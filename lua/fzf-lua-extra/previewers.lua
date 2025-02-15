@@ -70,10 +70,6 @@ function M.lazy:new(o, opts, fzf_win)
 end
 
 function M.lazy:populate_preview_buf(entry_str)
-  if entry_str == '' then
-    self:clear_preview_buf(true)
-    return
-  end
   local plugin = parse_entry(self, entry_str)
   local t, data = parse_plugin_type(self, plugin)
 
@@ -135,10 +131,6 @@ function M.gitignore:new(o, opts, fzf_win)
 end
 
 function M.gitignore:populate_preview_buf(entry_str)
-  if entry_str == '' then
-    self:clear_preview_buf(true)
-    return
-  end
   utils.gh_cache(
     self.api_root .. '/' .. entry_str,
     vim.schedule_wrap(function(_, json)
