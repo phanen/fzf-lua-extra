@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.1.0](https://github.com/phanen/fzf-lua-extra/compare/v3.0.0...v3.1.0) (2025-04-13)
+
+
+### Features
+
+* **aerial:** add symbols picker ([230d56c](https://github.com/phanen/fzf-lua-extra/commit/230d56c01f0207acb6f3cd6f2e644552f47ea2c9))
+* make all pickers reloadable ([8c18dc4](https://github.com/phanen/fzf-lua-extra/commit/8c18dc482ee814186885aa3db79013791f5d31ce))
+* process picker/inspector ([760e5fe](https://github.com/phanen/fzf-lua-extra/commit/760e5fee9457382e90c7855a6b888c51ff838750))
+
+
+### Bug Fixes
+
+* expand env variable by `_fmt.from` ([14d8ed4](https://github.com/phanen/fzf-lua-extra/commit/14d8ed45afa03b00de513ae47b1551dc1ab6a96c))
+* fzf_exec api would override info ([3b3ccb0](https://github.com/phanen/fzf-lua-extra/commit/3b3ccb081f0acf7cc24f79f2e8071cada71f89c3))
+* upsteram change '' to nil when no selected ([1856d69](https://github.com/phanen/fzf-lua-extra/commit/1856d697c99344cac45018584a4dd8f9eb2af946))
+
 ## [3.0.0](https://github.com/phanen/fzf-lua-extra/compare/v2.4.0...v3.0.0) (2025-01-16)
 
 
