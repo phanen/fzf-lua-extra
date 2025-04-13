@@ -11,12 +11,12 @@ jobs:
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Neovim
         shell: bash
         run: |
           mkdir -p /tmp/nvim
-          wget -q https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage -O /tmp/nvim/nvim.appimage
+          wget -q https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.appimage -O /tmp/nvim/nvim.appimage
           cd /tmp/nvim
           chmod a+x ./nvim.appimage
           ./nvim.appimage --appimage-extract
@@ -31,7 +31,7 @@ jobs:
     needs: tests
     if: ${{ github.ref == 'refs/heads/master' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: panvimdoc
         uses: kdheepak/panvimdoc@main
         with:
@@ -54,14 +54,12 @@ jobs:
       - tests
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v3
+      - uses: googleapis/release-please-action@v4
         id: release
         with:
           release-type: simple
           package-name: fzf-lua-extra
-          extra-files: |
-            lua/lazy/core/config.lua
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: tag stable versions
         if: ${{ steps.release.outputs.release_created }}
         run: |
