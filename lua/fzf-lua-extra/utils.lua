@@ -57,7 +57,7 @@ M.get_lazy_plugins = (function()
     if not plugins then
       -- https://github.com/folke/lazy.nvim/blob/d3974346b6cef2116c8e7b08423256a834cb7cbc/lua/lazy/view/render.lua#L38-L40
       local cfg = package.loaded['lazy.core.config']
-      plugins = vim.tbl_extend('keep', {}, cfg.plugins, cfg.to_clean, cfg.spec.disabled)
+      plugins = vim.tbl_deep_extend('keep', {}, cfg.plugins, cfg.to_clean, cfg.spec.disabled)
       -- kind="clean" seems not named in table
       for i, p in ipairs(plugins) do
         plugins[p.name] = p

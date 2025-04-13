@@ -65,7 +65,7 @@ return function(opts)
       ['ctrl-g'] = { fn = State.cycle, reload = true },
     },
   }
-  opts = vim.tbl_extend('force', default, opts or {})
+  opts = vim.tbl_deep_extend('force', default, opts or {})
   local _contents = function(fzf_cb)
     local filter, encode = State.get()
     vim

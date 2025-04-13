@@ -11,7 +11,7 @@ return function(opts)
       ['ctrl-n'] = function(sel) require('fzf-lua').live_grep_native { cwd = sel[1] } end,
     },
   }
-  opts = vim.tbl_extend('force', default, opts or {})
+  opts = vim.tbl_deep_extend('force', default, opts or {})
   local clear = require('fzf-lua').utils.ansi_escseq.clear
   local clear_pat = vim.pesc(clear)
   local contents = vim

@@ -6,7 +6,7 @@ return function(opts)
     file_icons = true,
     actions = { ['enter'] = require('fzf-lua.actions').file_sel_to_qf },
   }
-  opts = vim.tbl_extend('force', default, opts or {})
+  opts = vim.tbl_deep_extend('force', default, opts or {})
 
   local utils = require('fzf-lua').utils
   local green = utils.ansi_codes.green

@@ -29,7 +29,7 @@ return function(opts)
       end,
     },
   }
-  opts = vim.tbl_extend('force', default, opts or {})
+  opts = vim.tbl_deep_extend('force', default, opts or {})
   local contents = function(fzf_cb)
     utils.gh_cache(opts.api_root, function(_, json)
       vim.iter(json):each(function(item) fzf_cb(item.key) end)
