@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/phanen/fzf-lua-extra/compare/v3.1.0...v3.1.1) (2025-04-13)
+
+
+### Bug Fixes
+
+* **ps:** wrong whitespace delimiter for click-header ([cf3e8fd](https://github.com/phanen/fzf-lua-extra/commit/cf3e8fd9975481b388735b0e2280ffa835260433))
+
 ## [3.1.0](https://github.com/phanen/fzf-lua-extra/compare/v3.0.0...v3.1.0) (2025-04-13)
 
 
