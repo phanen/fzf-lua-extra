@@ -44,7 +44,7 @@ return function(opts)
     previewer = {
       _ctor = function()
         local p = require('fzf-lua.previewer.fzf').cmd_async:extend()
-        function p:fzf_delimiter() return '[\\s+]' end
+        function p:fzf_delimiter() return '\\s+' end
         function p:cmdline(o)
           o = o or {}
           local act = shell.raw_preview_action_cmd(function(items)
