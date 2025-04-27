@@ -5,13 +5,17 @@
 > Deprecated wrapper function: checkout [v2.4.0](https://github.com/phanen/flo/tree/v2.4.0).
 
 Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
-* lazy
+<!-- we need literate programming -->
+<!-- fd . lua/fzf-lua-extra/providers/ --format '* {/.}' -->
+* aerial
 * gitignore
+* lazy
 * license
-* rtp
-* scriptnames
-* zoxide
+* ps
 * recentfiles
+* rtp
+* runtime
+* scriptnames
 
 ## credit
 * <https://github.com/ibhagwan/fzf-lua>

@@ -4,7 +4,7 @@ return function(opts)
       cmd = 'eza --color=always --tree --level=3 --icons=always',
       _ctor = require('fzf-lua.previewer').fzf.cmd,
     },
-    path_shorten = 'set-to-trigger-glob-expansion',
+    _fmt = { from = function(e, _) return vim.fn.expand(e) end },
     actions = {
       ['enter'] = function(sel) require('fzf-lua-extra.utils').zoxide_chdir(sel[1]) end,
       ['ctrl-l'] = function(sel) require('fzf-lua').files { cwd = sel[1] } end,
