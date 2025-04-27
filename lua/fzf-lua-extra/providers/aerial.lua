@@ -45,7 +45,7 @@ return function(opts)
           local base = require 'fzf-lua.previewer.builtin'.buffer_or_file
           local previewer = base:extend()
           function previewer:parse_entry(entry_str)
-            local idx, _ = entry_str:match('^(%d)\t(.*)$')
+            local idx, _ = entry_str:match('^(%d+)\t(.*)$')
             local item = items[tonumber(idx)]
             return {
               bufnr = tonumber(bufnr),
