@@ -1,4 +1,4 @@
-*fzf-lua-extra.txt*       For Neovim >= 0.10.0      Last change: 2025 April 14
+*fzf-lua-extra.txt*       For Neovim >= 0.10.0      Last change: 2025 April 27
 
 ==============================================================================
 Table of Contents                            *fzf-lua-extra-table-of-contents*
@@ -16,8 +16,8 @@ Table of Contents                            *fzf-lua-extra-table-of-contents*
 
   [!NOTE] Deprecated wrapper function: checkout v2.4.0
   <https://github.com/phanen/flo/tree/v2.4.0>.
-Extra pickers for fzf-lua <https://github.com/ibhagwan/fzf-lua>. lazy gitignore
-license rtp scriptnames zoxide recentfiles
+Extra pickers for fzf-lua <https://github.com/ibhagwan/fzf-lua>. aerial
+gitignore lazy license ps recentfiles rtp runtime scriptnames
 
 
 CREDIT                                    *fzf-lua-extra-fzf-lua-extra-credit*
