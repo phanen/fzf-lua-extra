@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.2.0](https://github.com/phanen/fzf-lua-extra/compare/v3.1.1...v3.2.0) (2025-05-07)
+
+
+### Features
+
+* **ps:** colorize columns ([6480de0](https://github.com/phanen/fzf-lua-extra/commit/6480de0ac90882411d2455833c87689046a1b2f7))
+* **runtime:** runtime file ([77c6bc0](https://github.com/phanen/fzf-lua-extra/commit/77c6bc0d6876e5fa75888ec9d326b4743655f32d))
+* use mini.visits ([3a311f5](https://github.com/phanen/fzf-lua-extra/commit/3a311f5ad795289d6187d95d433c4e60d39a22ed))
+
+
+### Bug Fixes
+
+* **aerial:** when id &gt;= 10 ([81a9b1d](https://github.com/phanen/fzf-lua-extra/commit/81a9b1d458ebf8e57c2a1beced9249fd31d63765))
+
 ## [3.1.1](https://github.com/phanen/fzf-lua-extra/compare/v3.1.0...v3.1.1) (2025-04-13)
 
 
