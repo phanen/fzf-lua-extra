@@ -12,10 +12,10 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * lazy
 * license
 * ps
-* recentfiles
 * rtp
 * runtime
 * scriptnames
+* visits
 
 ## credit
 * <https://github.com/ibhagwan/fzf-lua>
