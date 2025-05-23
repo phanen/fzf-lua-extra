@@ -164,11 +164,13 @@ end
 ---TODO: cond cache, cond ttl
 ---@param filename string
 ---@param cmd string[]
+---@param cond boolean
 ---@return string
-M.cache_run = function(filename, cmd)
+M.cache_run = function(filename, cmd, cond)
+  u.pp(cond, 'a')
   local path = fs.joinpath(root, filename)
   local res = M.read_file(path)
-  if res and #res > 0 then return res end
+  if not cond and res and #res > 0 then return res end
   res = vim.fn.system(cmd)
   assert(M.write_file(path, res))
   return res
