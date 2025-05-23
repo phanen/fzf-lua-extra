@@ -10,6 +10,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * aerial
 * cliphist
 * gitignore
+* icons
 * lazy
 * license
 * ps

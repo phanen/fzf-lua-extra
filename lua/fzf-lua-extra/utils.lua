@@ -1,12 +1,13 @@
 local M = {}
 
+---@diagnostic disable-next-line: unused-local
 local api, fn, uv, fs = vim.api, vim.fn, vim.uv, vim.fs
 
-M.zoxide_chdir = function(path)
-  if fn.executable('zoxide') == 1 then vim.system { 'zoxide', 'add', path } end
-  return api.nvim_set_current_dir(path)
-end
+local root = fn.stdpath 'state' .. '/fzf-lua-extra'
 
+---@param path string
+---@param flag string?
+---@return string?
 M.read_file = function(path, flag)
   local fd = io.open(path, flag or 'r')
   if not fd then return nil end
@@ -41,6 +42,9 @@ local fs_file_mkdir = function(path)
 end
 
 -- path should be normalized
+---@param path string
+---@param flag string?
+---@return boolean
 M.write_file = function(path, content, flag)
   if not uv.fs_stat(path) then fs_file_mkdir(path) end
   local fd = io.open(path, flag or 'w')
@@ -108,6 +112,7 @@ local gh_cache = function(route, path, cb)
     if not ok then error('Fail to parse json: ' .. str) end
     return cb(str, tbl)
   end
+  -- TODO: this just a conditional cache...
   return gh(route, function(str, tbl)
     assert(M.write_file(path, str), 'Fail to write to cache path: ' .. path)
     cb(str, tbl)
@@ -118,8 +123,7 @@ end
 ---@param cb fun(string, table)
 ---@return vim.SystemObj?
 M.gh_cache = function(route, cb)
-  local cache_root = fn.stdpath 'state' .. '/fzf-lua-extra'
-  local path = cache_root .. '/' .. route .. '.json'
+  local path = root .. '/' .. route .. '.json'
   return gh_cache(route, path, cb)
 end
 
@@ -157,4 +161,16 @@ M.replace_with_envname = function(name)
   return name
 end
 
+---TODO: cond cache, cond ttl
+---@param filename string
+---@param cmd string[]
+---@return string
+M.cache_run = function(filename, cmd)
+  local path = fs.joinpath(root, filename)
+  local res = M.read_file(path)
+  if res and #res > 0 then return res end
+  res = vim.fn.system(cmd)
+  assert(M.write_file(path, res))
+  return res
+end
 return M
