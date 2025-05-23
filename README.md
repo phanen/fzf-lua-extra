@@ -8,6 +8,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 <!-- we need literate programming -->
 <!-- fd . lua/fzf-lua-extra/providers/ --format '* {/.}' -->
 * aerial
+* cliphist
 * gitignore
 * lazy
 * license
