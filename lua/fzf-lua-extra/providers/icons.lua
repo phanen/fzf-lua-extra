@@ -43,6 +43,8 @@ return function(opts)
     complete = function(sel, _o, line, col)
       sel = sel[1]
       if not sel then return '' end
+      col =
+        vim.str_byteindex(line, 'utf-16', vim.str_utfindex(line, math.min(line:len(), col)), true)
       local icon = sel:match(('^(.-)' .. require('fzf-lua').utils.nbsp))
       local newline = line:sub(1, col) .. icon .. line:sub(col + 1)
       return newline, col

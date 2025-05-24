@@ -167,7 +167,6 @@ end
 ---@param cond boolean
 ---@return string
 M.cache_run = function(filename, cmd, cond)
-  u.pp(cond, 'a')
   local path = fs.joinpath(root, filename)
   local res = M.read_file(path)
   if not cond and res and #res > 0 then return res end
