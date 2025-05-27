@@ -10,9 +10,12 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * aerial
 * cliphist
 * gitignore
+* grep_project_globs
 * icons
 * lazy
 * license
+* node_lines
+* plocate
 * ps
 * rtp
 * runtime
@@ -23,7 +26,3 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * <https://github.com/ibhagwan/fzf-lua>
 * <https://github.com/kilavila/nvim-gitignore>
 * <https://github.com/roginfarrer/fzf-lua-lazy.nvim>
-
-## todo
-* [ ] generic gh api
-* [ ] generic cacher
