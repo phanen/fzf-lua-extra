@@ -1,11 +1,10 @@
-*fzf-lua-extra.txt*       For Neovim >= 0.10.0      Last change: 2025 April 27
+*fzf-lua-extra.txt*        For Neovim >= 0.10.0       Last change: 2025 May 27
 
 ==============================================================================
 Table of Contents                            *fzf-lua-extra-table-of-contents*
 
 1. fzf-lua-extra                                 |fzf-lua-extra-fzf-lua-extra|
   - credit                                |fzf-lua-extra-fzf-lua-extra-credit|
-  - todo                                    |fzf-lua-extra-fzf-lua-extra-todo|
 2. Links                                                 |fzf-lua-extra-links|
 
 ==============================================================================
@@ -17,7 +16,8 @@ Table of Contents                            *fzf-lua-extra-table-of-contents*
   [!NOTE] Deprecated wrapper function: checkout v2.4.0
   <https://github.com/phanen/flo/tree/v2.4.0>.
 Extra pickers for fzf-lua <https://github.com/ibhagwan/fzf-lua>. aerial
-gitignore lazy license ps recentfiles rtp runtime scriptnames
+cliphist gitignore grep_project_globs icons lazy license node_lines plocate ps
+rtp runtime scriptnames visits
 
 
 CREDIT                                    *fzf-lua-extra-fzf-lua-extra-credit*
@@ -25,12 +25,6 @@ CREDIT                                    *fzf-lua-extra-fzf-lua-extra-credit*
 - <https://github.com/ibhagwan/fzf-lua>
 - <https://github.com/kilavila/nvim-gitignore>
 - <https://github.com/roginfarrer/fzf-lua-lazy.nvim>
-
-
-TODO                                        *fzf-lua-extra-fzf-lua-extra-todo*
-
-- generic gh api
-- generic cacher
 
 ==============================================================================
 2. Links                                                 *fzf-lua-extra-links*
