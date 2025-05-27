@@ -43,6 +43,7 @@ return function(opts)
     complete = function(sel, _o, line, col)
       sel = sel[1]
       if not sel then return '' end
+      if _o.__CTX.mode == 'i' then col = col - 1 end
       local _cur_start, cur_end =
         col + vim.str_utf_start(line, col), col + vim.str_utf_end(line, col)
       local icon = sel:match(('^(.-)' .. require('fzf-lua').utils.nbsp))
