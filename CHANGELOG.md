@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.2.0](https://github.com/phanen/fzf-lua-extra/compare/v3.1.1...v3.2.0) (2025-05-27)
+
+
+### Features
+
+* cliphist ([fae3e57](https://github.com/phanen/fzf-lua-extra/commit/fae3e57b516a18aa7436c89a3b77732f072b01eb))
+* **grep_project_globs:** init ([b9ff6d6](https://github.com/phanen/fzf-lua-extra/commit/b9ff6d650e77bef3812520e61b15d1e2e61765a1))
+* **icons:** force update cache ([353c5ff](https://github.com/phanen/fzf-lua-extra/commit/353c5ff9b52aeac195848e34333db7b6e992b771))
+* nerd icons, emojis ([f9bb5d3](https://github.com/phanen/fzf-lua-extra/commit/f9bb5d30f9284cd2dbd600e235ff81c0957c5c7c))
+* **node_lines:** init ([13a2a07](https://github.com/phanen/fzf-lua-extra/commit/13a2a07d18dadb3895422f787f3299b876364428))
+* **plocate:** init ([1e9650a](https://github.com/phanen/fzf-lua-extra/commit/1e9650a76bce51315b2be9eb0979bab86eeefdfc))
+* **ps:** colorize columns ([6480de0](https://github.com/phanen/fzf-lua-extra/commit/6480de0ac90882411d2455833c87689046a1b2f7))
+* **runtime:** runtime file ([77c6bc0](https://github.com/phanen/fzf-lua-extra/commit/77c6bc0d6876e5fa75888ec9d326b4743655f32d))
+* use mini.visits ([3a311f5](https://github.com/phanen/fzf-lua-extra/commit/3a311f5ad795289d6187d95d433c4e60d39a22ed))
+
+
+### Bug Fixes
+
+* **aerial:** when id &gt;= 10 ([81a9b1d](https://github.com/phanen/fzf-lua-extra/commit/81a9b1d458ebf8e57c2a1beced9249fd31d63765))
+* **icons:** 😼😼😼 ([b04c97e](https://github.com/phanen/fzf-lua-extra/commit/b04c97e957f0caf8432e74aabd24b8c64deda8ea))
+* **icons:** byte col ([7aa5421](https://github.com/phanen/fzf-lua-extra/commit/7aa542120f9a3d7595c84425e7b2eaf68875c382))
+* **icons:** insert mode 🐱😾😺 ([19bc4a8](https://github.com/phanen/fzf-lua-extra/commit/19bc4a86914e955fe0d65e616f200192334b3ab8))
+
 ## [3.1.1](https://github.com/phanen/fzf-lua-extra/compare/v3.1.0...v3.1.1) (2025-04-13)
 
 
