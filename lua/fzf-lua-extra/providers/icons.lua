@@ -43,11 +43,11 @@ return function(opts)
     complete = function(sel, _o, line, col)
       sel = sel[1]
       if not sel then return '' end
-      col =
-        vim.str_byteindex(line, 'utf-16', vim.str_utfindex(line, math.min(line:len(), col)), true)
+      local _cur_start, cur_end =
+        col + vim.str_utf_start(line, col), col + vim.str_utf_end(line, col)
       local icon = sel:match(('^(.-)' .. require('fzf-lua').utils.nbsp))
-      local newline = line:sub(1, col) .. icon .. line:sub(col + 1)
-      return newline, col
+      local newline = line:sub(1, cur_end) .. icon .. line:sub(cur_end + 1)
+      return newline, cur_end
     end,
     actions = {
       ['ctrl-r'] = {
