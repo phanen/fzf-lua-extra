@@ -8,5 +8,6 @@ return vim
       require('fzf-lua').set_info { mod = mod, cmd = name, fnc = name }
       return require(mod)(...)
     end
+    require('fzf-lua')[name] = M[name]
     return M
   end)
