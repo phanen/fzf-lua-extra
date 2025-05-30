@@ -49,6 +49,7 @@ return function(opts)
       local newline = line:sub(1, cur_end) .. icon .. line:sub(cur_end + 1)
       return newline, cur_end
     end,
+    winopts = { relative = 'cursor', height = 0.2, width = 0.3, border = 'none' },
     actions = {
       ['ctrl-r'] = {
         fn = function(_, o)
