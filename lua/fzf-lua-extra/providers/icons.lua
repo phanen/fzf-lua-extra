@@ -44,8 +44,7 @@ return function(opts)
       sel = sel[1]
       if not sel then return '' end
       if _o.__CTX.mode == 'i' then col = col - 1 end
-      local _cur_start, cur_end =
-        col + vim.str_utf_start(line, col), col + vim.str_utf_end(line, col)
+      local cur_end = (line:len() == 0 or col == 0) and 0 or col + vim.str_utf_end(line, col)
       local icon = sel:match(('^(.-)' .. require('fzf-lua').utils.nbsp))
       local newline = line:sub(1, cur_end) .. icon .. line:sub(cur_end + 1)
       return newline, cur_end
