@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.3.0](https://github.com/phanen/fzf-lua-extra/compare/v3.2.0...v3.3.0) (2025-05-30)
+
+
+### Features
+
+* register `:FzfLua {cmd}` ([1b54637](https://github.com/phanen/fzf-lua-extra/commit/1b54637debf86b5959703e4c9dc8927f18d366d0))
+
+
+### Bug Fixes
+
+* **icons:** 😿 when at the begin of line ([d6eaab8](https://github.com/phanen/fzf-lua-extra/commit/d6eaab8280ef2f9cfccc770ab0b126491c8b5e6f))
+* **icons:** relative to cursor ([4582e31](https://github.com/phanen/fzf-lua-extra/commit/4582e31166cadb3250597253c7869a30b0a9e567))
+
 ## [3.2.0](https://github.com/phanen/fzf-lua-extra/compare/v3.1.1...v3.2.0) (2025-05-27)
 
 
