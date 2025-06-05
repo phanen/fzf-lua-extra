@@ -56,7 +56,13 @@ return function()
   require('fzf-lua').blines {
     silent = true,
     _treesitter = function(line) return 'foo.lua', nil, line:sub(2) end,
-    fzf_opts = { ['--with-nth'] = '4..', ['--nth'] = '1..' },
+    fzf_colors = { ['hl'] = '-1:reverse', ['hl+'] = '-1:reverse' },
+    fzf_opts = {
+      ['--with-nth'] = '4..',
+      ['--nth'] = '1..',
+      ['--exact'] = true,
+    },
+    fzf_args = '--pointer=',
     winopts = {
       split = ('botright %snew +set\\ nobl'):format(height),
       preview = { hidden = true },
