@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.3.0](https://github.com/phanen/fzf-lua-extra/compare/v3.2.0...v3.3.0) (2025-06-06)
+
+
+### Features
+
+* register `:FzfLua {cmd}` ([1b54637](https://github.com/phanen/fzf-lua-extra/commit/1b54637debf86b5959703e4c9dc8927f18d366d0))
+* **swiper:** init ([7e1066d](https://github.com/phanen/fzf-lua-extra/commit/7e1066d7128c8e6ac085aa2fe2c97bf6814f378e))
+
+
+### Bug Fixes
+
+* handle lazy load ([47a9103](https://github.com/phanen/fzf-lua-extra/commit/47a9103435f983215d98c74bf5438db53bcf2f64))
+* **icons:** 😿 when at the begin of line ([d6eaab8](https://github.com/phanen/fzf-lua-extra/commit/d6eaab8280ef2f9cfccc770ab0b126491c8b5e6f))
+* **icons:** relative to cursor ([4582e31](https://github.com/phanen/fzf-lua-extra/commit/4582e31166cadb3250597253c7869a30b0a9e567))
+* **swiper:** force default flags ([265329c](https://github.com/phanen/fzf-lua-extra/commit/265329c066cfd8003d2acec11f3a1ebe8b4d8cb0))
+
 ## [3.2.0](https://github.com/phanen/fzf-lua-extra/compare/v3.1.1...v3.2.0) (2025-05-27)
 
 
