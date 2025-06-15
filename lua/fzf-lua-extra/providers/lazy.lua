@@ -50,6 +50,7 @@ return function(opts)
       ['enter'] = p_do(function(p)
         if p.dir and vim.uv.fs_stat(p.dir) then utils.zoxide_chdir(p.dir) end
       end),
+      ['ctrl-y'] = p_do(function(p) vim.fn.setreg('+', p.url) end),
       ['ctrl-o'] = p_do(function(p) -- search cleaned plugins
         vim.ui.open(p.url or ('https://github.com/search?q=%s'):format(p.name))
       end),
