@@ -26,7 +26,7 @@ return function(opts)
             id = (lmarks[lnum] or {})[1],
             -- virt_text_pos = 'inline', -- TODO: this break fzf match hl
             virt_text_pos = 'right_align',
-            virt_text = { { icon, hl or 'Error' } },
+            virt_text = { { icon .. ' ', hl or 'Error' } },
           })
           lmarks[lnum] = lmarks[lnum] or {}
           lmarks[lnum][1] = id
