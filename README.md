@@ -9,6 +9,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 <!-- fd . lua/fzf-lua-extra/providers/ --format '* {/.}' -->
 * aerial
 * cliphist
+* file_decor
 * gitignore
 * grep_project_globs
 * icons
