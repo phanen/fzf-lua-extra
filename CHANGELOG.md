@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.4.0](https://github.com/phanen/fzf-lua-extra/compare/v3.3.0...v3.4.0) (2025-06-29)
+
+
+### Features
+
+* add icons with extamrk ([8aaa897](https://github.com/phanen/fzf-lua-extra/commit/8aaa897c019524967bda7c3c94415f9ab66bddb1))
+* **function:** init ([98917fa](https://github.com/phanen/fzf-lua-extra/commit/98917fa27320075ab2309a7cdda20591310357d1))
+
+
+### Bug Fixes
+
+* padding but looks weird in kitty ([709fa6c](https://github.com/phanen/fzf-lua-extra/commit/709fa6c135527ffb4de71d7a83b9e0e782c3ee38))
+
 ## [3.3.0](https://github.com/phanen/fzf-lua-extra/compare/v3.2.0...v3.3.0) (2025-06-06)
 
 
