@@ -17,8 +17,9 @@ M.read_file = function(path, flag)
 end
 
 M.wrap_reload = function(opts, contents)
+  local shell = require('fzf-lua.shell') -- https://github.com/ibhagwan/fzf-lua/pull/2152
+  if shell.stringify then return contents end
   opts.__fn_reload = opts.__fn_reload or function() return contents end
-  local shell = require('fzf-lua.shell')
   -- build the "reload" cmd and remove '-- {+}' from the initial cmd
   local reload, id = shell.reload_action_cmd(opts, '{+}')
   local new_contents = reload:gsub('%-%-%s+{%+}$', '')
