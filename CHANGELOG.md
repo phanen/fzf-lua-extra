@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/phanen/fzf-lua-extra/compare/v3.4.0...v3.4.1) (2025-07-04)
+
+
+### Bug Fixes
+
+* **upstream:** fzf_exec now shell.stringify all the contents ([93d5f60](https://github.com/phanen/fzf-lua-extra/commit/93d5f60f8f99ba370e12809790aee7a088aa7de3))
+
 ## [3.4.0](https://github.com/phanen/fzf-lua-extra/compare/v3.3.0...v3.4.0) (2025-06-29)
 
 
