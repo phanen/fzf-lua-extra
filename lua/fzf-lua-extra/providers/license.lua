@@ -36,6 +36,5 @@ return function(opts)
       fzf_cb()
     end)
   end
-  contents = require('fzf-lua-extra.utils').wrap_reload(opts, contents)
   return require('fzf-lua.core').fzf_exec(contents, opts)
 end

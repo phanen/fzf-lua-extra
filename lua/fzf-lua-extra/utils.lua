@@ -16,18 +16,6 @@ M.read_file = function(path, flag)
   return content or ''
 end
 
-M.wrap_reload = function(opts, contents)
-  local shell = require('fzf-lua.shell') -- https://github.com/ibhagwan/fzf-lua/pull/2152
-  if shell.stringify then return contents end
-  opts.__fn_reload = opts.__fn_reload or function() return contents end
-  -- build the "reload" cmd and remove '-- {+}' from the initial cmd
-  local reload, id = shell.reload_action_cmd(opts, '{+}')
-  local new_contents = reload:gsub('%-%-%s+{%+}$', '')
-  opts.__reload_cmd = reload
-  opts._fn_pre_fzf = function() shell.set_protected(id) end
-  return new_contents
-end
-
 -- mkdir for file
 local fs_file_mkdir = function(path)
   local parents = {}
@@ -62,6 +50,10 @@ M.get_lazy_plugins = (function()
     if not plugins then
       -- https://github.com/folke/lazy.nvim/blob/d3974346b6cef2116c8e7b08423256a834cb7cbc/lua/lazy/view/render.lua#L38-L40
       local cfg = package.loaded['lazy.core.config']
+      if not cfg or not cfg.plugins then
+        error('lazy.nvim is not loaded')
+        return {}
+      end
       plugins = vim.tbl_deep_extend('keep', {}, cfg.plugins, cfg.to_clean, cfg.spec.disabled)
       -- kind="clean" seems not named in table
       for i, p in ipairs(plugins) do
@@ -140,11 +132,11 @@ M.replace_with_envname = function(name)
   vim.env.VIMFILE = vimfile
   -- note: lazy root may locate in xdg_data
   -- so it should be mached before data_home
-  local lazy = package.loaded['lazy.core.config'].options.root
+  local lazy = vim.tbl_get(package.loaded['lazy.core.config'] or {}, 'options', 'root')
   vim.env.LAZY = lazy
 
   local ac = require('fzf-lua.utils').ansi_codes
-  if name:match('^' .. lazy) then
+  if lazy and name:match('^' .. lazy) then
     name = name:gsub('^' .. lazy, ac.cyan('$LAZY'))
   elseif name:match('^' .. xdg_config) then
     name = name:gsub('^' .. xdg_config, ac.yellow('$XDG_CONFIG_HOME'))

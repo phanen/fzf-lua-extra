@@ -6,7 +6,8 @@ return function(opts)
     file_icons = 1,
     color_icons = true,
     fzf_opts = { ['--no-sort'] = true },
-    actions = _G.fzf_lua_actions.files,
+    ---@diagnostic disable-next-line: undefined-field
+    actions = _G.fzf_lua_actions and _G.fzf_lua_actions.files,
   })
   local contents = function(cb)
     coroutine.wrap(function()

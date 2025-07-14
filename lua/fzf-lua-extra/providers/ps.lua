@@ -21,7 +21,7 @@ return function(opts)
     requires_processing = true,
     -- debug = true,
     multiprocess = true,
-    __mt_preprocess = exec_lua [[
+    fn_preprocess = exec_lua [[
       local utils = require('fzf-lua.utils')
       _G.bold = utils.ansi_codes.bold
       _G.blue = utils.ansi_codes.blue
@@ -31,7 +31,7 @@ return function(opts)
         return cmd
       end
     ]],
-    __mt_transform = exec_lua [[
+    fn_transform = exec_lua [[
       return function(e)
         if e:match('^%s*PID') then
           local sep1, pid, sep2, ppid, sep3, cmd = e:match('^(%s*)(%S+)(%s*)(%S+)(%s*)(%S+)$')
@@ -69,11 +69,11 @@ return function(opts)
         function p:fzf_delimiter() return '\\s+' end
         function p:cmdline(o)
           o = o or {}
-          local act = shell.raw_preview_action_cmd(function(items)
+          local act = shell.stringify_cmd(function(items)
             local pid = (items[1]):match('^%s*(%d+)')
             if not pid then return 'echo no preview' end
             return opts.ps_preview_cmd .. ' ' .. pid
-          end, '{}', self.opts.debug)
+          end, self.opts, '{}', self.opts.debug)
           return act
         end
         return p
@@ -111,6 +111,5 @@ return function(opts)
       },
     },
   }, opts or {})
-  local contents = core.mt_cmd_wrapper(opts)
-  return core.fzf_exec(contents, opts)
+  return core.fzf_exec(cmd, opts)
 end

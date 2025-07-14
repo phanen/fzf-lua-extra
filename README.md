@@ -22,6 +22,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * rtp
 * runtime
 * scriptnames
+* serverlist
 * swiper_blines
 * visits
 

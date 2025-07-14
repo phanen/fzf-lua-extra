@@ -67,7 +67,7 @@ return function(opts)
     },
   }
   opts = vim.tbl_deep_extend('force', default, opts or {})
-  local _contents = function(fzf_cb)
+  local contents = function(fzf_cb)
     local filter, encode = State.get()
     vim
       .iter(utils.get_lazy_plugins())
@@ -75,6 +75,5 @@ return function(opts)
       :each(function(_, p) fzf_cb(encode(p)) end)
     fzf_cb()
   end
-  local contents = require('fzf-lua-extra.utils').wrap_reload(opts, _contents)
   return require('fzf-lua.core').fzf_exec(contents, opts)
 end

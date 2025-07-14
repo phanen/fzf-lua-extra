@@ -18,13 +18,13 @@ return function()
         fn = function() end,
         exec_silent = true,
         postfix = 'transform:'
-          .. require('fzf-lua.shell').raw_action(function(sel)
+          .. require('fzf-lua.shell').stringify_data(function(sel)
             local sq, gq = unpack(vim.split(unpack(sel), '%s%-%-%s'))
             local gq_changed = gq ~= last_gq
             last_gq = gq
             if gq_changed then return ('reload(%s "" --iglob %q)+search:%s'):format(cmd, gq, sq) end
             return ('+search:%s'):format(sq)
-          end, '{q}'),
+          end, {}, '{q}'),
       },
     },
   })
