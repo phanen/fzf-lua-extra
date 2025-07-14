@@ -48,7 +48,7 @@ local function render_no_attr(self)
       table.insert(rv, row_expr_no_attr(self, igrid, i, cursor) .. '|')
     end
   end
-  print(table.concat(rv, '\n'))
+  print('\n' .. table.concat(rv, '\n'))
 end
 
 describe('main', function()
@@ -98,17 +98,27 @@ describe('main', function()
     local color = red
     local prompt_mark = '\27]133;A;\a\27'
 
+    n.fn.search('function(')
+    local timeout = {
+      ps = 2000,
+      swiper_blines = 1000,
+      plocate = 1000,
+    }
+    local picker = os.getenv('picker')
+    print('\n')
     for name, _ in vim.fs.dir(vim.fs.joinpath(curdir, '../lua/fzf-lua-extra/providers')) do
       color = color == red and green or red
       name = name:match('(.*)%.lua$')
-      print(clear .. '\n' .. ('='):rep(40) .. name .. ('='):rep(40), prompt_mark, color)
-      exec_lua(function(name0)
-        vim.schedule(function() require('fzf-lua-extra')[name0]() end)
-      end, name)
-      screen:sleep(100)
-      -- screen:snapshot_util()
-      render_no_attr(screen)
-      n.feed('<esc>')
+      if not picker or name:match(picker) then
+        print(clear .. ('='):rep(40) .. name .. ('='):rep(40), prompt_mark, color)
+        exec_lua(function(name0)
+          vim.schedule(function() require('fzf-lua-extra')[name0]() end)
+        end, name)
+        screen:sleep(timeout[name] or 100)
+        -- screen:snapshot_util()
+        render_no_attr(screen)
+        n.feed('<esc>')
+      end
     end
   end)
 end)
