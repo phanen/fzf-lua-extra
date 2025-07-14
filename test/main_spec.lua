@@ -94,12 +94,14 @@ describe('main', function()
 
     local red = '\27[0;31m'
     local green = '\27[0;32m'
+    local clear = '\27[0m'
     local color = red
+    local prompt_mark = '\27]133;A;\a\27'
 
     for name, _ in vim.fs.dir(vim.fs.joinpath(curdir, '../lua/fzf-lua-extra/providers')) do
       color = color == red and green or red
       name = name:match('(.*)%.lua$')
-      print(color, ('='):rep(40) .. name .. ('='):rep(40))
+      print(clear .. '\n' .. ('='):rep(40) .. name .. ('='):rep(40), prompt_mark, color)
       exec_lua(function(name0)
         vim.schedule(function() require('fzf-lua-extra')[name0]() end)
       end, name)
