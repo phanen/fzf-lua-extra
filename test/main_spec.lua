@@ -3,6 +3,7 @@ local n = require('nvim-test.helpers')
 local Screen = require('nvim-test.screen')
 local exec_lua = n.exec_lua
 
+local scale = (os.getenv('CI') and 10 or 1)
 local row_expr_no_attr = function(self, gridnr, rownr, cursor)
   local rv = {}
   local i = 1
@@ -69,13 +70,15 @@ describe('main', function()
       vim.env.XDG_DATA_HOME = './deps/.data'
       vim.opt.pp:append(vim.env.XDG_DATA_HOME .. '/nvim/site')
       -- stylua: ignore
-      vim.pack.add {
-        -- { src = 'https://github.com/ibhagwan/fzf-lua', version = 'refacator_contents' },
-        -- { src = 'https://github.com/stevearc/aerial.nvim' },
+      vim.pack.add (os.getenv('CI') and {
+        { src = 'https://github.com/ibhagwan/fzf-lua', version = 'refacator_contents' },
+        { src = 'https://github.com/stevearc/aerial.nvim' },
+        { src = 'https://github.com/echasnovski/mini.visits', },
+      } or {
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'b/fzf-lua'), version = 'refacator_contents' },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/aerial.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/mini.nvim') },
-      }
+      })
       ---@diagnostic disable-next-line: undefined-field
       require('aerial').setup({})
       require('fzf-lua').setup({ 'hide' })
@@ -114,7 +117,7 @@ describe('main', function()
         exec_lua(function(name0)
           vim.schedule(function() require('fzf-lua-extra')[name0]() end)
         end, name)
-        screen:sleep(timeout[name] or 100)
+        screen:sleep((timeout[name] or 100) * scale)
         -- screen:snapshot_util()
         render_no_attr(screen)
         n.feed('<esc>')
