@@ -123,7 +123,7 @@ luals-check: $(LUALS) $(NVIM_TEST)
 	VIMRUNTIME=$(XDG_DATA_HOME)/nvim-test/nvim-test-$(NVIM_TEST_VERSION)/share/nvim/runtime \
 		$(LUALS)/bin/lua-language-server \
 			--configpath=../.luarc.jsonc \
-			--check=lua
+			--check=.
 
 EMMYLUA_SHA := 8a629f23
 EMMYLUA := deps/emmylua_analyzer-rust-$(EMMYLUA_SHA)

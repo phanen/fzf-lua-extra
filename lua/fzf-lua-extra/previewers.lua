@@ -76,6 +76,7 @@ function M.lazy:populate_preview_buf(entry_str)
   local plugin = parse_entry(self, entry_str)
   local t, data = parse_plugin_type(self, plugin)
 
+  ---@type (string|fun():string)[]
   local handlers = {
     -- TODO: parse local dir (absolute, or relative to vim.fn.stdpath('config'))
     [p_type.LOCAL] = function()
@@ -103,9 +104,9 @@ function M.lazy:populate_preview_buf(entry_str)
     [p_type.INS_NO_MD] = ('%s %s'):format(self.ls_cmd, plugin.dir),
   }
 
-  local cmdline = handlers[t]
-  if not cmdline then return end
-  if vim.is_callable(cmdline) then cmdline = cmdline() end
+  local handler = handlers[t]
+  if not handler then return end
+  local cmd = type(handler) == 'function' and handler() or handler
   if t == p_type.INS_MD or t == p_type.UNINS_GH then
     self.filetype = 'markdown'
   elseif t == p_type.LOCAL then
@@ -113,8 +114,8 @@ function M.lazy:populate_preview_buf(entry_str)
   end
 
   vim.system(
-    ---@cast cmdline string
-    { 'sh', '-c', cmdline },
+    ---@cast cmd string
+    { 'sh', '-c', cmd },
     ---@diagnostic disable-next-line: param-type-mismatch
     vim.schedule_wrap(function(obj)
       local content = vim.split(obj.stdout, '\n')

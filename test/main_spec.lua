@@ -1,4 +1,4 @@
----@diagnostic disable: invisible
+---@diagnostic disable: invisible, no-unknown
 local n = require('nvim-test.helpers')
 local Screen = require('nvim-test.screen')
 local exec_lua = n.exec_lua
@@ -69,14 +69,13 @@ describe('main', function()
       _G.save_print, _G.print = _G.print, function() end
       vim.env.XDG_DATA_HOME = './deps/.data'
       vim.opt.pp:append(vim.env.XDG_DATA_HOME .. '/nvim/site')
-      -- stylua: ignore
-      vim.pack.add (os.getenv('CI') and {
-        { src = 'https://github.com/ibhagwan/fzf-lua', version = 'refacator_contents' },
+      vim.pack.add(os.getenv('CI') and {
+        { src = 'https://github.com/ibhagwan/fzf-lua' },
         { src = 'https://github.com/stevearc/aerial.nvim' },
-        { src = 'https://github.com/echasnovski/mini.visits', },
-        { src = 'https://github.com/folke/lazy.nvim', },
+        { src = 'https://github.com/echasnovski/mini.visits' },
+        { src = 'https://github.com/folke/lazy.nvim' },
       } or {
-        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'b/fzf-lua'), version = 'refacator_contents' },
+        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'b/fzf-lua') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/aerial.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/mini.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/lazy.nvim') },

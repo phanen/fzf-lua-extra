@@ -3,12 +3,10 @@ local api = vim.api
 
 return function()
   local port ---@type string?
-  require('fzf-lua')
-  -- ...to get type we use internal impl, bad
-  FzfLua.core.fzf_live(function(q)
-    if type(q) ~= 'string' then q = q[1] end
+  require('fzf-lua').fzf_live(function(q)
+    if not q[1] then return end
     ---@type string, string
-    local gq, sq = q:match(glob_regex)
+    local gq, sq = q[1]:match(glob_regex)
     if port and sq then
       vim.system { 'curl', '-XPOST', ('localhost:%s'):format(port), '-d', ('search:%s'):format(sq) }
     end
