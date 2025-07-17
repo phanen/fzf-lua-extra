@@ -1,4 +1,5 @@
 local api, fn = vim.api, vim.fn
+---@param opts { query: string?, node: TSNode? }
 local function nodelines(opts)
   opts = opts or {}
   local stop = { function_definition = true }
@@ -7,7 +8,7 @@ local function nodelines(opts)
     node = node:parent()
   end
   if not node then return end
-  local start_line, end_line
+  local start_line, end_line ---@type integer, integer
   if api.nvim_get_mode().mode:match('[vV\022]') then
     start_line, end_line = fn.line '.', fn.line 'v'
     if start_line > end_line then

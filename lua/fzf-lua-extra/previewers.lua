@@ -2,6 +2,8 @@ local M = {}
 local previewer = require('fzf-lua.previewer.builtin')
 local utils = require('fzf-lua-extra.utils')
 
+---@param _self fzf-lua.previewer.Gitignore
+---@param content string[]
 local preview_with = function(_self, content)
   local tmpbuf = _self:get_tmp_buffer()
   vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, content)
@@ -26,15 +28,16 @@ local p_type = {
 }
 
 ---@param entry_str string
+---@return LazyPlugin
 local parse_entry = function(_, entry_str)
   local slices = vim.split(entry_str, '/')
-  local repo = slices[#slices]
+  local name = slices[#slices]
   local plugins = utils.get_lazy_plugins()
-  return plugins[repo]
+  return plugins[name]
 end
 
 -- item can be a fullname or just a plugin name
----@param plugin table plugin spec
+---@param plugin LazyPlugin plugin spec
 ---@return plugin_type,any
 local parse_plugin_type = function(_, plugin)
   local dir = plugin.dir
@@ -120,6 +123,11 @@ function M.lazy:populate_preview_buf(entry_str)
   )
 end
 
+---@class fzf-lua.previewer.Gitignore: fzf-lua.previewer.Builtin
+---@field super fzf-lua.previewer.Builtin
+---@field api_root string
+---@field filetype string
+---@field json_key string
 M.gitignore = previewer.buffer_or_file:extend()
 
 function M.gitignore:new(o, opts, fzf_win)
@@ -131,14 +139,11 @@ function M.gitignore:new(o, opts, fzf_win)
 end
 
 function M.gitignore:populate_preview_buf(entry_str)
-  utils.gh_cache(
-    self.api_root .. '/' .. entry_str,
-    vim.schedule_wrap(function(_, json)
-      local content = assert(json[self.json_key])
-      content = vim.split(content, '\n')
-      preview_with(self, content)
-    end)
-  )
+  utils.gh_cache(self.api_root .. '/' .. entry_str, function(_, json)
+    ---@type string
+    local content = assert(json[self.json_key])
+    preview_with(self, vim.split(content, '\n'))
+  end)
 end
 
 return M

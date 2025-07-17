@@ -7,6 +7,8 @@ State.state = {
     State.encode = function(p) return p.name end
   end,
   all_repo = function()
+    ---@param p LazyPlugin
+    ---@return string
     State.encode = function(p)
       local fullname = p[1]
       if not fullname then
@@ -29,11 +31,14 @@ State.cycle = function()
   if not State.key then State.key = next(State.state, State.key) end
   State.state[State.key]()
 end
+
+---@return function, function
 State.get = function() return State.filter, State.encode end
 State.cycle()
 
 return function(opts)
-  ---@param cb fun(plugins: table)
+  ---@param cb fun(plugin: LazyPlugin)
+  ---@return fun(selected: string[])
   local p_do = function(cb)
     return function(selected)
       vim.iter(selected):each(function(sel)

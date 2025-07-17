@@ -8,6 +8,7 @@ return function(opts)
     json_key = 'body',
     filetype = 'text',
     actions = {
+      ---@param selected string[]
       ['enter'] = function(selected)
         local root = vim.fs.root(0, '.git')
         if not root then error('Not in a git repo') end
@@ -22,6 +23,7 @@ return function(opts)
         if path and fn.confirm('Override?', '&Yes\n&No') ~= 1 then return end
         local license = assert(selected[1])
         utils.gh_cache(opts.api_root .. '/' .. license, function(_, json)
+          ---@type string
           local content = assert(json.body)
           utils.write_file(path, content)
           vim.cmd.edit(path)

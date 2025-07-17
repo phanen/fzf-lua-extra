@@ -5,6 +5,11 @@ local api, fn, uv, fs = vim.api, vim.fn, vim.uv, vim.fs
 
 local root = fn.stdpath 'state' .. '/fzf-lua-extra'
 
+M.zoxide_chdir = function(path)
+  if fn.executable('zoxide') == 1 then vim.system { 'zoxide', 'add', path } end
+  return api.nvim_set_current_dir(path)
+end
+
 ---@param path string
 ---@param flag string?
 ---@return string?
@@ -18,6 +23,7 @@ end
 
 -- mkdir for file
 local fs_file_mkdir = function(path)
+  ---@type string[]
   local parents = {}
   vim.iter(fs.parents(path)):all(function(dir)
     local fs_stat = uv.fs_stat(dir)
@@ -32,6 +38,7 @@ end
 
 -- path should be normalized
 ---@param path string
+---@param content string
 ---@param flag string?
 ---@return boolean
 M.write_file = function(path, content, flag)
@@ -43,17 +50,20 @@ M.write_file = function(path, content, flag)
   return true
 end
 
----@type fun(name: string?): table<string, any>
+---@type fun(name: string?): { [string]: LazyPlugin }|LazyPlugin
 M.get_lazy_plugins = (function()
-  local plugins
+  local plugins ---@type LazyPlugin[]
+  local ret ---@type { [string]: LazyPlugin }
   return function(name)
     if not plugins then
       -- https://github.com/folke/lazy.nvim/blob/d3974346b6cef2116c8e7b08423256a834cb7cbc/lua/lazy/view/render.lua#L38-L40
+      ---@module 'lazy.core.config'
       local cfg = package.loaded['lazy.core.config']
       if not cfg or not cfg.plugins then
         error('lazy.nvim is not loaded')
         return {}
       end
+      ---@type LazyPlugin[]
       plugins = vim.tbl_deep_extend('keep', {}, cfg.plugins, cfg.to_clean, cfg.spec.disabled)
       -- kind="clean" seems not named in table
       for i, p in ipairs(plugins) do
@@ -62,7 +72,7 @@ M.get_lazy_plugins = (function()
       end
     end
     if name then return plugins[name] end
-    return plugins
+    return ret
   end
 end)()
 
@@ -74,6 +84,7 @@ local gh = function(route, cb)
   local cmd = fn.executable('gh') == 1 and { 'gh', 'api', route }
     or { 'curl', '-sL', 'https://api.github.com/' .. route }
 
+  ---@param str string
   ---@return string, table
   local parse_gh_result = function(str)
     local ok, tbl = pcall(vim.json.decode, str)
@@ -88,7 +99,7 @@ local gh = function(route, cb)
 
   ---@diagnostic disable-next-line: param-type-mismatch
   return vim.system(cmd, function(obj)
-    local stdout = obj.stdout
+    local stdout = assert(obj.stdout) -- no disabled stdout
     return cb(parse_gh_result(stdout))
   end)
 end
@@ -96,7 +107,7 @@ end
 ---gh but use local cache first
 ---@param route string
 ---@param path string
----@param cb fun(string, table)
+---@param cb fun(str: string, tbl: table)
 ---@return vim.SystemObj?
 local gh_cache = function(route, path, cb)
   if uv.fs_stat(path) then
@@ -113,19 +124,21 @@ local gh_cache = function(route, path, cb)
 end
 
 ---@param route string
----@param cb fun(string, table)
+---@param cb fun(str: string, tbl: table)
 ---@return vim.SystemObj?
 M.gh_cache = function(route, cb)
   local path = root .. '/' .. route .. '.json'
   return gh_cache(route, path, cb)
 end
 
+---@param name string
+---@return string
 M.replace_with_envname = function(name)
-  local xdg_config = vim.env.XDG_CONFIG_HOME
-  local xdg_state = vim.env.XDG_STATE_HOME
-  local xdg_cache = vim.env.XDG_CACHE_HOME
-  local xdg_data = vim.env.XDG_DATA_HOME
-  local vimruntime = vim.env.VIMRUNTIME
+  local xdg_config = vim.env.XDG_CONFIG_HOME ---@type string
+  local xdg_state = vim.env.XDG_STATE_HOME ---@type string
+  local xdg_cache = vim.env.XDG_CACHE_HOME ---@type string
+  local xdg_data = vim.env.XDG_DATA_HOME ---@type string
+  local vimruntime = vim.env.VIMRUNTIME ---@type string
 
   -- archlinux specific system-wide configs...
   local vimfile = '/usr/share/vim/vimfiles'
@@ -157,7 +170,7 @@ end
 ---TODO: cond cache, cond ttl
 ---@param filename string
 ---@param cmd string[]
----@param cond boolean
+---@param cond boolean?
 ---@return string
 M.cache_run = function(filename, cmd, cond)
   local path = fs.joinpath(root, filename)

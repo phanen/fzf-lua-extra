@@ -8,6 +8,8 @@ return function(opts)
     filetype = 'gitignore',
     winopts = { preview = { hidden = true } },
     actions = {
+      -- TODO:
+      ---@param selected string[]
       ['enter'] = function(selected)
         local root = vim.fs.root(0, '.git')
         if not root then error('Not in a git repo') end
@@ -18,6 +20,7 @@ return function(opts)
         end
         local filetype = assert(selected[1])
         utils.gh_cache(opts.api_root .. '/' .. filetype, function(_, json)
+          ---@type string
           local content = assert(json.source)
           utils.write_file(path, content)
           vim.cmd.edit(path)

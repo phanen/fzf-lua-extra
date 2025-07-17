@@ -8,7 +8,7 @@ return function(opts)
   }
   opts = vim.tbl_deep_extend('force', default, opts or {})
 
-  local utils = require('fzf-lua').utils
+  local utils = require('fzf-lua.utils')
   local green = utils.ansi_codes.green
   local blue = utils.ansi_codes.blue
   local clear_pat = vim.pesc(utils.ansi_escseq.clear)
@@ -16,12 +16,16 @@ return function(opts)
     .iter(vim.fn.getscriptinfo())
     :map(function(s) return s.name end)
     :map(require('fzf-lua-extra.utils').replace_with_envname)
-    :map(function(path)
-      local _, off = path:find(clear_pat)
-      off = off or 0
-      return path:match('%.vim$') and (path:sub(0, off) .. green(path:sub(off + 1, -1)))
-        or path:match('%.lua$') and (path:sub(0, off) .. blue(path:sub(off + 1, -1)))
-    end)
+    :map(
+      ---@param path string
+      ---@return string
+      function(path)
+        local _, off = path:find(clear_pat)
+        off = off or 0
+        return path:match('%.vim$') and (path:sub(0, off) .. green(path:sub(off + 1, -1)))
+          or path:match('%.lua$') and (path:sub(0, off) .. blue(path:sub(off + 1, -1)))
+      end
+    )
     :totable()
 
   return require('fzf-lua.core').fzf_exec(contents, opts)

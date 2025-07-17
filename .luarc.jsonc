@@ -4,28 +4,34 @@
 		"version": "LuaJIT"
 	},
 	"workspace": {
+		"checkThirdParty": false,
+		"ignoreDir": ["deps"],
 		"library": [
 			"$VIMRUNTIME",
-			"deps/nvim-test",
 			"${3rd}/luv/library",
 			"${3rd}/busted/library",
-			"${3rd}/luassert/library"
+			"${3rd}/luassert/library",
+			"deps/nvim-test",
+			"deps/.data/nvim/site/pack/core/opt/fzf-lua",
+			"deps/.data/nvim/site/pack/core/opt/aerial.nvim",
+			"deps/.data/nvim/site/pack/core/opt/mini.nvim",
+			"deps/.data/nvim/site/pack/core/opt/lazy.nvim"
 		]
 	},
 	"diagnostics": {
 		"libraryFiles": "Disable",
-		// "groupFileStatus": {
-		// 	"strict": "Opened",
-		// 	"strong": "Opened",
-		// 	"ambiguity": "Opened",
-		// 	"duplicate": "Opened",
-		// 	"global": "Opened",
-		// 	"luadoc": "Opened",
-		// 	"redefined": "Opened",
-		// 	"type-check": "Opened",
-		// 	"unbalanced": "Opened",
-		// 	"unused": "Opened"
-		// },
+		"groupFileStatus": {
+			"strict": "Opened",
+			"strong": "Opened",
+			"ambiguity": "Opened",
+			"duplicate": "Opened",
+			"global": "Opened",
+			"luadoc": "Opened",
+			"redefined": "Opened",
+			"type-check": "Opened",
+			"unbalanced": "Opened",
+			"unused": "Opened"
+		},
 		"groupSeverity": {
 			"strong": "Warning",
 			"strict": "Warning"

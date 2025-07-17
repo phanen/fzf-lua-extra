@@ -1,10 +1,11 @@
-local utils = require 'fzf-lua.utils'
-local shell = require 'fzf-lua.shell'
-local core = require 'fzf-lua.core'
-local libuv = require 'fzf-lua.libuv'
-
+---@param opts { ps_preview_cmd: string? }
+---@return any
 return function(opts)
-  local cmd
+  local utils = require 'fzf-lua.utils'
+  local shell = require 'fzf-lua.shell'
+  local libuv = require 'fzf-lua.libuv'
+
+  local cmd ---@type string
   if vim.fn.executable('ps') == 1 then
     -- cmd = 'ps -ef'
     -- or use libuv to parse procfs...
@@ -14,6 +15,9 @@ return function(opts)
     return
   end
 
+  ---@generic T
+  ---@param _ T
+  ---@return T
   local exec_lua = function(_) return _ end
   opts = vim.tbl_deep_extend('force', {
     cmd = cmd,
@@ -65,7 +69,10 @@ return function(opts)
     },
     previewer = {
       _ctor = function()
+        ---@type fzf-lua.previewer.Builtin
         local p = require('fzf-lua.previewer.fzf').cmd_async:extend()
+        -- TODO:
+        ---@diagnostic disable-next-line: inject-field
         function p:fzf_delimiter() return '\\s+' end
         function p:cmdline(o)
           o = o or {}
@@ -73,7 +80,7 @@ return function(opts)
             local pid = (items[1]):match('^%s*(%d+)')
             if not pid then return 'echo no preview' end
             return opts.ps_preview_cmd .. ' ' .. pid
-          end, self.opts, '{}', self.opts.debug)
+          end, self.opts, '{}')
           return act
         end
         return p
@@ -91,11 +98,21 @@ return function(opts)
       ['ctrl-r'] = { fn = function() end, reload = true },
       change = { fn = function() end, reload = true },
       ['ctrl-x'] = {
+        ----@param selected string[]
         fn = function(selected)
-          local pids = vim.tbl_map(function(s) return tonumber(s:match('^%s*(%d+)')) end, selected)
+          local pids = vim.tbl_map(
+            ---@param s string
+            ---@return integer
+            function(s) return tonumber(s:match('^%s*(%d+)')) end,
+            selected
+          )
           local sig = require('fzf-lua.utils').input('signal: ', 'sigkill')
           if not sig then return end
-          vim.tbl_map(function(_pid) libuv.process_kill(_pid, sig) end, pids)
+          vim.tbl_map(
+            ---@param _pid integer
+            function(_pid) libuv.process_kill(_pid, sig) end,
+            pids
+          )
         end,
         field_index = '{+}',
         reload = true,
@@ -111,5 +128,5 @@ return function(opts)
       },
     },
   }, opts or {})
-  return core.fzf_exec(cmd, opts)
+  return FzfLua.core.fzf_exec(cmd, opts)
 end

@@ -74,10 +74,12 @@ describe('main', function()
         { src = 'https://github.com/ibhagwan/fzf-lua', version = 'refacator_contents' },
         { src = 'https://github.com/stevearc/aerial.nvim' },
         { src = 'https://github.com/echasnovski/mini.visits', },
+        { src = 'https://github.com/folke/lazy.nvim', },
       } or {
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'b/fzf-lua'), version = 'refacator_contents' },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/aerial.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/mini.nvim') },
+        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/lazy.nvim') },
       })
       ---@diagnostic disable-next-line: undefined-field
       require('aerial').setup({})

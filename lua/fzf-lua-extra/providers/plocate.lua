@@ -1,9 +1,11 @@
-local f = require('fzf-lua')
+---TODO:
+---@diagnostic disable-next-line: no-unknown
 return function(opts)
+  require('fzf-lua')
   opts = opts or {}
-  local search = f.utils.input('Grep > ')
+  local search = FzfLua.utils.input('Grep > ')
   if not search then return end
-  local last_gq
+  local last_gq ---@type string?
   local cmd = 'plocate -r'
   local actions = require('fzf-lua.actions')
   opts = vim.tbl_deep_extend('force', opts or {}, {
@@ -30,5 +32,5 @@ return function(opts)
       },
     },
   })
-  f.grep(opts)
+  FzfLua.grep(opts)
 end

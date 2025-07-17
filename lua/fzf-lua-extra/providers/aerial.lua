@@ -22,16 +22,16 @@ return function(opts)
     return
   end
 
-  local utils = require('fzf-lua').utils
+  local utils = require('fzf-lua.utils')
   local ns = api.nvim_create_namespace('fzf-lua-extra.aerial')
   local bufdata = data.get_or_create(bufnr)
-  local items = {}
+  local items = {} ---@type aerial.Symbol[]
 
   require('fzf-lua.core').fzf_exec(
     function(fzf_cb)
       for i, item in bufdata:iter({ skip_hidden = false }) do
         local icon = config.get_icon(bufnr, item.kind)
-        local icon_hl = highlight.get_highlight(item.kind, true, false) or 'NONE'
+        local icon_hl = highlight.get_highlight(item, true, false) or 'NONE'
         icon = utils.ansi_from_hl(icon_hl, icon)
         fzf_cb(('%s\t%s%s%s'):format(i, icon, utils.nbsp, item.name))
         items[#items + 1] = item
@@ -45,6 +45,7 @@ return function(opts)
           local base = require 'fzf-lua.previewer.builtin'.buffer_or_file
           local previewer = base:extend()
           function previewer:parse_entry(entry_str)
+            ---@type string, string
             local idx, _ = entry_str:match('^(%d+)\t(.*)$')
             local item = items[tonumber(idx)]
             return {

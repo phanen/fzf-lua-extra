@@ -1,3 +1,10 @@
+---@class swiper_state
+---@field lnum integer?
+---@field parsing_lnum integer?
+---@field in_matched boolean?
+---@field start_col integer?
+---@field text string[]?
+
 return function()
   local off = vim.o.cmdheight + (vim.o.laststatus and 1 or 0)
   local height = math.ceil(vim.o.lines / 4)
@@ -14,7 +21,7 @@ return function()
     local l_e = lines - off - 1
     local max_columns = vim.o.columns
     for r = l_s, l_e do
-      local state = {}
+      local state = {} ---@type swiper_state
       for c = 1, max_columns do
         local ok, ret = pcall(vim.api.nvim__inspect_cell, 1, r, c)
         if not ok or not ret[1] then break end
@@ -33,6 +40,8 @@ return function()
             state.lnum, state.parsing_lnum = assert(state.parsing_lnum), nil
             return
           end
+          ---TODO: neovim upstream type
+          ---@diagnostic disable-next-line: no-unknown
           local in_matched = ret[2] and ret[2].reverse
           if in_matched and not state.in_matched then
             state.start_col = math.max(c - 8, 0)
@@ -68,6 +77,7 @@ return function()
       split = ('botright %snew +set\\ nobl'):format(height),
       preview = { hidden = true },
       on_create = function(e)
+        ---TODO: remove it when upstream fixed
         ---@diagnostic disable-next-line: param-type-mismatch
         vim.api.nvim_create_autocmd('TextChangedT', { buffer = e.bufnr, callback = on_buf_change })
       end,
@@ -79,11 +89,14 @@ return function()
     },
     actions = {
       focus = {
+        ---@param sel string[]
+        ---@param opts table
         fn = function(sel, opts)
           if not sel[1] then return end
           local entry = require('fzf-lua.path').entry_to_file(sel[1], opts)
           if not entry.line then return end
-          local ctx = require('fzf-lua.utils').CTX()
+          -- TODO: what can i say
+          local ctx = FzfLua.core.CTX()
           pcall(vim.api.nvim_win_set_cursor, ctx.winid, { entry.line, entry.col })
         end,
         field_index = '{}',

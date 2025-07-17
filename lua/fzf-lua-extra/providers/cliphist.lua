@@ -1,3 +1,4 @@
+---@diagnostic disable-next-line: no-unknown
 local f = require('fzf-lua')
 return function(opts)
   opts = vim.tbl_deep_extend('force', opts or {}, {
@@ -6,7 +7,9 @@ return function(opts)
       ['--with-nth'] = '2..',
     },
     preview = {
+      -- TODO:
       fn = function(sel)
+        ---@diagnostic disable-next-line: no-unknown
         sel = sel[1]
         if not sel then return end
         return vim.system({ 'cliphist', 'decode', sel }):wait().stdout
@@ -17,9 +20,11 @@ return function(opts)
     actions = {
       enter = {
         fn = function(sel)
+          ---@diagnostic disable-next-line: no-unknown
           sel = sel[1]
           if not sel then return end
           local data = vim.fn.systemlist({ 'cliphist', 'decode', sel })
+          ---@type string[], string
           local regs, cb = {}, vim.o.clipboard
           if cb:match('unnamed') then regs[#regs + 1] = [[*]] end
           if cb:match('unnamedplus') then regs[#regs + 1] = [[+]] end

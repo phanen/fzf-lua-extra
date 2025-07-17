@@ -1,5 +1,5 @@
 return function()
-  local last_gq
+  local last_gq ---@type string?
   local cmd = 'rg --column --line-number --no-heading --color=always --smart-case'
   local actions = require('fzf-lua.actions')
   require('fzf-lua.core').fzf_exec(('%s ""'):format(cmd), {

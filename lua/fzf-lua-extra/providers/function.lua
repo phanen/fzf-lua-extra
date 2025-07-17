@@ -1,5 +1,6 @@
 local getfunc = function(s)
   if not s then return end
+  ---@type string?
   local name = s:match('function (.*)%(')
   if not name then return end
   local content = vim.split(vim.api.nvim_exec2('function ' .. name, { output = true }).output, '\n')
@@ -11,9 +12,12 @@ local getfunc = function(s)
   return name, new_content
 end
 
+---@param _self fzf-lua.previewer.Builtin
+---@param content string[]
 local preview_with = function(_self, content)
   local tmpbuf = _self:get_tmp_buffer()
   vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, content)
+  ---@diagnostic disable-next-line: undefined-field
   if _self.filetype then vim.bo[tmpbuf].filetype = _self.filetype end
   _self:set_preview_buf(tmpbuf)
   _self.win:update_preview_scrollbar()

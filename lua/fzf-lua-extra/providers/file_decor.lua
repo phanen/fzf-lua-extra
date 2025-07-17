@@ -4,7 +4,7 @@ return function(opts)
   opts.git_icons = false
   opts.winopts = opts.winopts or {}
   local ns = vim.api.nvim_create_namespace('fzf-lua-extra.decor')
-  local lmarks = {}
+  local lmarks = {} ---@type [integer, string, string][] -- line number -> { extmark id, icon, hl }
   opts.winopts.on_close = function() vim.api.nvim_set_decoration_provider(ns, { on_line = nil }) end
   opts.winopts.on_create = function(e)
     vim.api.nvim_set_decoration_provider(ns, {
@@ -20,6 +20,7 @@ return function(opts)
           return
         end
         -- FIXME: scroll...
+        ---@type string?, string?
         local icon, hl = require('mini.icons').get('file', content)
         if icon and (not lmarks[lnum] or (lmarks[lnum][2] ~= icon and lmarks[lnum][3] ~= hl)) then
           local id = vim.api.nvim_buf_set_extmark(buf, ns, lnum, 0, {
