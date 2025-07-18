@@ -47,7 +47,25 @@ jobs:
           version: "Neovim >= 0.10.0"
           demojify: true
           treesitter: true
+      - name: Check doc changes
+        id: check_doc_changes
+        run: |
+          set -e
+          git fetch
+          changed_files=$(git diff --name-only HEAD doc/)
+          abort_commit=true
+          for file in $changed_files; do
+            # Check if only the first line is changed
+            diff_output=$(git diff HEAD "$file")
+            # Count changed lines not in the first line
+            if echo "$diff_output" | grep -E '^@@' | grep -v '@@ -1,'; then
+              abort_commit=false
+              break
+            fi
+          done
+          echo "abort_commit=$abort_commit" >> $GITHUB_OUTPUT
       - name: Push changes
+        if: steps.check_doc_changes.outputs.abort_commit == 'false'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "chore(build): auto-generate vimdoc"
