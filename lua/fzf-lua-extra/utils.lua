@@ -52,8 +52,7 @@ end
 
 ---@type fun(name: string?): { [string]: LazyPlugin }|LazyPlugin
 M.get_lazy_plugins = (function()
-  local plugins ---@type LazyPlugin[]
-  local ret ---@type { [string]: LazyPlugin }
+  local plugins ---@type { [string]: LazyPlugin }
   return function(name)
     if not plugins then
       -- https://github.com/folke/lazy.nvim/blob/d3974346b6cef2116c8e7b08423256a834cb7cbc/lua/lazy/view/render.lua#L38-L40
@@ -72,7 +71,7 @@ M.get_lazy_plugins = (function()
       end
     end
     if name then return plugins[name] end
-    return ret
+    return plugins
   end
 end)()
 

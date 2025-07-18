@@ -57,7 +57,7 @@ describe('main', function()
   before_each(function()
     n.clear()
     screen = Screen.new(80, 24)
-    screen:attach({ ext_messages = true, ext_hlstate = true })
+    screen:attach({ ext_messages = true })
     ---@diagnostic disable-next-line: inject-field
     screen._handle_screenshot = function() end
     -- screen:set_default_attr_ids(nil)
@@ -68,7 +68,9 @@ describe('main', function()
       ---@diagnostic disable-next-line: duplicate-set-field
       _G.save_print, _G.print = _G.print, function() end
       vim.env.XDG_DATA_HOME = './deps/.data'
-      vim.opt.pp:append(vim.env.XDG_DATA_HOME .. '/nvim/site')
+      vim.opt.pp:append(
+        vim.fs.joinpath(vim.env.XDG_DATA_HOME, vim.env.NVIM_APPNAME or 'nvim', 'site')
+      )
       vim.pack.add(os.getenv('CI') and {
         { src = 'https://github.com/ibhagwan/fzf-lua' },
         { src = 'https://github.com/stevearc/aerial.nvim' },
@@ -80,10 +82,11 @@ describe('main', function()
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/mini.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/lazy.nvim') },
       })
-      ---@diagnostic disable-next-line: undefined-field
+      -- pass spec to let lazy konw it's not a plugins...
+      require('lazy').setup({ spec = {}, performance = { rtp = { reset = false } } })
       require('aerial').setup({})
       require('fzf-lua').setup({ 'hide' })
-      require('mini.visits').setup({})
+      require('mini.visits').setup()
       vim.opt.rtp:append('.')
       vim.cmd.runtime { 'plugin/fzf-lua-extra.lua', bang = true }
     end)
@@ -103,11 +106,6 @@ describe('main', function()
     local prompt_mark = '\27]133;A;\a\27'
 
     n.fn.search('function(')
-    local timeout = {
-      ps = 2000,
-      swiper_blines = 1000,
-      plocate = 1000,
-    }
     local picker = os.getenv('picker')
     print('\n')
     for name, _ in vim.fs.dir(vim.fs.joinpath(curdir, '../lua/fzf-lua-extra/providers')) do
@@ -115,12 +113,11 @@ describe('main', function()
       name = name:match('(.*)%.lua$')
       if not picker or name:match(picker) then
         print(clear .. ('='):rep(40) .. name .. ('='):rep(40), prompt_mark, color)
-        exec_lua(function(name0)
-          vim.schedule(function() require('fzf-lua-extra')[name0]() end)
-        end, name)
-        screen:sleep((timeout[name] or 100) * scale)
-        -- screen:snapshot_util()
+        exec_lua(function(name0) require('fzf-lua-extra')[name0]() end, name)
+        n.api.nvim_command('sleep 100m') -- wait jobstart, check callback codepath
+        screen:sleep(200 * scale)
         render_no_attr(screen)
+        -- screen:expect({ messages = {} })
         n.feed('<esc>')
       end
     end
