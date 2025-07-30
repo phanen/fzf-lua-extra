@@ -10,8 +10,10 @@ return function(opts)
   }
   opts = vim.tbl_deep_extend('force', default, opts or {})
   local list = vim
-    .iter(vim.fn.serverlist())
-    :filter(function(e) return not e:match('fzf%-lua') end)
+    .iter(vim.fn.serverlist({ peer = true }))
+    :filter(
+      function(e) return not e:match('fzf%-lua') and not vim.tbl_contains(vim.fn.serverlist(), e) end
+    )
     :totable()
   require('fzf-lua').fzf_exec(list, opts)
 end
