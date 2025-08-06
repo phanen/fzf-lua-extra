@@ -1,24 +1,18 @@
----@param opts { ps_preview_cmd: string? }
+---@param opts table?
 ---@return any
 return function(opts)
   local utils = require 'fzf-lua.utils'
-  local shell = require 'fzf-lua.shell'
-  local libuv = require 'fzf-lua.libuv'
-
-  local cmd ---@type string
-  if vim.fn.executable('ps') == 1 then
-    -- cmd = 'ps -ef'
-    -- or use libuv to parse procfs...
-    cmd = 'ps --sort=-pid -eo pid,ppid,cmd'
-  else
+  if vim.fn.executable('ps') ~= 1 then
     utils.warn("No executable 'ps' (https://gitlab.com/procps-ng/procps)")
     return
   end
-
+  local cmd = 'ps --sort=-pid -eo pid,ppid,cmd'
   ---@generic T
   ---@param _ T
   ---@return T
   local exec_lua = function(_) return _ end
+  opts = require('fzf-lua.config').normalize_opts(opts or {}, {})
+  if not opts then return end
   opts = vim.tbl_deep_extend('force', {
     cmd = cmd,
     ps_preview_cmd = 'ps --no-headers -wwo cmd',
@@ -26,7 +20,7 @@ return function(opts)
     -- debug = true,
     multiprocess = true,
     fn_preprocess = exec_lua [[
-      local utils = require('fzf-lua.utils')
+      local utils = FzfLua.utils
       _G.bold = utils.ansi_codes.bold
       _G.blue = utils.ansi_codes.blue
       _G.green = utils.ansi_codes.green
@@ -62,7 +56,7 @@ return function(opts)
     },
     keymap = {
       fzf = {
-        ['click-header'] = utils.fzf_version()[2] > 0.59
+        ['click-header'] = utils.has(opts, 'fzf', { 0, 60 })
             and [[transform-nth(echo "$FZF_CLICK_HEADER_NTH")+transform-prompt(echo "$FZF_CLICK_HEADER_WORD> ")]]
           or nil,
       },
@@ -76,7 +70,7 @@ return function(opts)
         function p:fzf_delimiter() return '\\s+' end
         function p:cmdline(o)
           o = o or {}
-          local act = shell.stringify_cmd(function(items)
+          local act = FzfLua.shell.stringify_cmd(function(items)
             local pid = (items[1]):match('^%s*(%d+)')
             if not pid then return 'echo no preview' end
             return opts.ps_preview_cmd .. ' ' .. pid
@@ -110,7 +104,7 @@ return function(opts)
           if not sig then return end
           vim.tbl_map(
             ---@param _pid integer
-            function(_pid) libuv.process_kill(_pid, sig) end,
+            function(_pid) FzfLua.libuv.process_kill(_pid, sig) end,
             pids
           )
         end,

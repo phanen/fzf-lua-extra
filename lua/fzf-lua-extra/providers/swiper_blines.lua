@@ -83,8 +83,8 @@ return function()
       end,
       on_close = function()
         vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-        vim.api.nvim_win_set_cursor(0, require('fzf-lua.utils').fzf_winobj()._o.__CTX.cursor)
-        require('fzf-lua.utils').zz()
+        vim.api.nvim_win_set_cursor(0, FzfLua.utils.__CTX().cursor)
+        FzfLua.utils.zz()
       end,
     },
     actions = {
@@ -93,10 +93,10 @@ return function()
         ---@param opts table
         fn = function(sel, opts)
           if not sel[1] then return end
-          local entry = require('fzf-lua.path').entry_to_file(sel[1], opts)
+          local entry = FzfLua.path.entry_to_file(sel[1], opts)
           if not entry.line then return end
           -- TODO: what can i say
-          local ctx = FzfLua.core.CTX()
+          local ctx = FzfLua.utils.CTX()
           pcall(vim.api.nvim_win_set_cursor, ctx.winid, { entry.line, entry.col })
         end,
         field_index = '{}',

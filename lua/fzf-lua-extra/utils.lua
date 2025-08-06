@@ -148,20 +148,20 @@ M.replace_with_envname = function(name)
   vim.env.LAZY = lazy
 
   local ac = require('fzf-lua.utils').ansi_codes
-  if lazy and name:match('^' .. lazy) then
-    name = name:gsub('^' .. lazy, ac.cyan('$LAZY'))
-  elseif name:match('^' .. xdg_config) then
-    name = name:gsub('^' .. xdg_config, ac.yellow('$XDG_CONFIG_HOME'))
-  elseif name:match('^' .. xdg_state) then
-    name = name:gsub('^' .. xdg_state, ac.red('$XDG_STATE_HOME'))
-  elseif name:match('^' .. xdg_cache) then
-    name = name:gsub('^' .. xdg_cache, ac.grey('$XDG_CACHE_HOME'))
-  elseif name:match('^' .. xdg_data) then
-    name = name:gsub('^' .. xdg_data, ac.green('$XDG_DATA_HOME'))
-  elseif name:match(vimfile) then
-    name = name:gsub('^' .. vimfile, ac.red('$VIMFILE'))
-  elseif name:match(vimruntime) then
-    name = name:gsub('^' .. vimruntime, ac.red('$VIMRUNTIME'))
+  local patterns = {
+    { var = lazy, color = ac.cyan, label = '$LAZY' },
+    { var = xdg_config, color = ac.yellow, label = '$XDG_CONFIG_HOME' },
+    { var = xdg_state, color = ac.red, label = '$XDG_STATE_HOME' },
+    { var = xdg_cache, color = ac.grey, label = '$XDG_CACHE_HOME' },
+    { var = xdg_data, color = ac.green, label = '$XDG_DATA_HOME' },
+    { var = vimfile, color = ac.red, label = '$VIMFILE' },
+    { var = vimruntime, color = ac.red, label = '$VIMRUNTIME' },
+  }
+  for _, p in ipairs(patterns) do
+    if p.var and name:match('^' .. p.var) then
+      name = name:gsub('^' .. p.var, p.color(p.label))
+      break
+    end
   end
   return name
 end
