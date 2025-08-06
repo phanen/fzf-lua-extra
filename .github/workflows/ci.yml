@@ -31,7 +31,14 @@ jobs:
       - name: Download nvim-test
         run: make nvim-test
 
+      - name: Download fzf
+        run: |
+          wget -O - https://github.com/junegunn/fzf/releases/download/v0.64.0/fzf-0.64.0-linux_amd64.tar.gz | tar zxfv -
+          sudo mv ./fzf /bin
+
       - name: Run Test
+        env: # we use "gh"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make test
 
   docs:

@@ -8,13 +8,9 @@ return vim.iter(vim.fs.dir(vim.fs.joinpath(curdir, 'fzf-lua-extra/providers'))):
     ---@type string
     name = assert(name:match('(.*)%.lua$'))
     local mod = 'fzf-lua-extra.providers.' .. name
-    ---@type fun(...: any): any
-    M[name] = function(...)
-      require('fzf-lua').set_info { mod = mod, cmd = name, fnc = name }
-      return require(mod)(...)
-    end
-    ---@type fun(...: any): any
-    require('fzf-lua')[name] = M[name]
+    require('fzf-lua').register_extension(name, function(...) return require(mod)(...) end)
+    ---@type fun(...: table): any
+    M[name] = require('fzf-lua')[name]
     return M
   end
 )
