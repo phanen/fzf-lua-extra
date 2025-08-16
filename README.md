@@ -1,9 +1,6 @@
 # fzf-lua-extra
 [![CI](https://github.com/phanen/fzf-lua-overlay/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/phanen/fzf-lua-overlay/actions/workflows/ci.yml)
 
-> [!NOTE]
-> Deprecated wrapper function: checkout [v2.4.0](https://github.com/phanen/flo/tree/v2.4.0).
-
 Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 <!-- we need literate programming -->
 <!-- fd . lua/fzf-lua-extra/providers/ --format '* {/.}' -->
@@ -12,6 +9,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * file_decor
 * function
 * gitignore
+* gitlog
 * grep_project_globs
 * icons
 * lazy
@@ -23,7 +21,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * runtime
 * scriptnames
 * serverlist
-* swiper_blines
+* ~swiper_blines~ (upstreamed: `FzfLua blines profile=ivy`)
 * visits
 
 ## credit

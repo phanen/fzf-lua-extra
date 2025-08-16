@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - uses: lewis6991/gh-actions-lua@master
         with:
@@ -46,7 +46,7 @@ jobs:
     needs: tests
     if: ${{ github.ref == 'refs/heads/master' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: panvimdoc
         uses: kdheepak/panvimdoc@main
         with:
@@ -92,7 +92,7 @@ jobs:
         with:
           release-type: simple
           package-name: fzf-lua-extra
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: tag stable versions
         if: ${{ steps.release.outputs.release_created }}
         run: |
@@ -103,4 +103,3 @@ jobs:
           git push origin :stable || true
           git tag -a stable -m "Last Stable Release"
           git push origin stable
-
