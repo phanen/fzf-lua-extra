@@ -21,6 +21,7 @@ return function()
         end, { buffer = e.bufnr })
       end,
     },
+    query = '--grep=',
     exec_empty_query = true,
     preview = {
       fn = function(s)
