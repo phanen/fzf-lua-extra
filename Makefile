@@ -104,7 +104,7 @@ else
     LUALS_ARCH ?= x64
 endif
 
-LUALS_VERSION := 3.14.0
+LUALS_VERSION := 3.15.0
 LUALS := deps/lua-language-server-$(LUALS_VERSION)-$(shell uname -s)-$(LUALS_ARCH)
 LUALS_TARBALL := $(LUALS).tar.gz
 LUALS_URL := https://github.com/LuaLS/lua-language-server/releases/download/$(LUALS_VERSION)/$(notdir $(LUALS_TARBALL))

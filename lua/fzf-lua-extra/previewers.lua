@@ -131,8 +131,8 @@ end
 ---@field json_key string
 M.gitignore = previewer.buffer_or_file:extend()
 
-function M.gitignore:new(o, opts, fzf_win)
-  M.gitignore.super.new(self, o, opts, fzf_win)
+function M.gitignore:new(o, opts)
+  M.gitignore.super.new(self, o, opts)
   self.api_root = opts.api_root
   self.filetype = opts.filetype
   self.json_key = opts.json_key
