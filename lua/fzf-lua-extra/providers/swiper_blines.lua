@@ -77,8 +77,6 @@ return function()
       split = ('botright %snew +set\\ nobl'):format(height),
       preview = { hidden = true },
       on_create = function(e)
-        ---TODO: remove it when upstream fixed
-        ---@diagnostic disable-next-line: param-type-mismatch
         vim.api.nvim_create_autocmd('TextChangedT', { buffer = e.bufnr, callback = on_buf_change })
       end,
       on_close = function()
