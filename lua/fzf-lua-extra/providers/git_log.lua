@@ -2,8 +2,6 @@
 return function()
   local q ---@type string?
   local pager = vim.fn.executable('delta') == 1 and ('delta --%s'):format(vim.o.bg) or nil
-  local bpstart = '\27[200~'
-  local bpend = '\27[201~'
   return require('fzf-lua').fzf_live(function(s)
     ---@type string
     q = s[1]
@@ -15,9 +13,11 @@ return function()
       on_create = function(e)
         vim.keymap.set('t', '<c-r>#', function()
           local altfile = vim.fn.expand('#')
-          local root = assert(vim.fs.root(0, '.git'))
+          local root = assert(vim.fs.root(vim.fn.expand('#'), '.git'))
           altfile = assert(vim.fs.relpath(root, altfile))
-          vim.api.nvim_chan_send(vim.bo.channel, bpend .. altfile .. bpstart)
+          local bpstart = '\27[200~'
+          local bpend = '\27[201~'
+          vim.api.nvim_chan_send(vim.bo.channel, bpstart .. altfile .. bpend)
         end, { buffer = e.bufnr })
       end,
     },
