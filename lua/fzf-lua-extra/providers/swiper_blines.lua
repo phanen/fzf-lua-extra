@@ -6,6 +6,7 @@
 ---@field text string[]?
 
 return function()
+  vim.deprecate([['swiper_blines']], [[':FzfLua bline proflie=ivy']], 'Jan 2026', 'FzfLua')
   local off = vim.o.cmdheight + (vim.o.laststatus and 1 or 0)
   local height = math.ceil(vim.o.lines / 4)
   local ns = vim.api.nvim_create_namespace('swiper')

@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - uses: lewis6991/gh-actions-lua@master
         with:
@@ -46,7 +46,7 @@ jobs:
     needs: tests
     if: ${{ github.ref == 'refs/heads/master' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: panvimdoc
         uses: kdheepak/panvimdoc@main
         with:
@@ -80,27 +80,21 @@ jobs:
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
   release:
-    name: release
     if: ${{ github.ref == 'refs/heads/master' }}
     needs:
       - docs
       - tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: googleapis/release-please-action@v4
-        id: release
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
         with:
-          release-type: simple
-          package-name: fzf-lua-extra
-      - uses: actions/checkout@v4
-      - name: tag stable versions
-        if: ${{ steps.release.outputs.release_created }}
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email github-actions[bot]@users.noreply.github.com
-          git remote add gh-token "https://${{ secrets.GITHUB_TOKEN }}@github.com/google-github-actions/release-please-action.git"
-          git tag -d stable || true
-          git push origin :stable || true
-          git tag -a stable -m "Last Stable Release"
-          git push origin stable
-
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          token: ${{ github.token }}
+          files: ./**/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
