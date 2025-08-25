@@ -17,6 +17,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * node_lines
 * plocate
 * ps
+* repl
 * rtp
 * runtime
 * scriptnames
