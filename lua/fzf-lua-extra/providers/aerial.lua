@@ -56,8 +56,8 @@ return function(opts)
               col = item.col or 0,
               -- end_line = item.end_lnum or 0,
               -- end_col = item.end_col or 0,
-              end_line = item.selection_range.end_lnum or 0,
-              end_col = item.selection_range.end_col or 0,
+              end_line = (item.selection_range or {}).end_lnum or 0,
+              end_col = (item.selection_range or {}).end_col or 0,
               item = item,
             }
           end
