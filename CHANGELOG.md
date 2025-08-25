@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.5.0](https://github.com/phanen/fzf-lua-extra/compare/v3.4.0...v3.5.0) (2025-08-25)
+
+
+### Features
+
+* **gitlog:** git log -Sx --grep=y ([ff552f4](https://github.com/phanen/fzf-lua-extra/commit/ff552f4583ffb7191b427027054bcd1f65759e7c))
+* **repl:** init ([00f5cbd](https://github.com/phanen/fzf-lua-extra/commit/00f5cbd67f462e16af98d85f7f2ef65e4ffda98e))
+* **serverlist:** init ([64bdde1](https://github.com/phanen/fzf-lua-extra/commit/64bdde16aef4b6233b97a23a97dd2d0070689bcf))
+
+
+### Bug Fixes
+
+* **aerial:** nil check in manpage outline ([5c1130a](https://github.com/phanen/fzf-lua-extra/commit/5c1130adf4b74f00af7a70bdcce9369dd3d9aa86))
+* ctx ([7dd893c](https://github.com/phanen/fzf-lua-extra/commit/7dd893c93e8db7c887564ffc5d31d6ccb430c062))
+* **gitlog:** preset git args ([9daacfe](https://github.com/phanen/fzf-lua-extra/commit/9daacfe1565751f21aad90e7201ba80fb425b299))
+* **gitlog:** wrong bracketed paste.. ([9f942b1](https://github.com/phanen/fzf-lua-extra/commit/9f942b1207310056356d72a2bc0b91c666be4315))
+* has ([7dd893c](https://github.com/phanen/fzf-lua-extra/commit/7dd893c93e8db7c887564ffc5d31d6ccb430c062))
+* **upstream:** fzf_exec now shell.stringify all the contents ([93d5f60](https://github.com/phanen/fzf-lua-extra/commit/93d5f60f8f99ba370e12809790aee7a088aa7de3))
+
 ## [3.4.0](https://github.com/phanen/fzf-lua-extra/compare/v3.3.0...v3.4.0) (2025-06-29)
 
 
