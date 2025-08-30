@@ -1,16 +1,24 @@
 local glob_regex = '(.*)%s%-%-%s(.*)'
 local api = vim.api
 
-return function()
+local test = function()
   local port ---@type string?
+  local glob ---@type string?
+  local f ---@type string[]
   require('fzf-lua').fzf_live(function(q)
     if not q[1] then return end
     ---@type string, string
-    local gq, sq = q[1]:match(glob_regex)
-    if port and sq then
+    local sq, gq = q[1]:match(glob_regex)
+    if port then
+      sq = sq or q[1]
       vim.system { 'curl', '-XPOST', ('localhost:%s'):format(port), '-d', ('search:%s'):format(sq) }
     end
-    return api.nvim_get_runtime_file(gq or q, true)
+    local new_glob = gq or '*'
+    if new_glob == glob then return f end
+    glob = new_glob
+    -- sometimes we don't reload?
+    f = api.nvim_get_runtime_file(glob, true)
+    return f
   end, {
     fzf_opts = { ['--listen'] = true },
     previewer = 'builtin',
@@ -25,4 +33,13 @@ return function()
       },
     },
   })
+end
+
+return function()
+  ---@type string[]
+  local rtp = vim.opt.runtimepath:get()
+  -- If using lazy.nvim, get all the lazy loaded plugin paths (#1296)
+  local lazy = package.loaded['lazy.core.util'] ---@type table
+  if lazy and lazy.get_unloaded_rtp then vim.list_extend(rtp, (lazy.get_unloaded_rtp(''))) end
+  require('fzf-lua').live_grep({ search_paths = rtp }, { actions = { ['alt-t'] = test } })
 end

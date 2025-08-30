@@ -1,5 +1,4 @@
 return function(opts)
-  require('fzf-lua')
   local default = {
     previewer = {
       cmd = 'eza --color=always --tree --level=3 --icons=always',
