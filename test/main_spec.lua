@@ -103,24 +103,22 @@ describe('main', function()
   end)
 
   local curdir = debug.getinfo(1, 'S').source:sub(2):match('(.*/)')
-  local picker = os.getenv('picker')
   for name, _ in vim.fs.dir(vim.fs.joinpath(curdir, '../lua/fzf-lua-extra/providers')) do
     name = name:match('(.*)%.lua$')
     it(('%s no error'):format(name), function()
+      color = color == red and green or red
       print(clear, prompt_mark, color)
       n.api.nvim_command('edit test/main_spec.lua')
       n.fn.search('function(')
-      color = color == red and green or red
-      if not picker or name:match(picker) then
-        exec_lua(function(name0)
-          require('fzf-lua-extra')[name0]()
-          vim.api.nvim_command('sleep 100m') -- wait jobstart, check callback codepath
-        end, name)
-        screen:sleep(200 * scale)
-        render_no_attr(screen)
-        -- screen:expect({ messages = {} })
-        n.feed('<c-c>')
-      end
+      exec_lua(function(name0)
+        assert(xpcall(function() require('fzf-lua-extra')[name0]() end, debug.traceback))
+        vim.api.nvim_command('sleep 100m') -- wait jobstart, check callback codepath
+      end, name)
+      vim.uv.sleep(100)
+      screen:sleep(200 * scale)
+      render_no_attr(screen)
+      -- screen:expect({ messages = {} })
+      n.feed('<c-c>')
     end)
   end
 end)
