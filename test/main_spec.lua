@@ -96,11 +96,13 @@ describe('main', function()
       vim.opt.rtp:append('.')
       vim.cmd.runtime { 'plugin/fzf-lua-extra.lua', bang = true }
     end)
-    print('SERVERNAME:', n.api.nvim_get_vvar('servername'))
+    -- print('SERVERNAME:', n.api.nvim_get_vvar('servername'))
     -- n.feed('y')
     -- screen:print_snapshot()
     exec_lua(function() _G.print = _G.save_print end)
   end)
+
+  after_each(function() n.eq(n.api.nvim_get_vvar('errmsg'), '') end)
 
   local curdir = debug.getinfo(1, 'S').source:sub(2):match('(.*/)')
   for name, _ in vim.fs.dir(vim.fs.joinpath(curdir, '../lua/fzf-lua-extra/providers')) do
@@ -112,13 +114,12 @@ describe('main', function()
       n.fn.search('function(')
       exec_lua(function(name0)
         assert(xpcall(function() require('fzf-lua-extra')[name0]() end, debug.traceback))
-        vim.api.nvim_command('sleep 100m') -- wait jobstart, check callback codepath
+        -- vim.api.nvim_command('sleep 100m') wait jobstart, check callback codepath
+        vim.uv.sleep(100)
       end, name)
-      vim.uv.sleep(100)
       screen:sleep(200 * scale)
       render_no_attr(screen)
       -- screen:expect({ messages = {} })
-      n.feed('<c-c>')
     end)
   end
 end)
