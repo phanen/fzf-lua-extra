@@ -117,6 +117,7 @@ describe('main', function()
         -- vim.api.nvim_command('sleep 100m') wait jobstart, check callback codepath
         vim.uv.sleep(100)
       end, name)
+      n.sleep(100)
       screen:sleep(200 * scale)
       render_no_attr(screen)
       -- screen:expect({ messages = {} })
