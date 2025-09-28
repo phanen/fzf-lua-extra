@@ -45,7 +45,8 @@ local function render_no_attr(self)
     local height = grid.height
     if igrid == self.msg_grid then height = self._grids[1].height - self.msg_grid_pos end
     for i = 1, height do
-      local cursor = self._cursor.grid == igrid and self._cursor.row == i
+      -- local cursor = self._cursor.grid == igrid and self._cursor.row == i
+      local cursor = false
       table.insert(rv, row_expr_no_attr(self, igrid, i, cursor) .. '|')
     end
   end
