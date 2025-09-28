@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.6.0](https://github.com/phanen/fzf-lua-extra/compare/v3.5.0...v3.6.0) (2025-09-28)
+
+
+### Features
+
+* **gitlog:** raw mode ([84fbad5](https://github.com/phanen/fzf-lua-extra/commit/84fbad5bfd1d9e886cd9ad30d5ea4c12d1aacc76))
+
+
+### Bug Fixes
+
+* avoid indirect dep on mini.icons ([c3e096f](https://github.com/phanen/fzf-lua-extra/commit/c3e096fb2255045d64c0e6869f1dd2e8b3af9c63))
+* disable new keymap ([c3e096f](https://github.com/phanen/fzf-lua-extra/commit/c3e096fb2255045d64c0e6869f1dd2e8b3af9c63))
+* grep rtp ([de35955](https://github.com/phanen/fzf-lua-extra/commit/de35955f48ac5f67e1f54ac6b6d41b3b4aba7e13))
+* schedule_wrap ([c3e096f](https://github.com/phanen/fzf-lua-extra/commit/c3e096fb2255045d64c0e6869f1dd2e8b3af9c63))
+
 ## [3.5.0](https://github.com/phanen/fzf-lua-extra/compare/v3.4.0...v3.5.0) (2025-08-25)
 
 
