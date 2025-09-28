@@ -14,14 +14,14 @@ end
 
 ---@param _self fzf-lua.previewer.Builtin
 ---@param content string[]
-local preview_with = function(_self, content)
+local preview_with = vim.schedule_wrap(function(_self, content)
   local tmpbuf = _self:get_tmp_buffer()
   vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, content)
   ---@diagnostic disable-next-line: undefined-field
   if _self.filetype then vim.bo[tmpbuf].filetype = _self.filetype end
   _self:set_preview_buf(tmpbuf)
   _self.win:update_preview_scrollbar()
-end
+end)
 
 return function(opts)
   opts = opts or {}

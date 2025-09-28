@@ -4,13 +4,13 @@ local utils = require('fzf-lua-extra.utils')
 
 ---@param _self fzf-lua.previewer.Gitignore
 ---@param content string[]
-local preview_with = function(_self, content)
+local preview_with = vim.schedule_wrap(function(_self, content)
   local tmpbuf = _self:get_tmp_buffer()
   vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, content)
   if _self.filetype then vim.bo[tmpbuf].filetype = _self.filetype end
   _self:set_preview_buf(tmpbuf)
   _self.win:update_preview_scrollbar()
-end
+end)
 
 local github_raw_url = function(url, filepath)
   return url:gsub('github.com', 'raw.githubusercontent.com'):gsub('%.git$', '')
@@ -117,10 +117,10 @@ function M.lazy:populate_preview_buf(entry_str)
     ---@cast cmd string
     { 'sh', '-c', cmd },
     ---@diagnostic disable-next-line: param-type-mismatch
-    vim.schedule_wrap(function(obj)
+    function(obj)
       local content = vim.split(obj.stdout, '\n')
       preview_with(self, content)
-    end)
+    end
   )
 end
 

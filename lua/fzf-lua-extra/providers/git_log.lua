@@ -38,9 +38,9 @@ return function()
     keymap = {
       fzf = {
         start = 'beginning-of-line',
-        ['alt-j'] = 'down-match',
-        ['alt-k'] = 'up-match',
-        ['ctrl-x'] = 'toggle-raw',
+        -- ['alt-j'] = 'down-match',
+        -- ['alt-k'] = 'up-match',
+        -- ['ctrl-x'] = 'toggle-raw',
       },
     },
     actions = {

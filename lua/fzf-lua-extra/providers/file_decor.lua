@@ -21,7 +21,7 @@ return function(opts)
         end
         -- FIXME: scroll...
         ---@type string?, string?
-        local icon, hl = require('mini.icons').get('file', content)
+        local icon, hl = require('fzf-lua.devicons').get_devicon(content)
         if icon and (not lmarks[lnum] or (lmarks[lnum][2] ~= icon and lmarks[lnum][3] ~= hl)) then
           local id = vim.api.nvim_buf_set_extmark(buf, ns, lnum, 0, {
             id = (lmarks[lnum] or {})[1],
