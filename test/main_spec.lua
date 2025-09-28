@@ -50,11 +50,16 @@ local function render_no_attr(self)
       table.insert(rv, row_expr_no_attr(self, igrid, i, cursor) .. '|')
     end
   end
-  print('\n' .. table.concat(rv, '\n'))
+  print(table.concat(rv, '\n'))
 end
 
 describe('main', function()
   local screen --- @type test.screen
+  local red = '\27[0;31m'
+  local green = '\27[0;32m'
+  local clear = '\27[0m'
+  local color = red
+  local prompt_mark = '\27]133;A;\a\27'
   before_each(function()
     n.clear()
     screen = Screen.new(80, 24)
@@ -96,31 +101,26 @@ describe('main', function()
     -- screen:print_snapshot()
     exec_lua(function() _G.print = _G.save_print end)
   end)
-  it('api no error', function()
-    local curdir = debug.getinfo(1, 'S').source:sub(2):match('(.*/)')
-    n.api.nvim_command('edit test/main_spec.lua')
 
-    local red = '\27[0;31m'
-    local green = '\27[0;32m'
-    local clear = '\27[0m'
-    local color = red
-    local prompt_mark = '\27]133;A;\a\27'
-
-    n.fn.search('function(')
-    local picker = os.getenv('picker')
-    print('\n')
-    for name, _ in vim.fs.dir(vim.fs.joinpath(curdir, '../lua/fzf-lua-extra/providers')) do
+  local curdir = debug.getinfo(1, 'S').source:sub(2):match('(.*/)')
+  local picker = os.getenv('picker')
+  for name, _ in vim.fs.dir(vim.fs.joinpath(curdir, '../lua/fzf-lua-extra/providers')) do
+    name = name:match('(.*)%.lua$')
+    it(('%s no error'):format(name), function()
+      print(clear, prompt_mark, color)
+      n.api.nvim_command('edit test/main_spec.lua')
+      n.fn.search('function(')
       color = color == red and green or red
-      name = name:match('(.*)%.lua$')
       if not picker or name:match(picker) then
-        print(clear .. ('='):rep(40) .. name .. ('='):rep(40), prompt_mark, color)
-        exec_lua(function(name0) require('fzf-lua-extra')[name0]() end, name)
-        n.api.nvim_command('sleep 100m') -- wait jobstart, check callback codepath
+        exec_lua(function(name0)
+          require('fzf-lua-extra')[name0]()
+          vim.api.nvim_command('sleep 100m') -- wait jobstart, check callback codepath
+        end, name)
         screen:sleep(200 * scale)
         render_no_attr(screen)
         -- screen:expect({ messages = {} })
-        n.feed('<esc>')
+        n.feed('<c-c>')
       end
-    end
-  end)
+    end)
+  end
 end)
