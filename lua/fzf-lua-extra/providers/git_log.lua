@@ -2,13 +2,7 @@
 return function()
   local q ---@type string?
   local pager = vim.fn.executable('delta') == 1 and ('delta --%s'):format(vim.o.bg) or nil
-  return require('fzf-lua').fzf_live(function(s)
-    ---@type string
-    q = s[1]
-    local cmd = [[git log --color --pretty=format:"%C(yellow)%h%Creset %Cgreen(%cs)%Creset %s %Cblue<%an>%Creset" ]]
-      .. q
-    return cmd
-  end, {
+  local opts = {
     winopts = {
       on_create = function(e)
         vim.keymap.set('t', '<c-r>#', function()
@@ -21,7 +15,7 @@ return function()
         end, { buffer = e.bufnr })
       end,
     },
-    query = '--grep=',
+    query = ' --grep=',
     exec_empty_query = true,
     preview = {
       fn = function(s)
@@ -41,6 +35,14 @@ return function()
       end,
       type = 'cmd',
     },
+    keymap = {
+      fzf = {
+        start = 'beginning-of-line',
+        ['alt-j'] = 'down-match',
+        ['alt-k'] = 'up-match',
+        ['ctrl-x'] = 'toggle-raw',
+      },
+    },
     actions = {
       enter = function(s)
         ---@type string
@@ -55,5 +57,22 @@ return function()
         vim.cmd('Gtabedit ' .. h)
       end,
     },
-  })
+    -- fzf_opts = { ['--raw'] = true },
+  }
+  opts._fzf_cli_args = {
+    '--bind='
+      .. require('fzf-lua.libuv').shellescape(
+        'start,change:+transform:'
+          .. FzfLua.shell.stringify_data(function(_q, _, _)
+            q = _q[1]
+            local cmd =
+              [[git log --color --pretty=format:"%C(yellow)%h%Creset %Cgreen(%cs)%Creset %s %Cblue<%an>%Creset" ]]
+            return ('reload(%s)+search:%s'):format(
+              cmd .. (q:match('%-%-grep=.*$') or ''),
+              q:match('(.*)%-%-grep=.*') or q or ''
+            )
+          end, opts, '{q}')
+      ),
+  }
+  return require('fzf-lua').fzf_exec('true', opts)
 end
