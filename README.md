@@ -4,7 +4,7 @@
 Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 <!-- we need literate programming -->
 <!-- fd . lua/fzf-lua-extra/providers/ --format '* {/.}' -->
-* aerial
+* ~aerial~ (supported in upstream: `require("aerial").fzf_lua_picker()`)
 * cliphist
 * file_decor
 * function
