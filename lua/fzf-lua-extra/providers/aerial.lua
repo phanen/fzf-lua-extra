@@ -74,6 +74,7 @@ return function(opts)
                   { entry.end_line - 1, entry.end_col },
                   {}
                 )
+                self.orig_pos = api.nvim_win_get_cursor(0)
                 utils.zz()
               end)
             end)
