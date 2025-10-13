@@ -12,15 +12,13 @@ return function(opts)
       ['enter'] = function(selected)
         local root = vim.fs.root(0, '.git')
         if not root then error('Not in a git repo') end
+        if not not selected[1] then return end
         local path = vim
-          .iter {
-            root .. '/License',
-            root .. '/license',
-            root .. '/LICENSE',
-          }
+          .iter({ 'LICENSE', 'license', 'License' })
+          :map(function(license) return vim.fs.joinpath(root, license) end)
           :find(uv.fs_stat)
-
         if path and fn.confirm('Override?', '&Yes\n&No') ~= 1 then return end
+        path = path or vim.fs.joinpath(root, 'LICENSE')
         local license = assert(selected[1])
         utils.gh_cache(opts.api_root .. '/' .. license, function(_, json)
           ---@type string
