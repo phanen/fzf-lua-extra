@@ -27,6 +27,44 @@ return function(opts)
   local bufdata = data.get_or_create(bufnr)
   local items = {} ---@type aerial.Symbol[]
 
+  ---@param entry_str string
+  ---@return fzf-lua.buffer_or_file.Entry
+  local parse_entry = function(entry_str)
+    ---@type string, string
+    local idx, _ = entry_str:match('^(%d+)\t(.*)$')
+    local item = assert(items[tonumber(idx)], entry_str)
+    return {
+      bufnr = tonumber(bufnr),
+      bufname = filename,
+      path = filename,
+      line = item.lnum or 0,
+      col = item.col or 0,
+      -- end_line = item.end_lnum or 0,
+      -- end_col = item.end_col or 0,
+      end_line = (item.selection_range or {}).end_lnum or 0,
+      end_col = (item.selection_range or {}).end_col or 0,
+      item = item,
+    }
+  end
+
+  local actions =
+    vim.deepcopy((_G.fzf_lua_actions or {}).files or require('fzf-lua').defaults.actions.files)
+  for a, f in pairs(actions) do
+    if type(f) == 'function' then actions[a] = { fn = f } end
+    local old_fn = actions[a].fn
+    actions[a].fn = function(s, ...)
+      if s[1] and vim.startswith(s[1], '/tmp/fzf-temp-') then
+        s = vim.split(io.open(s[1], 'r'):read('*a'), '\n')
+        s[#s] = nil
+      end
+      s = vim
+        .iter(s)
+        :map(parse_entry)
+        :map(function(e) return ('%s:%s:%s'):format(e.bufname, e.line, e.col) end)
+        :totable()
+      return old_fn(s, ...)
+    end
+  end
   require('fzf-lua.core').fzf_exec(
     function(fzf_cb)
       for i, item in bufdata:iter({ skip_hidden = false }) do
@@ -40,27 +78,12 @@ return function(opts)
     end,
     vim.tbl_deep_extend('force', opts or {}, {
       fzf_opts = { ['--ansi'] = true, ['--with-nth'] = '2..' },
+      actions = actions,
       previewer = {
         _ctor = function()
           local base = require 'fzf-lua.previewer.builtin'.buffer_or_file
           local previewer = base:extend()
-          function previewer:parse_entry(entry_str)
-            ---@type string, string
-            local idx, _ = entry_str:match('^(%d+)\t(.*)$')
-            local item = items[tonumber(idx)]
-            return {
-              bufnr = tonumber(bufnr),
-              bufname = filename,
-              path = filename,
-              line = item.lnum or 0,
-              col = item.col or 0,
-              -- end_line = item.end_lnum or 0,
-              -- end_col = item.end_col or 0,
-              end_line = (item.selection_range or {}).end_lnum or 0,
-              end_col = (item.selection_range or {}).end_col or 0,
-              item = item,
-            }
-          end
+          function previewer:parse_entry(entry_str) return parse_entry(entry_str) end
           function previewer:set_cursor_hl(entry)
             pcall(api.nvim_win_call, self.win.preview_winid, function()
               api.nvim_buf_call(self.preview_bufnr, function()
