@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.6.0](https://github.com/phanen/fzf-lua-extra/compare/v3.5.0...v3.6.0) (2025-10-16)
+
+
+### Features
+
+* aerial actions ([e863b91](https://github.com/phanen/fzf-lua-extra/commit/e863b9119c2c54997de1c3e5e19a26a130f3ffe0))
+* **gitlog:** raw mode ([84fbad5](https://github.com/phanen/fzf-lua-extra/commit/84fbad5bfd1d9e886cd9ad30d5ea4c12d1aacc76))
+
+
+### Bug Fixes
+
+* aerial now has builtin picker ([0bca3fe](https://github.com/phanen/fzf-lua-extra/commit/0bca3fec62c97e0b7308b5f1b4f043a7a8b2459f))
+* avoid indirect dep on mini.icons ([c3e096f](https://github.com/phanen/fzf-lua-extra/commit/c3e096fb2255045d64c0e6869f1dd2e8b3af9c63))
+* disable new keymap ([c3e096f](https://github.com/phanen/fzf-lua-extra/commit/c3e096fb2255045d64c0e6869f1dd2e8b3af9c63))
+* grep rtp ([de35955](https://github.com/phanen/fzf-lua-extra/commit/de35955f48ac5f67e1f54ac6b6d41b3b4aba7e13))
+* nil check ([18d3f16](https://github.com/phanen/fzf-lua-extra/commit/18d3f161166cfe989452aa5e45b4e2ac84e7188e))
+* nil orig_pos ([91ac0c9](https://github.com/phanen/fzf-lua-extra/commit/91ac0c9f872ce380c29922bd56af327d012c1cd4))
+* pad empty preview ([518df81](https://github.com/phanen/fzf-lua-extra/commit/518df8155b55d3e061e678a781c0cf29b82fb256))
+* schedule_wrap ([c3e096f](https://github.com/phanen/fzf-lua-extra/commit/c3e096fb2255045d64c0e6869f1dd2e8b3af9c63))
+
 ## [3.5.0](https://github.com/phanen/fzf-lua-extra/compare/v3.4.0...v3.5.0) (2025-08-25)
 
 
