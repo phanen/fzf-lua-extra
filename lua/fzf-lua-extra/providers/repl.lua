@@ -7,5 +7,8 @@ return function()
       if ret[1] then table.remove(ret, 1) end
       vim.iter(ret):map(vim.inspect):each(cb)
     end
-  end, {})
+  end, {
+    preview = 'true',
+    winopts = { preview = { hidden = true } },
+  })
 end
