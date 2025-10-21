@@ -80,7 +80,7 @@ describe('main', function()
       vim.pack.add(os.getenv('CI') and {
         { src = 'https://github.com/ibhagwan/fzf-lua' },
         { src = 'https://github.com/stevearc/aerial.nvim' },
-        { src = 'https://github.com/echasnovski/mini.visits' },
+        { src = 'https://github.com/echasnovski/mini.nvim' },
         { src = 'https://github.com/folke/lazy.nvim' },
       } or {
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'b/fzf-lua') },
@@ -93,6 +93,7 @@ describe('main', function()
       require('aerial').setup({})
       require('fzf-lua').setup({ 'hide' })
       require('mini.visits').setup()
+      require('mini.icons').setup()
       vim.opt.rtp:append('.')
       vim.cmd.runtime { 'plugin/fzf-lua-extra.lua', bang = true }
     end)
