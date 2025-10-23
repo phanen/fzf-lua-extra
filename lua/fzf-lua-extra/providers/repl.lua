@@ -1,14 +1,20 @@
-return function()
+local __DEFAULT__ = {
+  preview = 'true',
+  winopts = { preview = { hidden = true } },
+}
+
+return function(opts)
+  assert(__DEFAULT__)
   require('fzf-lua').fzf_live(function(s)
     return function(cb)
-      local f = loadstring('return ' .. s[1])
-      if not f then return end
-      local ret = { pcall(f) }
-      if ret[1] then table.remove(ret, 1) end
-      vim.iter(ret):map(vim.inspect):each(cb)
+      local f, err = loadstring('return ' .. s[1])
+      if not f then return cb(err) end
+      local ret = vim.F.pack_len(pcall(f))
+      if not ret[1] then return cb(ret[2]) end
+      for i = 2, ret.n do
+        cb(vim.inspect(ret[i]))
+      end
+      cb(nil)
     end
-  end, {
-    preview = 'true',
-    winopts = { preview = { hidden = true } },
-  })
+  end, opts)
 end
