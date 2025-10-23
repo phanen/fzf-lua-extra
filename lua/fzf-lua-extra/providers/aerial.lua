@@ -47,24 +47,8 @@ return function(opts)
     }
   end
 
-  local actions =
-    vim.deepcopy((_G.fzf_lua_actions or {}).files or require('fzf-lua').defaults.actions.files)
-  for a, f in pairs(actions) do
-    if type(f) == 'function' then actions[a] = { fn = f } end
-    local old_fn = actions[a].fn
-    actions[a].fn = function(s, ...)
-      if s[1] and vim.startswith(s[1], '/tmp/fzf-temp-') then
-        s = vim.split(io.open(s[1], 'r'):read('*a'), '\n')
-        s[#s] = nil
-      end
-      s = vim
-        .iter(s)
-        :map(parse_entry)
-        :map(function(e) return ('%s:%s:%s'):format(e.bufname, e.line, e.col) end)
-        :totable()
-      return old_fn(s, ...)
-    end
-  end
+  local format = function(e) return ('%s:%s:%s'):format(e.bufname, e.line, e.col) end
+
   require('fzf-lua.core').fzf_exec(
     function(fzf_cb)
       for i, item in bufdata:iter({ skip_hidden = false }) do
@@ -78,7 +62,7 @@ return function(opts)
     end,
     vim.tbl_deep_extend('force', opts or {}, {
       fzf_opts = { ['--ansi'] = true, ['--with-nth'] = '2..' },
-      actions = actions,
+      actions = require('fzf-lua-extra.utils').make_actions(format),
       previewer = {
         _ctor = function()
           local base = require 'fzf-lua.previewer.builtin'.buffer_or_file
