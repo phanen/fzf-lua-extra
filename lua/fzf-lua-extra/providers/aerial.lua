@@ -47,7 +47,10 @@ return function(opts)
     }
   end
 
-  local format = function(e) return ('%s:%s:%s'):format(e.bufname, e.line, e.col) end
+  local format = function(e)
+    e = parse_entry(e)
+    return ('%s:%s:%s'):format(e.bufname, e.line, e.col)
+  end
 
   require('fzf-lua.core').fzf_exec(
     function(fzf_cb)

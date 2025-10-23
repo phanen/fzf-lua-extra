@@ -75,6 +75,7 @@ describe('main', function()
       _G.save_print, _G.print = _G.print, function() end
       vim.env.XDG_DATA_HOME = './deps/.data'
       vim.opt.pp:append(
+        -- TODO: we don't need lockfile, modify HOME+NVIM_APPNAME?
         vim.fs.joinpath(vim.env.XDG_DATA_HOME, vim.env.NVIM_APPNAME or 'nvim', 'site')
       )
       vim.pack.add(os.getenv('CI') and {
@@ -82,11 +83,13 @@ describe('main', function()
         { src = 'https://github.com/stevearc/aerial.nvim' },
         { src = 'https://github.com/echasnovski/mini.nvim' },
         { src = 'https://github.com/folke/lazy.nvim' },
+        { src = 'https://github.com/lewis6991/gitsigns.nvim' },
       } or {
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'b/fzf-lua') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/aerial.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/mini.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/lazy.nvim') },
+        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/gitsigns.nvim') },
       })
       -- pass spec to let lazy konw it's not a plugins...
       require('lazy').setup({ spec = {}, performance = { rtp = { reset = false } } })
@@ -94,6 +97,7 @@ describe('main', function()
       require('fzf-lua').setup({ 'hide' })
       require('mini.visits').setup()
       require('mini.icons').setup()
+      require('gitsigns').setup({})
       vim.opt.rtp:append('.')
       vim.cmd.runtime { 'plugin/fzf-lua-extra.lua', bang = true }
     end)
