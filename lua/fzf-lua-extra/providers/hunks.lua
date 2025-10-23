@@ -1,3 +1,9 @@
+local __DEFAULT__ = {
+  previewer = 'builtin',
+  _treesitter = function(line) return line:match('(.-):?(%d+)[: ].-:(.+)$') end,
+  _actions = function() return require('fzf-lua-extra.utils').make_actions() end,
+}
+
 --- @param buf_or_filename string|integer
 --- @param hunks Gitsigns.Hunk.Hunk[]
 --- @param cb function
@@ -28,7 +34,8 @@ local function cb_hunks(buf_or_filename, hunks, cb, opts)
   end
 end
 
-return function()
+return function(opts)
+  assert(__DEFAULT__)
   if not pcall(require, 'gitsigns') then return end
   local config = require('gitsigns.config').config
   local git = require('gitsigns.git')
@@ -36,11 +43,6 @@ return function()
   local uv = vim.uv or vim.loop
   local run_diff = require('gitsigns.diff')
   local util = require('gitsigns.util')
-  local opts = {
-    previewer = 'builtin',
-    _treesitter = function(line) return line:match('(.-):?(%d+)[: ].-:(.+)$') end,
-    actions = require('fzf-lua-extra.utils').make_actions(),
-  }
   local a = function()
     local repo = git.Repo.get((assert(uv.cwd())))
     if not repo then return end

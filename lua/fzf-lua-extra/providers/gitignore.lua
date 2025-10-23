@@ -1,13 +1,12 @@
-local utils = require('fzf-lua-extra.utils')
-
-return function(opts)
-  local default = {
-    previewer = { _ctor = function() return require('fzf-lua-extra.previewers').gitignore end },
-    api_root = 'gitignore/templates',
-    json_key = 'source',
-    filetype = 'gitignore',
-    winopts = { preview = { hidden = true } },
-    actions = {
+local __DEFAULT__ = {
+  previewer = { _ctor = function() return require('fzf-lua-extra.previewers').gitignore end },
+  api_root = 'gitignore/templates',
+  json_key = 'source',
+  filetype = 'gitignore',
+  winopts = { preview = { hidden = true } },
+  _actions = function()
+    local utils = require('fzf-lua-extra.utils')
+    return {
       -- TODO:
       ---@param selected string[]
       ['enter'] = function(selected)
@@ -26,9 +25,13 @@ return function(opts)
           vim.cmd.edit(path)
         end)
       end,
-    },
-  }
-  opts = vim.tbl_extend('force', default, opts or {})
+    }
+  end,
+}
+
+return function(opts)
+  assert(__DEFAULT__)
+  local utils = require('fzf-lua-extra.utils')
   local contents = function(fzf_cb)
     utils.gh_cache(opts.api_root, function(_, json)
       vim.iter(json):each(function(item) fzf_cb(item) end)

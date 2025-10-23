@@ -1,15 +1,16 @@
+local __DEFAULT__ = {
+  silent = true,
+  previewer = 'builtin',
+  file_icons = 1,
+  color_icons = true,
+  fzf_opts = { ['--no-sort'] = true },
+  ---@diagnostic disable-next-line: undefined-field
+  actions = _G.fzf_lua_actions and _G.fzf_lua_actions.files or nil,
+}
 ---@diagnostic disable-next-line: no-unknown
-local f = require('fzf-lua')
 return function(opts)
-  opts = vim.tbl_deep_extend('force', opts or {}, {
-    silent = true,
-    previewer = 'builtin',
-    file_icons = 1,
-    color_icons = true,
-    fzf_opts = { ['--no-sort'] = true },
-    ---@diagnostic disable-next-line: undefined-field
-    actions = _G.fzf_lua_actions and _G.fzf_lua_actions.files or nil,
-  })
+  assert(__DEFAULT__)
+  local f = require('fzf-lua')
   local contents = function(cb)
     coroutine.wrap(function()
       local co = coroutine.running()
