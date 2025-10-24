@@ -20,11 +20,7 @@ local spawn = function(cmd)
         return renv
       end)(),
     },
-    vim.schedule_wrap(function(rc)
-      if #vim.api.nvim_get_proc_children(uv.os_getpid()) == 0 then
-        vim.cmd.cquit { count = rc, bang = true }
-      end
-    end)
+    function(_) end
   )
 end
 
@@ -40,8 +36,6 @@ end
 
 local __DEFAULT__ = {
   previewer = {
-    -- TODO: should reload on preview fail
-    -- cmd = [[>/tmp/screenshot; nvim --clean --headless --remote-expr 'nvim__screenshot("/tmp/screenshot")' --server {}; cat /tmp/screenshot]],
     _ctor = function()
       local p = require('fzf-lua.previewer.fzf').cmd_async:extend()
       local utils = require('fzf-lua-extra.utils')
@@ -52,7 +46,9 @@ local __DEFAULT__ = {
           local tmpfile = vim.fn.tempname()
           local filelines = utils.center_message({ 'This instance seems headless' }, lines, columns)
           vim.fn.writefile(filelines, tmpfile)
-          remote_exec(path, 'nvim__screenshot', tmpfile)
+          if not pcall(remote_exec, path, 'nvim__screenshot', tmpfile) then
+            vim.schedule(function() FzfLua.utils.fzf_winobj():SIGWINCH({}) end)
+          end
           return 'cat ' .. tmpfile
         end, self.opts, '{} {q}')
       end
@@ -65,15 +61,16 @@ local __DEFAULT__ = {
     ['enter'] = function(sel) vim.cmd.connect(parse_entry(sel[1])) end,
     ['alt-n'] = {
       fn = function()
+        -- launch in kitty/tmux?
         spawn({ vim.fn.exepath('nvim'), '--headless' })
-        vim.wait(10)
       end,
       reload = true,
     },
     ['ctrl-x'] = {
       fn = function(sel)
         local exec = function(path)
-          remote_exec(path, 'nvim_exec_lua', 'vim.schedule(function() vim.cmd("qa!") end)', {})
+          local ok, err = pcall(remote_exec, path, 'nvim_exec2', 'qa!', {})
+          assert(ok or err and err:match('Invalid channel'), err)
         end
         vim.iter(sel):map(parse_entry):each(exec)
       end,
@@ -85,6 +82,7 @@ local __DEFAULT__ = {
 return function(opts)
   assert(__DEFAULT__)
   require('fzf-lua').fzf_exec(function(cb)
+    vim.wait(100) -- need to wait for spawn/remote_exec?, uv.new_sem seems unusable now
     vim
       .iter(vim.fn.serverlist({ peer = true }))
       :filter(
