@@ -12,6 +12,10 @@ local __DEFAULT__ = {
         local bpend = '\27[201~'
         vim.api.nvim_chan_send(vim.bo.channel, bpstart .. altfile .. bpend)
       end, { buffer = e.bufnr })
+      -- vim.keymap.set({ 't', 'n' }, '<Esc>', function()
+      --   if not insert then FzfLua.hide() end
+      --   vim.api.nvim_chan_send(vim.bo[e.bufnr].channel, '\x1b')
+      -- end, { buffer = e.bufnr, nowait = true })
     end,
   },
   query = ' --grep=""',
@@ -34,16 +38,42 @@ local __DEFAULT__ = {
     end,
     type = 'cmd',
   },
-  keymap = {
-    fzf = {
-      -- start = 'beginning-of-line',
-      start = 'end-of-line+backward-char',
-      ['ctrl-w'] = 'backward-kill-word',
-      ['alt-j'] = 'down-match',
-      ['alt-k'] = 'up-match',
-      ['ctrl-x'] = 'toggle-raw',
-    },
-  },
+  keymap = function(opts)
+    local s = FzfLua.shell.stringify_data2
+    local insert = false
+    local iOrN = function(a, b)
+      return s(
+        function(...)
+          return insert and (type(a) == 'function' and a(...) or a)
+            or (type(b) == 'function' and b(...) or b)
+        end,
+        opts,
+        ''
+      )
+    end
+    local toggle = function()
+      insert = not insert
+      return 'change-prompt:' .. (insert and '❯ ' or '[N]❯ ')
+    end
+    return {
+      fzf = {
+        j = ('transform:%s'):format(iOrN('put:j', 'down')),
+        k = ('transform:%s'):format(iOrN('put:k', 'up')),
+        u = ('transform:%s'):format(iOrN('put:d', 'half-page-down')),
+        d = ('transform:%s'):format(iOrN('put:u', 'half-page-up')),
+        i = ('transform:%s'):format(iOrN('put:i', toggle)),
+        ['ctrl-/'] = ('transform:%s'):format(s(toggle, opts, '')),
+        -- start = 'beginning-of-line',
+        start = 'end-of-line+backward-char+change-prompt:' .. (insert and '❯ ' or '[N]❯ '),
+        ['ctrl-j'] = ('transform:%s'):format(iOrN('down', 'down-match')),
+        ['ctrl-k'] = ('transform:%s'):format(iOrN('up', 'up-match')),
+        ['alt-j'] = 'down-match',
+        ['alt-k'] = 'up-match',
+        ['ctrl-x'] = 'toggle-raw',
+        ['ctrl-w'] = 'backward-kill-word',
+      },
+    }
+  end,
   actions = {
     enter = function(s)
       ---@type string
