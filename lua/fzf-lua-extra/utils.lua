@@ -200,4 +200,37 @@ M.make_actions = function(format)
   return actions
 end
 
+---@param messages string[]
+---@param lines integer
+---@param columns integer
+---@return string[]
+M.center_message = function(messages, lines, columns)
+  -- messages: array of strings (each is a line)
+  local msg_count = #messages
+  local top = math.floor((lines - msg_count) / 2)
+  local bottom = lines - top - msg_count
+
+  -- Center each message line horizontally
+  local centered_lines = {} ---@type string[]
+  for _, line in ipairs(messages) do
+    local pad = math.max(0, columns - #line)
+    local left = math.floor(pad / 2)
+    local right = pad - left
+    table.insert(centered_lines, string.rep(' ', left) .. line .. string.rep(' ', right))
+  end
+
+  -- Build the array
+  local result = {}
+  for _ = 1, top do
+    table.insert(result, string.rep(' ', columns))
+  end
+  for _, line in ipairs(centered_lines) do
+    table.insert(result, line)
+  end
+  for _ = 1, bottom do
+    table.insert(result, string.rep(' ', columns))
+  end
+  return result
+end
+
 return M
