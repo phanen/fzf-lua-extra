@@ -68,12 +68,15 @@ describe('main', function()
     screen._handle_screenshot = function() end
     -- screen:set_default_attr_ids(nil)
     exec_lua(function() ---@diagnostic disable-next-line: duplicate-set-field
-      vim.fn.input = function() return 'input' end ---@diagnostic disable-next-line: duplicate-set-field
-      vim.fn.confirm = function() return 1 end
+      -- for plocated
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.fn.input = function() return 'input' end
+      -- vim.fn.confirm = function() return 1 end
       -- cannot print https://github.com/neovim/neovim/blob/12689c73d882a29695d3fff4f6f5af642681f0a6/runtime/lua/vim/pack.lua#L370
       ---@diagnostic disable-next-line: duplicate-set-field
       _G.save_print, _G.print = _G.print, function() end
       vim.env.XDG_DATA_HOME = './deps/.data'
+      vim.env.XDG_CONFIG_HOME = './deps/.config'
       vim.opt.pp:append(
         -- TODO: we don't need lockfile, modify HOME+NVIM_APPNAME?
         vim.fs.joinpath(vim.env.XDG_DATA_HOME, vim.env.NVIM_APPNAME or 'nvim', 'site')
@@ -90,7 +93,7 @@ describe('main', function()
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/mini.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/lazy.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/gitsigns.nvim') },
-      })
+      }, { confirm = false })
       -- pass spec to let lazy konw it's not a plugins...
       require('lazy').setup({ spec = {}, performance = { rtp = { reset = false } } })
       require('aerial').setup({})
