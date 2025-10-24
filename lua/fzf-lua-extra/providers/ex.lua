@@ -20,6 +20,9 @@ local __DEFAULT__ = {
 return function(opts)
   assert(__DEFAULT__)
   require('fzf-lua').fzf_live(function(s)
-    return function(cb) vim.iter(vim.fn.getcompletion(s[1], 'cmdline')):each(cb) end
+    return function(cb)
+      vim.iter(vim.fn.getcompletion(s[1], 'cmdline')):each(cb)
+      cb(nil)
+    end
   end, opts)
 end

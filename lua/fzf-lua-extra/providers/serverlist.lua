@@ -28,25 +28,32 @@ local spawn = function(cmd)
   )
 end
 
+local __DEFAULT__ = {
+  previewer = {
+    -- TODO: should reload on preview fail
+    cmd = [[>/tmp/screenshot; nvim --clean --headless --remote-expr 'nvim__screenshot("/tmp/screenshot")' --server {}; cat /tmp/screenshot]],
+    _ctor = function(o) return require('fzf-lua.previewer').fzf.cmd(o) end,
+  },
+  _resume_reload = true, -- avoid list contain killed server unhide
+  actions = {
+    ['enter'] = function(sel) vim.cmd.connect(sel[1]) end,
+    ['alt-n'] = {
+      fn = function() spawn({ vim.fn.exepath('nvim'), '--headless' }) end,
+      reload = true,
+    },
+    ['ctrl-x'] = {
+      fn = function(sel)
+        if not sel[1] then return end
+        local chan = vim.fn.sockconnect('pipe', sel[1], { rpc = true })
+        vim.rpcrequest(chan, 'nvim_exec_lua', 'vim.schedule(function() vim.cmd("qa!") end)', {})
+      end,
+      reload = true,
+    },
+  },
+}
+
 return function(opts)
-  local scrshot = '/tmp/screenshot'
-  vim.fn.system({ 'touch', scrshot })
-  local default = {
-    previewer = {
-      -- TODO: should reload on preview fail
-      cmd = [[nvim --clean --headless --remote-expr 'nvim__screenshot("/tmp/screenshot")' --server {} && cat /tmp/screenshot]],
-      _ctor = require('fzf-lua.previewer').fzf.cmd,
-    },
-    actions = {
-      ['enter'] = vim.schedule_wrap(function(sel) vim.cmd.connect(sel[1]) end),
-      ['alt-n'] = {
-        fn = vim.schedule_wrap(function() spawn({ vim.fn.exepath('nvim'), '--headless' }) end),
-        reload = true,
-      },
-    },
-  }
-  opts = vim.tbl_deep_extend('force', default, opts or {})
-  opts._resume_reload = true -- avoid list contain killed server unhide
+  assert(__DEFAULT__)
   require('fzf-lua').fzf_exec(function(cb)
     vim
       .iter(vim.fn.serverlist({ peer = true }))
@@ -54,5 +61,6 @@ return function(opts)
         function(e) return not e:match('fzf%-lua') and not vim.tbl_contains(vim.fn.serverlist(), e) end
       )
       :each(cb)
+    cb(nil)
   end, opts)
 end
