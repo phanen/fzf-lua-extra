@@ -33,7 +33,7 @@ jobs:
 
       - name: Download fzf
         run: |
-          wget -O - https://github.com/junegunn/fzf/releases/download/v0.64.0/fzf-0.64.0-linux_amd64.tar.gz | tar zxfv -
+          wget -O - https://github.com/junegunn/fzf/releases/download/v0.66.0/fzf-0.66.0-linux_amd64.tar.gz | tar zxfv -
           sudo mv ./fzf /bin
 
       - name: Run Test
