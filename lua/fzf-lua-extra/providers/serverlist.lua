@@ -1,6 +1,7 @@
 local uv = vim.uv
 
-local _spawn = function(cmd)
+local spawn = function()
+  local cmd = { vim.fn.exepath('nvim'), '--headless' }
   uv.spawn(
     cmd[1],
     ---@diagnostic disable-next-line: missing-fields, missing-parameter
@@ -24,97 +25,6 @@ local _spawn = function(cmd)
   )
 end
 
-local C ---@type ffi.namespace*?
--- https://luvit.io/blog/pty-ffi.html
-local pty_spawn = function(cmd)
-  local ffi = require('ffi')
-  if not C then
-    ffi.cdef [[
-      struct winsize {
-          unsigned short ws_row;
-          unsigned short ws_col;
-          unsigned short ws_xpixel;   /* unused */
-          unsigned short ws_ypixel;   /* unused */
-      };
-      int openpty(int *amaster, int *aslave, char *name,
-                  void *termp, /* unused so change to void to avoid defining struct */
-                  const struct winsize *winp);
-    ]]
-    C = ffi.C
-  end
-
-  local function openpty(rows, cols)
-    -- Lua doesn't have out-args so we create short arrays of numbers.
-    local amaster = ffi.new('int[1]')
-    local aslave = ffi.new('int[1]')
-    local winp = ffi.new('struct winsize')
-    ---@diagnostic disable-next-line: inject-field
-    winp.ws_row = rows
-    ---@diagnostic disable-next-line: inject-field
-    winp.ws_col = cols
-    C.openpty(amaster, aslave, nil, nil, winp)
-    -- And later extract the single value that was placed in the array.
-    return amaster[0], aslave[0]
-  end
-
-  local spawn = function()
-    -- local master, slave = openpty(vim.o.lines, vim.o.columns)
-    ---@diagnostic disable-next-line: no-unknown
-    local master, slave = openpty(1000, 1000) -- workaround with resizing
-    local pipe
-    local child = uv.spawn(
-      cmd,
-      ---@diagnostic disable-next-line: missing-fields
-      {
-        stdio = { slave, slave, slave },
-        detached = true,
-      },
-      function(...)
-        print(...)
-        if pipe and not pipe:is_closing() then pipe:close() end
-      end
-    )
-    pipe = assert(uv.new_pipe(false))
-    pipe:open(master)
-    -- 1. this will stop working when the process hold master handle is killed...
-    -- so a "manager/reader/daemon/proxy process" seems still needed
-    -- 2. jobstart pty=true cannot detach a terminal job
-    -- 3. how about re-attach an headless peer on preview? (--remote-ui)
-    pipe:read_start(function(_) end)
-    return child
-  end
-  spawn()
-end
-
-local kitty_spawn = function(cmd)
-  local os_wins = vim.json.decode(vim.system({ 'kitten', '@', 'ls' }):wait().stdout)
-  local os_win = vim.iter(os_wins):find(function(w) return w.wm_class == 'kitty-rofi' end)
-  local winid = tostring(assert(os_win.tabs[1].id))
-  local obj
-  obj = vim
-    .system({
-      'kitten',
-      '@',
-      'launch',
-      '--dont-take-focus',
-      -- '--type=tab',
-      '--type=background',
-      '--match',
-      'id:' .. winid,
-      '--',
-      cmd,
-    })
-    :wait()
-  assert(obj.code == 0, obj.stderr)
-end
-
-local spawn = function()
-  if pcall(require, 'ffi') then return pty_spawn(vim.fn.exepath('nvim')) end
-
-  if false and vim.env.KITTY_LISTEN_ON then return kitty_spawn(vim.fn.exepath('nvim')) end
-  return _spawn({ vim.fn.exepath('nvim'), '--headless' })
-end
-
 local parse_entry = function(e) return e and e:match('%((.-)%)') or nil end
 
 local remote_exec = function(path, method, ...)
@@ -125,30 +35,67 @@ local remote_exec = function(path, method, ...)
   return unpack(ret)
 end
 
+-- generate screenshot
+-- spawn a temporary tui for non-tui/headless client
+local make_screenshot = function(screenshot, addr, lines, columns)
+  local closing = false
+  local utils = require('fzf-lua-extra.utils')
+  vim.fn.writefile(
+    utils.center_message({ 'Failed to generate screenshot' }, lines, columns),
+    screenshot
+  )
+  local uis = remote_exec(addr, 'nvim_list_uis')
+  local has_tui = #uis > 0
+    and vim
+      .iter(remote_exec(addr, 'nvim_list_chans'))
+      :find(function(info) return info.client and info.client.name == 'nvim-tui' end)
+  if has_tui then
+    pcall(remote_exec, addr, 'nvim__screenshot', screenshot)
+    return
+  end
+  local chan = vim.fn.jobstart({ vim.fn.exepath('nvim'), '--server', addr, '--remote-ui' }, {
+    pty = true,
+    height = lines,
+    width = columns,
+    env = { TERM = 'xterm-256color' },
+    on_stdout = function(chan)
+      if closing then return end
+      closing = true
+      -- TODO: we can loop check line1? (https://github.com/neovim/neovim/blob/460738e02de0b018c5caf1a2abe66441897ae5c8/src/nvim/tui/tui.c#L1692)
+      vim.defer_fn(function() pcall(remote_exec, addr, 'nvim__screenshot', screenshot) end, 10)
+      vim.defer_fn(function() vim.fn.jobstop(chan) end, 20)
+    end,
+  })
+  return chan
+end
+
 local __DEFAULT__ = {
+  screenshot = true and '/tmp/screenshot' or vim.fn.tempname(),
   previewer = {
     _ctor = function()
       local p = require('fzf-lua.previewer.fzf').cmd_async:extend()
-      local utils = require('fzf-lua-extra.utils')
       function p:cmdline(_)
         return FzfLua.shell.stringify_cmd(function(items, lines, columns)
           self._last_query = items[2] or ''
           local path = parse_entry(items[1])
           if not path then return 'true' end
-          local tmpfile = vim.fn.tempname()
-          local filelines = utils.center_message({ 'This instance seems headless' }, lines, columns)
-          vim.fn.writefile(filelines, tmpfile)
-          if not pcall(remote_exec, path, 'nvim__screenshot', tmpfile) then
-            vim.schedule(function() FzfLua.utils.fzf_winobj():SIGWINCH({}) end)
-          end
-          return 'cat ' .. tmpfile
+          local screenshot = assert(self.opts.screenshot) ---@type string
+          local chan = make_screenshot(screenshot, path, lines, columns)
+          local wait = chan
+              and vim.fn.executable('waitpid') == 1
+              and ('waitpid %s;'):format(vim.fn.jobpid(chan))
+            or ('sleep %s;'):format(50 / 1000)
+          local pager = vim.fn.executable('tail') == 1 and 'tail -n+2 %s' or 'cat %s'
+          return wait .. pager:format(screenshot)
         end, self.opts, '{} {q}')
       end
       return p
     end,
   },
   _resume_reload = true, -- avoid list contain killed server unhide
-  keymap = { fzf = { resize = 'refresh-preview' } },
+  keymap = {
+    fzf = { resize = 'refresh-preview' },
+  },
   actions = {
     ['enter'] = function(sel)
       local path = parse_entry(sel[1])
