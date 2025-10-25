@@ -45,10 +45,7 @@ local make_screenshot = function(screenshot, addr, lines, columns)
     screenshot
   )
   local uis = remote_exec(addr, 'nvim_list_uis')
-  local has_tui = #uis > 0
-    and vim
-      .iter(remote_exec(addr, 'nvim_list_chans'))
-      :find(function(info) return info.client and info.client.name == 'nvim-tui' end)
+  local has_tui = vim.iter(uis):find(function(info) return info.stdout_tty end)
   if has_tui then
     pcall(remote_exec, addr, 'nvim__screenshot', screenshot)
     return
