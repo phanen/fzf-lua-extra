@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.7.0](https://github.com/phanen/fzf-lua-extra/compare/v3.6.0...v3.7.0) (2025-10-25)
+
+
+### Features
+
+* ex cmd mvp ([ae39760](https://github.com/phanen/fzf-lua-extra/commit/ae39760e53531d30b8618e6a53b16b26e7e051f3))
+* **gitlog:** normal mode ([8d9bb63](https://github.com/phanen/fzf-lua-extra/commit/8d9bb630fff013dde8e2789a196511191805f70e))
+* hunks picker ([1e2971f](https://github.com/phanen/fzf-lua-extra/commit/1e2971f489b177916f76b96c6f077c36f425a310))
+
+
+### Bug Fixes
+
+* feed nil to close pipe ([3f83885](https://github.com/phanen/fzf-lua-extra/commit/3f838855399caf6b6b75fa003b878c10fc7dd473))
+* hunk test ([2798909](https://github.com/phanen/fzf-lua-extra/commit/2798909c54755d5b3c4565d8f50136aea03fee6b))
+* improve tui detection ([9f7b943](https://github.com/phanen/fzf-lua-extra/commit/9f7b943c7505a13b23747c0c5ac6446524af7a6a))
+* openpty to get screenshot data ([56c3197](https://github.com/phanen/fzf-lua-extra/commit/56c3197d8a8d8603f39135f48bae5198f910ef8a))
+* **repl:** feed nil to close pipe ([af76957](https://github.com/phanen/fzf-lua-extra/commit/af76957e592079c82eb05ed861a7c883e022584c))
+* show info when instance is headless ([d961f8f](https://github.com/phanen/fzf-lua-extra/commit/d961f8f4c58d06814b711118e7d6e65cf3f6d2a1))
+* spawn a tui client to generate screenshot when needed ([8af803b](https://github.com/phanen/fzf-lua-extra/commit/8af803b5286b7dee7b26e437f3f1d8807d9ec06d))
+* when child seems exited ([b002cb0](https://github.com/phanen/fzf-lua-extra/commit/b002cb017709c4aaab136389468172db84c7f547))
+
 ## [3.6.0](https://github.com/phanen/fzf-lua-extra/compare/v3.5.0...v3.6.0) (2025-10-21)
 
 
