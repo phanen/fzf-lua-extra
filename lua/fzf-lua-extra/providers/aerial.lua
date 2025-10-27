@@ -65,7 +65,7 @@ return function(opts)
     end,
     vim.tbl_deep_extend('force', opts or {}, {
       fzf_opts = { ['--ansi'] = true, ['--with-nth'] = '2..' },
-      actions = require('fzf-lua-extra.utils').make_actions(format),
+      _actions = function() return require('fzf-lua-extra.utils').fix_actions(format) end,
       previewer = {
         _ctor = function()
           local base = require 'fzf-lua.previewer.builtin'.buffer_or_file

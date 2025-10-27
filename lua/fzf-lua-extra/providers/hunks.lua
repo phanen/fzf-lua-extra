@@ -1,7 +1,7 @@
 local __DEFAULT__ = {
   previewer = 'builtin',
   _treesitter = function(line) return line:match('(.-):?(%d+)[: ].-:(.+)$') end,
-  _actions = function() return require('fzf-lua-extra.utils').make_actions() end,
+  _actions = function() return require('fzf-lua-extra.utils').fix_actions() end,
 }
 
 --- @param buf_or_filename string|integer

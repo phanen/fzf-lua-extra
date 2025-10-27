@@ -182,19 +182,20 @@ end
 
 ---@param format? function
 ---@return fzf-lua.config.Actions
-M.make_actions = function(format)
-  local actions =
-    vim.deepcopy((_G.fzf_lua_actions or {}).files or require('fzf-lua').defaults.actions.files)
+M.fix_actions = function(format)
+  local actions = FzfLua.config.globals.actions.files ---@type fzf-lua.config.Actions
   for a, f in pairs(actions) do
     if type(f) == 'function' then actions[a] = { fn = f } end
     local old_fn = actions[a].fn
-    actions[a].fn = function(s, ...)
-      if s[1] and vim.startswith(s[1], '/tmp/fzf-temp-') then -- {+f} is used as field_index
-        s = vim.split(io.open(s[1], 'r'):read('*a'), '\n')
-        s[#s] = nil
+    if old_fn then
+      actions[a].fn = function(s, ...)
+        if s[1] and vim.startswith(s[1], '/tmp/fzf-temp-') then -- {+f} is used as field_index
+          s = vim.split(io.open(s[1], 'r'):read('*a'), '\n')
+          s[#s] = nil
+        end
+        s = format and vim.tbl_map(format, s) or s
+        return old_fn(s, ...)
       end
-      s = format and vim.tbl_map(format, s) or s
-      return old_fn(s, ...)
     end
   end
   return actions

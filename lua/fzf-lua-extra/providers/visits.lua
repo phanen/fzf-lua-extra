@@ -5,7 +5,8 @@ local __DEFAULT__ = {
   color_icons = true,
   fzf_opts = { ['--no-sort'] = true },
   ---@diagnostic disable-next-line: undefined-field
-  actions = _G.fzf_lua_actions and _G.fzf_lua_actions.files or nil,
+  _actions = function() return require('fzf-lua-extra.utils').fix_actions() end,
+  filter = function(e) return (vim.uv.fs_stat(e.path) or {}).type == 'file' end,
 }
 ---@diagnostic disable-next-line: no-unknown
 return function(opts)
@@ -14,9 +15,9 @@ return function(opts)
   local contents = function(cb)
     coroutine.wrap(function()
       local co = coroutine.running()
-      ---damn
       ---@type string[]
-      local paths = require('mini.visits').list_paths('')
+      ---@diagnostic disable-next-line: no-unknown
+      local paths = require('mini.visits').list_paths(opts.cwd or '', { filter = opts.filter })
       for _, file in ipairs(paths) do
         cb(f.make_entry.file(file, opts), function() coroutine.resume(co) end)
         coroutine.yield()
