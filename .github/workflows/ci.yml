@@ -13,7 +13,7 @@ jobs:
 
       matrix:
         neovim_branch:
-          - 'nightly'
+          - "nightly"
 
     env:
       NVIM_TEST_VERSION: ${{ matrix.neovim_branch }}
@@ -47,6 +47,13 @@ jobs:
     if: ${{ github.ref == 'refs/heads/master' }}
     steps:
       - uses: actions/checkout@v5
+      - name: Install Neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: "stable"
+      - name: Generate README providers section
+        run: nvim -l scripts/gen_readme.lua
       - name: panvimdoc
         uses: kdheepak/panvimdoc@main
         with:
