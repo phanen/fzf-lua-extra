@@ -166,9 +166,11 @@ NVIM_TEST_RUNTIME=$(XDG_DATA_HOME)/nvim-test/nvim-test-$(NVIM_TEST_VERSION)/shar
 $(NVIM_TEST_RUNTIME): $(NVIM_TEST)
 	$^/bin/nvim-test --init
 
+# make emmylua-check | grep -o '\[[a-z-]\{6,\}\]$' | sort | uniq | sed 's/^\[\(.*\)\]$/\1/'
+
 .PHONY: emmylua-check
 emmylua-check: $(EMMYLUA_BIN) $(NVIM_TEST_RUNTIME)
 	VIMRUNTIME=$(NVIM_TEST_RUNTIME) \
 		$(EMMYLUA_BIN) . \
-		--ignore 'test/**/*' \
+		--ignore 'deps/**/*' \
 		--ignore gen_help.lua
