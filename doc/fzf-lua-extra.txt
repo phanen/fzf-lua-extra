@@ -1,4 +1,4 @@
-*fzf-lua-extra.txt*      For Neovim >= 0.10.0     Last change: 2025 October 16
+*fzf-lua-extra.txt*      For Neovim >= 0.10.0     Last change: 2025 October 27
 
 ==============================================================================
 Table of Contents                            *fzf-lua-extra-table-of-contents*
@@ -13,10 +13,13 @@ Table of Contents                            *fzf-lua-extra-table-of-contents*
 <https://github.com/phanen/fzf-lua-overlay/actions/workflows/ci.yml>
 
 Extra pickers for fzf-lua <https://github.com/ibhagwan/fzf-lua>. _aerial
-(supported in upstream: `require("aerial").fzf_lua_picker()`) cliphist
-file_decor function gitignore gitlog grep_project_globs icons lazy license
-node_lines plocate ps repl rtp runtime scriptnames serverlist _swiper_blines
-(upstreamed: `FzfLua blines profile=ivy`) visits
+`require("aerial").fzf_lua_picker()`
+<https://github.com/stevearc/aerial.nvim/issues/47> cliphist cmd ex file_decor
+function git_log gitignore grep_project_globs hunks icons lazy license
+node_lines plocate ps repl rtp runtime scriptnames _serverlist2 `FzfLua
+serverlist` <https://github.com/ibhagwan/fzf-lua/pull/232> _swiper_blines
+`FzfLua blines profile=ivy` <https://github.com/ibhagwan/fzf-lua/issues/226>
+visits
 
 
 CREDIT                                    *fzf-lua-extra-fzf-lua-extra-credit*
