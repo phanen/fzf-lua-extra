@@ -1,3 +1,4 @@
+---@type fzf-lua.config.Base|{}
 local __DEFAULT__ = {
   preview = 'true',
   winopts = { preview = { hidden = true } },

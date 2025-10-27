@@ -1,3 +1,4 @@
+---@type fzf-lua.config.Base|{}
 local __DEFAULT__ = {
   preview = 'true',
   line_query = function(q) return nil, (q:match('%S+$') or '') end,

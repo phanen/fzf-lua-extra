@@ -68,6 +68,7 @@ local make_screenshot = function(screenshot, addr, lines, columns)
   return chan
 end
 
+---@type fzf-lua.config.Base|{}
 local __DEFAULT__ = {
   screenshot = true and '/tmp/screenshot' or vim.fn.tempname(),
   previewer = {

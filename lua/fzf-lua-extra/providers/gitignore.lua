@@ -1,3 +1,4 @@
+---@type fzf-lua.config.Base|{}
 local __DEFAULT__ = {
   previewer = { _ctor = function() return require('fzf-lua-extra.previewers').gitignore end },
   api_root = 'gitignore/templates',
@@ -8,8 +9,7 @@ local __DEFAULT__ = {
     local utils = require('fzf-lua-extra.utils')
     return {
       -- TODO:
-      ---@param selected string[]
-      ['enter'] = function(selected)
+      ['enter'] = function(selected, opts)
         local root = vim.fs.root(0, '.git')
         if not root then error('Not in a git repo') end
         local path = root .. '/.gitignore'
@@ -17,6 +17,7 @@ local __DEFAULT__ = {
           local confirm = vim.fn.confirm('Override?', '&Yes\n&No')
           if confirm ~= 1 then return end
         end
+        ---@type string
         local filetype = assert(selected[1])
         utils.gh_cache(opts.api_root .. '/' .. filetype, function(_, json)
           ---@type string

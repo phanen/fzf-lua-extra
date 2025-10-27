@@ -1,6 +1,7 @@
 local pager ---@type string?
 local q ---@type string?
 
+---@type fzf-lua.config.Base|{}
 local __DEFAULT__ = {
   winopts = {
     on_create = function(e)

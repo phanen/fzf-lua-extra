@@ -1,3 +1,4 @@
+---@type fzf-lua.config.Base|{}
 local __DEFAULT__ = {
   previewer = 'builtin',
   _treesitter = function(line) return line:match('(.-):?(%d+)[: ].-:(.+)$') end,
