@@ -32,6 +32,7 @@ local function cb_hunks(buf_or_filename, hunks, cb, opts)
       text = text,
     }, opts))
   end
+  cb()
 end
 
 return function(opts)
