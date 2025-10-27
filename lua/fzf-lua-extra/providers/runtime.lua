@@ -41,5 +41,5 @@ return function()
   -- If using lazy.nvim, get all the lazy loaded plugin paths (#1296)
   local lazy = package.loaded['lazy.core.util'] ---@type table
   if lazy and lazy.get_unloaded_rtp then vim.list_extend(rtp, (lazy.get_unloaded_rtp(''))) end
-  require('fzf-lua').live_grep({ search_paths = rtp }, { actions = { ['alt-t'] = test } })
+  require('fzf-lua').live_grep({ search_paths = rtp, actions = { ['alt-t'] = test } })
 end
