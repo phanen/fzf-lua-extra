@@ -125,20 +125,41 @@ luals-check: $(LUALS) $(NVIM_TEST)
 			--configpath=../.luarc.jsonc \
 			--check=.
 
-EMMYLUA_SHA := 8a629f23
-EMMYLUA := deps/emmylua_analyzer-rust-$(EMMYLUA_SHA)
+################################################################################
+# Emmylua
+################################################################################
+
+ifeq ($(shell uname -m),arm64)
+    EMMYLUA_ARCH ?= arm64
+else
+    EMMYLUA_ARCH ?= x64
+endif
+
+EMMYLUA_REF := 0.11.0
+EMMYLUA_OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
+EMMYLUA_RELEASE_URL := https://github.com/EmmyLuaLs/emmylua-analyzer-rust/releases/download/$(EMMYLUA_REF)/emmylua_check-$(EMMYLUA_OS)-$(EMMYLUA_ARCH).tar.gz
+EMMYLUA_RELEASE_TAR := deps/emmylua_check-$(EMMYLUA_REF)-$(EMMYLUA_OS)-$(EMMYLUA_ARCH).tar.gz
+EMMYLUA_DIR := deps/emmylua
+EMMYLUA_BIN := $(EMMYLUA_DIR)/emmylua_check
 
 .PHONY: emmylua
-emmylua: $(EMMYLUA)
+emmylua: $(EMMYLUA_BIN)
 
-$(EMMYLUA):
-	git clone \
-		--filter=blob:none \
-		https://github.com/EmmyLuaLs/emmylua-analyzer-rust.git \
-		$(EMMYLUA)
-	git -C $@ checkout $(EMMYLUA_SHA)
-	cd $@ && cargo build --release --package emmylua_check
+ifeq ($(shell echo $(EMMYLUA_REF) | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$$'),$(EMMYLUA_REF))
 
+$(EMMYLUA_BIN):
+	mkdir -p $(EMMYLUA_DIR)
+	curl -L $(EMMYLUA_RELEASE_URL) -o $(EMMYLUA_RELEASE_TAR)
+	tar -xzf $(EMMYLUA_RELEASE_TAR) -C $(EMMYLUA_DIR)
+
+else
+
+$(EMMYLUA_BIN):
+	git clone --filter=blob:none https://github.com/EmmyLuaLs/emmylua-analyzer-rust.git $(EMMYLUA_DIR)
+	git -C $(EMMYLUA_DIR) checkout $(EMMYLUA_SHA)
+	cd $(EMMYLUA_DIR) && cargo build --release --package emmylua_check
+
+endif
 
 NVIM_TEST_RUNTIME=$(XDG_DATA_HOME)/nvim-test/nvim-test-$(NVIM_TEST_VERSION)/share/nvim/runtime
 
@@ -146,9 +167,8 @@ $(NVIM_TEST_RUNTIME): $(NVIM_TEST)
 	$^/bin/nvim-test --init
 
 .PHONY: emmylua-check
-emmylua-check: $(EMMYLUA) $(NVIM_TEST_RUNTIME)
+emmylua-check: $(EMMYLUA_BIN) $(NVIM_TEST_RUNTIME)
 	VIMRUNTIME=$(NVIM_TEST_RUNTIME) \
-		$(EMMYLUA)/target/release/emmylua_check . \
+		$(EMMYLUA_BIN) . \
 		--ignore 'test/**/*' \
 		--ignore gen_help.lua
-
