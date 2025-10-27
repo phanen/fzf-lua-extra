@@ -112,5 +112,5 @@ return function(opts)
         end, opts, '{q}')
     )
 
-  return require('fzf-lua').fzf_exec('true', opts)
+  return FzfLua.fzf_exec('true', opts)
 end

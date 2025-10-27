@@ -43,5 +43,5 @@ return function(opts)
       end,
     })
   end
-  require('fzf-lua').files(opts)
+  FzfLua.files(opts)
 end

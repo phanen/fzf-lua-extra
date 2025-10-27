@@ -38,5 +38,5 @@ local __DEFAULT__ = {
 
 return function(opts)
   assert(__DEFAULT__)
-  require('fzf-lua').fzf_exec('cliphist list', opts)
+  FzfLua.fzf_exec('cliphist list', opts)
 end

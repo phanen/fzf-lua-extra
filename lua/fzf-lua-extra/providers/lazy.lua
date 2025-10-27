@@ -60,10 +60,10 @@ return function(opts)
         vim.ui.open(p.url or ('https://github.com/search?q=%s'):format(p.name))
       end),
       ['ctrl-l'] = p_do(function(p)
-        if p.dir and vim.uv.fs_stat(p.dir) then require('fzf-lua').files { cwd = p.dir } end
+        if p.dir and vim.uv.fs_stat(p.dir) then FzfLua.files { cwd = p.dir } end
       end),
       ['ctrl-n'] = p_do(function(p)
-        if p.dir then require('fzf-lua').live_grep_native { cwd = p.dir } end
+        if p.dir then FzfLua.live_grep_native { cwd = p.dir } end
       end),
       ['ctrl-r'] = p_do(
         function(p) require('lazy.core.loader')[p._ and p._.loaded and 'reload' or 'load'](p) end

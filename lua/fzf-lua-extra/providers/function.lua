@@ -58,8 +58,5 @@ return function(opts)
   }
 
   opts.fzf_colors = { ['hl'] = '-1:reverse', ['hl+'] = '-1:reverse' }
-  require('fzf-lua').fzf_exec(
-    vim.split(vim.api.nvim_exec2('function', { output = true }).output, '\n'),
-    opts
-  )
+  FzfLua.fzf_exec(vim.split(vim.api.nvim_exec2('function', { output = true }).output, '\n'), opts)
 end

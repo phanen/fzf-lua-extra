@@ -70,7 +70,7 @@ return function(opts)
       end
     end)
     async.schedule()
-    require('fzf-lua').fzf_exec(func, opts)
+    FzfLua.fzf_exec(func, opts)
   end
   async.run(a):raise_on_error()
 end

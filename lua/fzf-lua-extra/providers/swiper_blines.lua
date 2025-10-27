@@ -62,7 +62,7 @@ return function()
     end
   end
 
-  require('fzf-lua').blines {
+  FzfLua.blines {
     silent = true,
     _treesitter = function(line) return 'foo.lua', nil, line:sub(2) end,
     start = 'cursor',

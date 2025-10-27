@@ -5,12 +5,12 @@ local test = function()
   local port ---@type string?
   local glob ---@type string?
   local f ---@type string[]
-  require('fzf-lua').fzf_live(function(q)
+  FzfLua.fzf_live(function(q)
     if not q[1] then return end
     ---@type string, string
     local sq, gq = q[1]:match(glob_regex)
     if port then
-      sq = sq or q[1]
+      sq = sq or q[1] ---@type string
       vim.system { 'curl', '-XPOST', ('localhost:%s'):format(port), '-d', ('search:%s'):format(sq) }
     end
     local new_glob = gq or '*'
@@ -41,5 +41,5 @@ return function()
   -- If using lazy.nvim, get all the lazy loaded plugin paths (#1296)
   local lazy = package.loaded['lazy.core.util'] ---@type table
   if lazy and lazy.get_unloaded_rtp then vim.list_extend(rtp, (lazy.get_unloaded_rtp(''))) end
-  require('fzf-lua').live_grep({ search_paths = rtp, actions = { ['alt-t'] = test } })
+  FzfLua.live_grep({ search_paths = rtp, actions = { ['alt-t'] = test } })
 end

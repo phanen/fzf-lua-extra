@@ -7,8 +7,8 @@ local __DEFAULT__ = {
   _fmt = { from = function(e, _) return vim.fn.expand(e) end },
   actions = {
     ['enter'] = function(sel) require('fzf-lua-extra.utils').zoxide_chdir(sel[1]) end,
-    ['ctrl-l'] = function(sel) require('fzf-lua').files { cwd = sel[1] } end,
-    ['ctrl-n'] = function(sel) require('fzf-lua').live_grep_native { cwd = sel[1] } end,
+    ['ctrl-l'] = function(sel) FzfLua.files { cwd = sel[1] } end,
+    ['ctrl-n'] = function(sel) FzfLua.live_grep_native { cwd = sel[1] } end,
   },
 }
 

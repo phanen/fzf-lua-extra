@@ -9,7 +9,7 @@ local __DEFAULT__ = {
 }
 return function(opts)
   assert(__DEFAULT__)
-  require('fzf-lua').fzf_live(function(s)
+  FzfLua.fzf_live(function(s)
     local q = s[1]
     local cmd = q:match('^%s*(%S+)')
     if not cmd or not opts.allow[cmd] then return vim.tbl_keys(opts.allow) end

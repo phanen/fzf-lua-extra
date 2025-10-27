@@ -19,7 +19,7 @@ local function nodelines(opts)
     start_line = start_line + 1
     end_line = end_line + 1
   end
-  require('fzf-lua').blines({
+  FzfLua.blines({
     start_line = start_line,
     end_line = end_line,
     query = opts.query,
