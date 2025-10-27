@@ -44,9 +44,11 @@ local make_screenshot = function(screenshot, addr, lines, columns)
     utils.center_message({ 'Failed to generate screenshot' }, lines, columns),
     screenshot
   )
-  local uis = remote_exec(addr, 'nvim_list_uis')
+  local uis = vim.F.npcall(remote_exec, addr, 'nvim_list_uis')
+  if not uis then return end
   local has_tui = vim.iter(uis):find(function(info) return info.stdout_tty end)
   if has_tui then
+    -- TODO: lines/columns don't fit in fzf preview...
     pcall(remote_exec, addr, 'nvim__screenshot', screenshot)
     return
   end
