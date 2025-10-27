@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.7.1](https://github.com/phanen/fzf-lua-extra/compare/v3.7.0...v3.7.1) (2025-10-27)
+
+
+### Bug Fixes
+
+* connect error ([81cc1e5](https://github.com/phanen/fzf-lua-extra/commit/81cc1e53e252b92297ec185448645c5abff996bd))
+* rename serverlist to serverlist2 ([8d1891b](https://github.com/phanen/fzf-lua-extra/commit/8d1891bde7dba1db151d786a5aa6705d5c08c594))
+
 ## [3.7.0](https://github.com/phanen/fzf-lua-extra/compare/v3.6.0...v3.7.0) (2025-10-25)
 
 
