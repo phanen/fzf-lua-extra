@@ -75,8 +75,8 @@ describe('main', function()
       -- cannot print https://github.com/neovim/neovim/blob/12689c73d882a29695d3fff4f6f5af642681f0a6/runtime/lua/vim/pack.lua#L370
       ---@diagnostic disable-next-line: duplicate-set-field
       _G.save_print, _G.print = _G.print, function() end
-      vim.env.XDG_DATA_HOME = './deps/.data'
-      vim.env.XDG_CONFIG_HOME = './deps/.config'
+      vim.env.XDG_DATA_HOME = vim.fs.abspath('./deps/.data')
+      vim.env.XDG_CONFIG_HOME = vim.fs.abspath('./deps/.config')
       vim.opt.pp:append(
         -- TODO: we don't need lockfile, modify HOME+NVIM_APPNAME?
         vim.fs.joinpath(vim.env.XDG_DATA_HOME, vim.env.NVIM_APPNAME or 'nvim', 'site')
@@ -94,6 +94,7 @@ describe('main', function()
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/lazy.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/gitsigns.nvim') },
       }, { confirm = false })
+      vim.pack.update()
       -- pass spec to let lazy konw it's not a plugins...
       require('lazy').setup({ spec = {}, performance = { rtp = { reset = false } } })
       require('aerial').setup({})
@@ -120,13 +121,18 @@ describe('main', function()
       print(clear, prompt_mark, color)
       n.api.nvim_command('edit test/main_spec.lua')
       n.fn.search('function(')
-      exec_lua(function(name0)
+      exec_lua(function(name0, scale0)
         assert(xpcall(function() require('fzf-lua-extra')[name0]() end, debug.traceback))
         -- vim.api.nvim_command('sleep 100m') wait jobstart, check callback codepath
-        vim.uv.sleep(100)
-      end, name)
-      n.sleep(100)
+        -- vim.uv.sleep(100)
+        vim.defer_fn(function() vim.api.nvim_input(('<c-j>'):rep(4)) end, 100 * scale0)
+      end, name, scale)
+      n.sleep(200 * scale)
       screen:sleep(200 * scale)
+      -- n.run_session(screen._session, nil, function(method, args)
+      --   if method == 'nvim_print_event' then return end
+      --   screen:_redraw(args)
+      -- end, 200 * scale)
       render_no_attr(screen)
       -- screen:expect({ messages = {} })
     end)
