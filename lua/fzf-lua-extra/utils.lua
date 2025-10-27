@@ -88,7 +88,7 @@ local gh = function(route, cb)
   local parse_gh_result = function(str)
     local ok, tbl = pcall(vim.json.decode, str)
     if not ok then --
-      error(('Fail to parse json: ' .. str))
+      error(('Fail to parse json: ' .. tbl))
     end
     if tbl.message and tbl.message:match('API rate limit exceeded') then
       error('API error: ' .. tbl.message)
