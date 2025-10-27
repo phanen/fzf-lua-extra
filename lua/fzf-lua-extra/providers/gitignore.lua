@@ -7,6 +7,7 @@ local __DEFAULT__ = {
   winopts = { preview = { hidden = true } },
   _actions = function()
     local utils = require('fzf-lua-extra.utils')
+    ---@type fzf-lua.config.Actions
     return {
       -- TODO:
       ['enter'] = function(selected, opts)

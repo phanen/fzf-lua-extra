@@ -68,7 +68,6 @@ function M.lazy:new(o, opts, fzf_win)
 
   -- lazy_builtin.super.new(self, o, op, fzf_win)
   self.ls_cmd = 'ls -lh'
-  -- FIXME: why this is needed (why fzf previewer don't needed this...)
   return self
 end
 
