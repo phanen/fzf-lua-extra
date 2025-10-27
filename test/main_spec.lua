@@ -74,7 +74,7 @@ describe('main', function()
       -- vim.fn.confirm = function() return 1 end
       -- cannot print https://github.com/neovim/neovim/blob/12689c73d882a29695d3fff4f6f5af642681f0a6/runtime/lua/vim/pack.lua#L370
       ---@diagnostic disable-next-line: duplicate-set-field
-      _G.save_print, _G.print = _G.print, function() end
+      -- _G.save_print, _G.print = _G.print, function() end
       vim.env.XDG_DATA_HOME = vim.fs.abspath('./deps/.data')
       vim.env.XDG_CONFIG_HOME = vim.fs.abspath('./deps/.config')
       vim.opt.pp:append(
@@ -108,7 +108,7 @@ describe('main', function()
     -- print('SERVERNAME:', n.api.nvim_get_vvar('servername'))
     -- n.feed('y')
     -- screen:print_snapshot()
-    exec_lua(function() _G.print = _G.save_print end)
+    -- exec_lua(function() _G.print = _G.save_print end)
   end)
 
   after_each(function() n.eq(n.api.nvim_get_vvar('errmsg'), '') end)
@@ -128,11 +128,12 @@ describe('main', function()
         vim.defer_fn(function() vim.api.nvim_input(('<c-j>'):rep(4)) end, 100 * scale0)
       end, name, scale)
       n.sleep(200 * scale)
-      screen:sleep(200 * scale)
-      -- n.run_session(screen._session, nil, function(method, args)
-      --   if method == 'nvim_print_event' then return end
-      --   screen:_redraw(args)
-      -- end, 200 * scale)
+      -- screen:sleep(200 * scale)
+      ---@diagnostic disable-next-line: redundant-parameter
+      n.run_session(screen._session, nil, function(method, args)
+        if method == 'nvim_print_event' then return end
+        screen:_redraw(args)
+      end, 200 * scale)
       render_no_attr(screen)
       -- screen:expect({ messages = {} })
     end)
