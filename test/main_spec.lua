@@ -94,7 +94,7 @@ describe('main', function()
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/lazy.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/gitsigns.nvim') },
       }, { confirm = false })
-      vim.pack.update()
+      vim.pack.update(nil, { force = true })
       -- pass spec to let lazy konw it's not a plugins...
       require('lazy').setup({ spec = {}, performance = { rtp = { reset = false } } })
       require('aerial').setup({})
