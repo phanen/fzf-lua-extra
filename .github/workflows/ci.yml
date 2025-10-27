@@ -80,7 +80,7 @@ jobs:
           echo "abort_commit=$abort_commit" >> $GITHUB_OUTPUT
       - name: Push changes
         if: steps.check_doc_changes.outputs.abort_commit == 'false'
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore(build): auto-generate vimdoc"
           commit_user_name: "github-actions[bot]"
