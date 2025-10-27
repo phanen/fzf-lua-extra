@@ -5,7 +5,7 @@
 	},
 	"workspace": {
 		"checkThirdParty": false,
-		"ignoreDir": ["deps"],
+		"ignoreDir": ["deps", "scripts"],
 		"library": [
 			"$VIMRUNTIME",
 			"${3rd}/luv/library",
