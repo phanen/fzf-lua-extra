@@ -57,18 +57,18 @@ local make_screenshot = function(screenshot, addr, lines, columns)
     height = lines,
     width = columns,
     env = { TERM = 'xterm-256color' },
-    on_stdout = function(chan)
+    on_stdout = function(chan0)
       if closing then return end
       closing = true
       -- TODO: we can loop check line1? (https://github.com/neovim/neovim/blob/460738e02de0b018c5caf1a2abe66441897ae5c8/src/nvim/tui/tui.c#L1692)
       vim.defer_fn(function() pcall(remote_exec, addr, 'nvim__screenshot', screenshot) end, 10)
-      vim.defer_fn(function() vim.fn.jobstop(chan) end, 20)
+      vim.defer_fn(function() vim.fn.jobstop(chan0) end, 20)
     end,
   })
   return chan
 end
 
----@type fzf-lua.config.Base|{}
+---@class fle.config.Serverlist2: fzf-lua.config.Base
 local __DEFAULT__ = {
   screenshot = true and '/tmp/screenshot' or vim.fn.tempname(),
   previewer = {

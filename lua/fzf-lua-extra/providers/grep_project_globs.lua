@@ -1,8 +1,12 @@
+---@class fle.config.GrepProjectGlobs: fzf-lua.config.Base
+local __DEFAULT__ = {}
+
 return function()
+  assert(__DEFAULT__)
   local last_gq ---@type string?
   local cmd = 'rg --column --line-number --no-heading --color=always --smart-case'
   local actions = require('fzf-lua.actions')
-  require('fzf-lua.core').fzf_exec(('%s ""'):format(cmd), {
+  FzfLua.fzf_exec(('%s ""'):format(cmd), {
     previewer = 'builtin',
     actions = {
       ['enter'] = actions.file_edit_or_qf,

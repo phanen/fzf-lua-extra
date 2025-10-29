@@ -98,33 +98,6 @@ build: stylua-run
 doc-check: gen_help
 	git diff --exit-code -- doc
 
-ifeq ($(shell uname -m),arm64)
-    LUALS_ARCH ?= arm64
-else
-    LUALS_ARCH ?= x64
-endif
-
-LUALS_VERSION := 3.15.0
-LUALS := deps/lua-language-server-$(LUALS_VERSION)-$(shell uname -s)-$(LUALS_ARCH)
-LUALS_TARBALL := $(LUALS).tar.gz
-LUALS_URL := https://github.com/LuaLS/lua-language-server/releases/download/$(LUALS_VERSION)/$(notdir $(LUALS_TARBALL))
-
-.PHONY: luals
-luals: $(LUALS)
-
-$(LUALS):
-	wget --directory-prefix=$(dir $@) $(LUALS_URL)
-	mkdir -p $@
-	tar -xf $(LUALS_TARBALL) -C $@
-	rm -rf $(LUALS_TARBALL)
-
-.PHONY: luals-check
-luals-check: $(LUALS) $(NVIM_TEST)
-	VIMRUNTIME=$(XDG_DATA_HOME)/nvim-test/nvim-test-$(NVIM_TEST_VERSION)/share/nvim/runtime \
-		$(LUALS)/bin/lua-language-server \
-			--configpath=../.luarc.jsonc \
-			--check=.
-
 ################################################################################
 # Emmylua
 ################################################################################

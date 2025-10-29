@@ -1,4 +1,4 @@
----@type fzf-lua.config.Base|{}
+---@class fle.config.Rtp: fzf-lua.config.Base
 local __DEFAULT__ = {
   previewer = {
     cmd = 'eza --color=always --tree --level=3 --icons=always',
@@ -6,7 +6,7 @@ local __DEFAULT__ = {
   },
   _fmt = { from = function(e, _) return vim.fn.expand(e) end },
   actions = {
-    ['enter'] = function(sel) require('fzf-lua-extra.utils').zoxide_chdir(sel[1]) end,
+    ['enter'] = function(sel) require('fzf-lua-extra.utils').chdir(sel[1]) end,
     ['ctrl-l'] = function(sel) FzfLua.files { cwd = sel[1] } end,
     ['ctrl-n'] = function(sel) FzfLua.live_grep_native { cwd = sel[1] } end,
   },
@@ -29,5 +29,5 @@ return function(opts)
     )
     :totable()
 
-  return require('fzf-lua.core').fzf_exec(contents, opts)
+  return FzfLua.fzf_exec(contents, opts)
 end

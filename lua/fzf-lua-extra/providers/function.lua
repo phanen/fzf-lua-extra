@@ -1,3 +1,6 @@
+---@class fle.config.Function: fzf-lua.config.Base
+local __DEFAULT__ = {}
+
 local getfunc = function(s)
   if not s then return end
   ---@type string?
@@ -24,6 +27,7 @@ local preview_with = vim.schedule_wrap(function(_self, content)
 end)
 
 return function(opts)
+  assert(__DEFAULT__)
   opts = opts or {}
   opts._treesitter = function(line) return 'foo.vim', nil, line end
   opts.actions = {

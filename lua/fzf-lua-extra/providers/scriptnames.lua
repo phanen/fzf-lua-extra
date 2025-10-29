@@ -1,4 +1,8 @@
+---@class fle.config.Scriptnames: fzf-lua.config.Base
+local __DEFAULT__ = {}
+
 return function(opts)
+  assert(__DEFAULT__)
   local default = {
     previewer = 'builtin',
     _fmt = { from = function(e, _) return vim.fn.expand(e) end },
@@ -24,9 +28,10 @@ return function(opts)
         off = off or 0
         return path:match('%.vim$') and (path:sub(0, off) .. green(path:sub(off + 1, -1)))
           or path:match('%.lua$') and (path:sub(0, off) .. blue(path:sub(off + 1, -1)))
+          or path
       end
     )
     :totable()
 
-  return require('fzf-lua.core').fzf_exec(contents, opts)
+  return FzfLua.fzf_exec(contents, opts)
 end

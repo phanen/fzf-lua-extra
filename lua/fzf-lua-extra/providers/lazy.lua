@@ -1,3 +1,6 @@
+---@class fle.config.Lazy: fzf-lua.config.Base
+local __DEFAULT__ = {}
+
 -- tbh lazy load is not necessary now, just use alias here
 local utils = require('fzf-lua-extra.utils')
 
@@ -37,15 +40,14 @@ State.get = function() return State.filter, State.encode end
 State.cycle()
 
 return function(opts)
+  assert(__DEFAULT__)
   ---@param cb fun(plugin: LazyPlugin)
-  ---@return fun(selected: string[])
   local p_do = function(cb)
     return function(selected)
       vim.iter(selected):each(function(sel)
         local bs_parts = vim.split(sel, '/')
         local name = bs_parts[#bs_parts]
-        local plugin = utils.get_lazy_plugins(name)
-        cb(plugin)
+        cb(utils.get_lazy_plugins()[name])
       end)
     end
   end
@@ -53,7 +55,7 @@ return function(opts)
     previewer = { _ctor = function() return require('fzf-lua-extra.previewers').lazy end },
     actions = {
       ['enter'] = p_do(function(p)
-        if p.dir and vim.uv.fs_stat(p.dir) then utils.zoxide_chdir(p.dir) end
+        if p.dir and vim.uv.fs_stat(p.dir) then utils.chdir(p.dir) end
       end),
       ['ctrl-y'] = p_do(function(p) vim.fn.setreg('+', p.url) end),
       ['ctrl-o'] = p_do(function(p) -- search cleaned plugins
@@ -80,5 +82,5 @@ return function(opts)
       :each(function(_, p) fzf_cb(encode(p)) end)
     fzf_cb()
   end
-  return require('fzf-lua.core').fzf_exec(contents, opts)
+  return FzfLua.fzf_exec(contents, opts)
 end

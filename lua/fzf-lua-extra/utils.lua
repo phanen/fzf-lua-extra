@@ -1,17 +1,43 @@
 local M = {}
 
+---@module 'vim._async'
+local async = vim.F.npcall(require, 'vim._async') or require('fzf-lua-extra.compat.async')
+
 ---@diagnostic disable-next-line: unused-local
 local api, fn, uv, fs = vim.api, vim.fn, vim.uv, vim.fs
 
-local root = fn.stdpath 'state' .. '/fzf-lua-extra'
+local state_path ---@type string
+---@param ... string
+---@return string
+M.path = function(...)
+  state_path = state_path or fn.stdpath('state')
+  --- @diagnostic disable-next-line: param-type-not-match
+  return fs.joinpath(state_path, 'fzf-lua-extra', ...)
+end
 
-M.zoxide_chdir = function(path)
-  if fn.executable('zoxide') == 1 then vim.system { 'zoxide', 'add', path } end
-  return api.nvim_set_current_dir(path)
+M.arun = async.run
+
+--- @param x any
+--- @return integer?
+function M.tointeger(x)
+  local nx = tonumber(x)
+  if nx and nx == math.floor(nx) then
+    --- @cast nx integer
+    return nx
+  end
 end
 
 ---@param path string
----@param flag string?
+M.chdir = function(path)
+  if fn.executable('zoxide') == 1 then vim.system { 'zoxide', 'add', path } end
+  api.nvim_set_current_dir(path)
+end
+
+---@type fun(fmt: string, ...: any)
+M.errf = function(fmt, ...) error(fmt:format(...)) end
+
+---@param path string
+---@param flag iolib.OpenMode?
 ---@return string?
 M.read_file = function(path, flag)
   local fd = io.open(path, flag or 'r')
@@ -39,7 +65,7 @@ end
 -- path should be normalized
 ---@param path string
 ---@param content string
----@param flag string?
+---@param flag iolib.OpenMode?
 ---@return boolean
 M.write_file = function(path, content, flag)
   if not uv.fs_stat(path) then fs_file_mkdir(path) end
@@ -50,84 +76,103 @@ M.write_file = function(path, content, flag)
   return true
 end
 
----@type fun(name: string?): { [string]: LazyPlugin }|LazyPlugin
-M.get_lazy_plugins = (function()
-  local plugins ---@type { [string]: LazyPlugin }
-  return function(name)
-    if not plugins then
-      -- https://github.com/folke/lazy.nvim/blob/d3974346b6cef2116c8e7b08423256a834cb7cbc/lua/lazy/view/render.lua#L38-L40
-      ---@module 'lazy.core.config'
-      local cfg = package.loaded['lazy.core.config']
-      if not cfg or not cfg.plugins then
-        error('lazy.nvim is not loaded')
-        return {}
-      end
-      ---@type LazyPlugin[]
-      plugins = vim.tbl_deep_extend('keep', {}, cfg.plugins, cfg.to_clean, cfg.spec.disabled)
-      -- kind="clean" seems not named in table
-      for i, p in ipairs(plugins) do
-        plugins[p.name] = p
-        plugins[i] = nil
-      end
-    end
-    if name then return plugins[name] end
-    return plugins
+-- https://github.com/folke/lazy.nvim/blob/d3974346b6cef2116c8e7b08423256a834cb7cbc/lua/lazy/view/render.lua#L38-L40
+---@return table<string, LazyPlugin?>
+M.get_lazy_plugins = function()
+  ---@module 'lazy.core.config'
+  local cfg = package.loaded['lazy.core.config']
+  if not cfg or not cfg.plugins then
+    error('lazy.nvim is not loaded')
+    return {}
   end
-end)()
+  local plugins = vim.tbl_deep_extend('force', cfg.plugins, cfg.spec.disabled)
+  for _, p in ipairs(cfg.to_clean) do -- kind="clean" seems not named in table
+    plugins[p.name] = p
+  end
+  return plugins
+end
 
----github restful api
+---@class fle.SystemOpts: vim.SystemOpts
+---@field cache_path? string
+---@field cache_invalid? fun(cache_path: string): boolean
+
+---@param path string
+---@return boolean
+M.month_invalid = function(path)
+  local stat = uv.fs_stat(path)
+  return not stat or (os.time() - stat.ctime.sec) > 30 * 24 * 60 * 60
+end
+
+---run with optional cache
+---@async
+---@param cmd string[]
+---@param opts? fle.SystemOpts
+---@return vim.SystemCompleted
+M.run = function(cmd, opts)
+  opts = opts or {} ---@type fle.SystemOpts
+  opts.cache_invalid = opts.cache_invalid or function(_) return false end
+  local path = opts.cache_path
+  if path then
+    local res = M.read_file(path)
+    if res and #res > 0 and not opts.cache_invalid(path) then
+      return { code = 0, stdout = res, signal = 0 }
+    end
+  end
+  local obj = async.await(3, vim.system, cmd, opts) ---@type vim.SystemCompleted
+  if obj.code ~= 0 then M.errf('Fail %q (%s %s)', table.concat(cmd, ' '), obj.code, obj.stderr) end
+  if path and obj.stdout then assert(M.write_file(path, obj.stdout or '')) end
+  return obj
+end
+
+---@class fle.gh.Opts
+---@field method? string
+---@field headers? table
+---@field data? any
+
+---github restful api with cache
+---@async
 ---@param route string
----@param cb fun(string, table)
----@return vim.SystemObj
-local gh = function(route, cb)
-  local cmd = fn.executable('gh') == 1 and { 'gh', 'api', route }
-    or { 'curl', '-sL', 'https://api.github.com/' .. route }
+---@param opts? fle.gh.Opts
+---@return table
+M.gh = function(route, opts)
+  opts = opts or {}
+  local method = opts.method or 'GET'
+  local headers = opts.headers or {}
+  local data = opts.data
+
+  local cmd = { 'gh', 'api', route, '--method', method }
+
+  -- Add headers if provided
+  for k, v in pairs(headers) do
+    table.insert(cmd, '-H')
+    table.insert(cmd, string.format('%s: %s', k, v))
+  end
+
+  -- Add data if provided
+  if data then
+    table.insert(cmd, '--input')
+    table.insert(cmd, '-')
+  end
 
   ---@param str string
-  ---@return string, table
+  ---@return table
   local parse_gh_result = function(str)
     local ok, tbl = pcall(vim.json.decode, str)
-    if not ok then --
-      error(('Fail to parse json: ' .. tbl))
-    end
-    if tbl.message and tbl.message:match('API rate limit exceeded') then
-      error('API error: ' .. tbl.message)
-    end
-    return str, tbl
+    if not ok then error('Fail to parse json: ' .. tostring(tbl)) end ---@cast tbl table
+    if tbl.message and tbl.message:match('API rate limit exceeded') then M.errf(tbl.message) end
+    return tbl
   end
 
-  ---@diagnostic disable-next-line: param-type-mismatch
-  return vim.system(cmd, function(obj)
-    local stdout = assert(obj.stdout) -- no disabled stdout
-    return cb(parse_gh_result(stdout))
-  end)
-end
+  local sopts = {} ---@type fle.SystemOpts
+  if data then sopts.stdin = vim.json.encode(data) end
+  sopts.cache_invalid = function(_) return false end
+  sopts.cache_path = M.path(route .. '.json')
 
----gh but use local cache first
----@param route string
----@param path string
----@param cb fun(str: string, tbl: table)
----@return vim.SystemObj?
-local gh_cache = function(route, path, cb)
-  if uv.fs_stat(path) then
-    local str = assert(M.read_file(path))
-    local ok, tbl = pcall(vim.json.decode, str)
-    if not ok then error('Fail to parse json: ' .. str) end
-    return cb(str, tbl)
-  end
-  -- TODO: this just a conditional cache...
-  return gh(route, function(str, tbl)
-    assert(M.write_file(path, str), 'Fail to write to cache path: ' .. path)
-    cb(str, tbl)
-  end)
-end
-
----@param route string
----@param cb fun(str: string, tbl: table)
----@return vim.SystemObj?
-M.gh_cache = function(route, cb)
-  local path = root .. '/' .. route .. '.json'
-  return gh_cache(route, path, cb)
+  local obj = M.run(cmd, sopts)
+  local stdout = obj.stdout or ''
+  -- local stderr = obj.stderr or ''
+  -- if obj.code ~= 0 then M.errf('gh api failed: %s', stderr) end
+  return parse_gh_result(stdout)
 end
 
 ---@param name string
@@ -164,20 +209,6 @@ M.replace_with_envname = function(name)
     end
   end
   return name
-end
-
----TODO: cond cache, cond ttl
----@param filename string
----@param cmd string[]
----@param cond boolean?
----@return string
-M.cache_run = function(filename, cmd, cond)
-  local path = fs.joinpath(root, filename)
-  local res = M.read_file(path)
-  if not cond and res and #res > 0 then return res end
-  res = vim.fn.system(cmd)
-  assert(M.write_file(path, res))
-  return res
 end
 
 ---@param format? function

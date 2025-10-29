@@ -1,4 +1,6 @@
----@type fzf-lua.config.Base|{}
+local uv = vim.uv
+
+---@class fle.config.Hunks: fzf-lua.config.Base
 local __DEFAULT__ = {
   previewer = 'builtin',
   _treesitter = function(line) return line:match('(.-):?(%d+)[: ].-:(.+)$') end,
@@ -42,9 +44,9 @@ return function(opts)
   local config = require('gitsigns.config').config
   local git = require('gitsigns.git')
   local async = require('gitsigns.async')
-  local uv = vim.uv or vim.loop
   local run_diff = require('gitsigns.diff')
   local util = require('gitsigns.util')
+  ---@async
   local a = function()
     local repo = git.Repo.get((assert(uv.cwd())))
     if not repo then return end
@@ -60,9 +62,8 @@ return function(opts)
           else
             obj = ':0:' .. f
           end
-          local a = repo:get_show_text(obj)
           async.schedule()
-          local hunks = run_diff(a, util.file_lines(f_abs))
+          local hunks = run_diff(repo:get_show_text(obj), util.file_lines(f_abs))
           async.schedule()
           ---@diagnostic disable-next-line: param-type-mismatch
           cb_hunks(f_abs, hunks, cb, opts)

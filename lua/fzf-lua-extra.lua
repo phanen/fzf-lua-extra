@@ -1,4 +1,4 @@
-local curdir = debug.getinfo(1, 'S').source:sub(2):match('(.*/)')
+local curdir = assert(debug.getinfo(1, 'S').source:sub(2):match('(.*/)'))
 
 local getdefault = function(f, name)
   local i = 1

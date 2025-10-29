@@ -1,4 +1,4 @@
----@type fzf-lua.config.Base|{}
+---@class fle.config.Cmd: fzf-lua.config.Base
 local __DEFAULT__ = {
   allow = {
     journalctl = true,

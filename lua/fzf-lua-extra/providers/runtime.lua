@@ -1,7 +1,11 @@
+---@class fle.config.Runtime: fzf-lua.config.Base
+local __DEFAULT__ = {}
+
 local glob_regex = '(.*)%s%-%-%s(.*)'
 local api = vim.api
 
 local test = function()
+  assert(__DEFAULT__)
   local port ---@type string?
   local glob ---@type string?
   local f ---@type string[]

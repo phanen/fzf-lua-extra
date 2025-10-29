@@ -1,3 +1,6 @@
+---@class fle.config.Aerial: fzf-lua.config.Base
+local __DEFAULT__ = {}
+
 require('aerial').sync_load() -- ensure aerial config loaded
 local config = require('aerial.config')
 local backends = require('aerial.backends')
@@ -6,6 +9,7 @@ local highlight = require('aerial.highlight')
 local api = vim.api
 
 return function(opts)
+  assert(__DEFAULT__)
   local bufnr = api.nvim_get_current_buf()
   local filename = api.nvim_buf_get_name(bufnr)
   local backend = backends.get()
@@ -31,8 +35,9 @@ return function(opts)
   ---@return fzf-lua.buffer_or_file.Entry
   local parse_entry = function(entry_str)
     ---@type string, string
-    local idx, _ = entry_str:match('^(%d+)\t(.*)$')
-    local item = assert(items[tonumber(idx)], entry_str)
+    local idx0, _ = entry_str:match('^(%d+)\t(.*)$')
+    local idx = assert(utils.tointeger(idx0))
+    local item = assert(items[idx], entry_str)
     return {
       bufnr = tonumber(bufnr),
       bufname = filename,
@@ -52,7 +57,7 @@ return function(opts)
     return ('%s:%s:%s'):format(e.bufname, e.line, e.col)
   end
 
-  require('fzf-lua.core').fzf_exec(
+  FzfLua.fzf_exec(
     function(fzf_cb)
       for i, item in bufdata:iter({ skip_hidden = false }) do
         local icon = config.get_icon(bufnr, item.kind)
@@ -70,6 +75,7 @@ return function(opts)
         _ctor = function()
           local base = require 'fzf-lua.previewer.builtin'.buffer_or_file
           local previewer = base:extend()
+          --- @diagnostic disable-next-line: unused
           function previewer:parse_entry(entry_str) return parse_entry(entry_str) end
           function previewer:set_cursor_hl(entry)
             pcall(api.nvim_win_call, self.win.preview_winid, function()

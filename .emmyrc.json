@@ -1,26 +1,37 @@
 {
   "$schema": "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json",
   "runtime": {
-    "version": "LuaJIT"
+    "version": "LuaJIT",
+    "requirePattern": [
+      "lua/?.lua",
+      "lua/?/init.lua"
+    ]
+  },
+  "woefj": "eowfj",
+  "workspace": {
+    "library": [
+      "$VIMRUNTIME",
+      "${3rd}/luv/library",
+      "${3rd}/busted/library",
+      "${3rd}/luassert/library",
+      "deps/nvim-test",
+      "deps/.data/nvim/site/pack/core/opt/fzf-lua",
+      "deps/.data/nvim/site/pack/core/opt/aerial.nvim",
+      "deps/.data/nvim/site/pack/core/opt/mini.nvim",
+      "deps/.data/nvim/site/pack/core/opt/lazy.nvim",
+      "deps/.data/nvim/site/pack/core/opt/gitsigns.nvim"
+    ]
   },
   "diagnostics": {
     "disable": [
       "unnecessary-if",
+      "unnecessary-assert",
       "access-invisible",
       "assign-type-mismatch",
-      "await-in-sync",
       "inject-field",
       "need-check-nil",
-      "param-type-not-match",
-      "redefined-local",
-      "return-type-mismatch",
-      "type-not-found",
-      "undefined-field",
-      "undefined-global",
-      "unnecessary-assert",
-      "unnecessary-if",
-      "unused",
-      "missing-fields"
+      "missing-fields",
+      "param-type-not-match"
     ],
     "enables": []
   },
@@ -30,6 +41,5 @@
   },
   "codeAction": {
     "insertSpace": true
-  },
-  "workspace": {}
+  }
 }

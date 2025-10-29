@@ -1,6 +1,10 @@
+---@class fle.config.NodeLines: fzf-lua.config.Base
+local __DEFAULT__ = {}
+
 local api, fn = vim.api, vim.fn
 ---@param opts { query: string?, node: TSNode? }
 local function nodelines(opts)
+  assert(__DEFAULT__)
   opts = opts or {}
   local stop = { function_definition = true }
   local node = opts.node or vim.treesitter.get_node()

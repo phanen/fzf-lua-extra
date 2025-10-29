@@ -1,7 +1,7 @@
 local utils = require 'fzf-lua.utils'
 local exec_lua = function(_) return _ end
 
----@type fzf-lua.config.Base|{}
+---@class fle.config.Ps: fzf-lua.config.Base
 local __DEFAULT__ = {
   cmd = 'ps --sort=-pid -eo pid,ppid,cmd',
   ps_preview_cmd = 'ps --no-headers -wwo cmd',
@@ -57,15 +57,19 @@ local __DEFAULT__ = {
   },
   previewer = {
     _ctor = function()
-      ---@type fzf-lua.previewer.Fzf
+      ---@class fle.previewer.Ps: fzf-lua.previewer.Fzf
+      ---@field opts fle.config.Ps
       local p = require('fzf-lua.previewer.fzf').cmd_async:extend()
+      --- @diagnostic disable-next-line: unused
       function p:fzf_delimiter() return '\\s+' end
       function p:cmdline(_)
-        return FzfLua.shell.stringify_cmd(function(items)
-          local pid = (items[1]):match('^%s*(%d+)')
-          if not pid then return 'echo no preview' end
-          return self.opts.ps_preview_cmd .. ' ' .. pid
-        end, self.opts, '{}')
+        return (
+          FzfLua.shell.stringify_cmd(function(items)
+            local pid = (items[1]):match('^%s*(%d+)')
+            if not pid then return 'echo no preview' end
+            return self.opts.ps_preview_cmd .. ' ' .. pid
+          end, self.opts, '{}')
+        )
       end
       return p
     end,
@@ -77,12 +81,7 @@ local __DEFAULT__ = {
     ['ctrl-x'] = {
       ----@param selected string[]
       fn = function(selected)
-        local pids = vim.tbl_map(
-          ---@param s string
-          ---@return integer
-          function(s) return tonumber(s:match('^%s*(%d+)')) end,
-          selected
-        )
+        local pids = vim.tbl_map(function(s) return tonumber(s:match('^%s*(%d+)')) end, selected)
         local sig = require('fzf-lua.utils').input('signal: ', 'sigkill')
         if not sig then return end
         vim.tbl_map(

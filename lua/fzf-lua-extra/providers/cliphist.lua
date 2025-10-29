@@ -1,4 +1,4 @@
----@type fzf-lua.config.Base|{}
+---@class fle.config.Cliphist: fzf-lua.config.Base
 local __DEFAULT__ = {
   fzf_opts = {
     ['--no-sort'] = true,

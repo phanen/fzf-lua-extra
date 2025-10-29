@@ -1,4 +1,4 @@
----@type fzf-lua.config.Base|{}
+---@class fle.config.Visits: fzf-lua.config.Base
 local __DEFAULT__ = {
   silent = true,
   previewer = 'builtin',
@@ -12,7 +12,6 @@ local __DEFAULT__ = {
 ---@diagnostic disable-next-line: no-unknown
 return function(opts)
   assert(__DEFAULT__)
-  local f = require('fzf-lua')
   local contents = function(cb)
     coroutine.wrap(function()
       local co = coroutine.running()
@@ -20,11 +19,11 @@ return function(opts)
       ---@diagnostic disable-next-line: no-unknown
       local paths = require('mini.visits').list_paths(opts.cwd or '', { filter = opts.filter })
       for _, file in ipairs(paths) do
-        cb(f.make_entry.file(file, opts), function() coroutine.resume(co) end)
+        cb(FzfLua.make_entry.file(file, opts), function() coroutine.resume(co) end)
         coroutine.yield()
       end
       cb(nil)
     end)()
   end
-  f.fzf_exec(contents, opts)
+  FzfLua.fzf_exec(contents, opts)
 end

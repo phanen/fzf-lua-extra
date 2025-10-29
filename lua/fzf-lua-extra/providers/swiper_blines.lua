@@ -1,3 +1,6 @@
+---@class fle.config.SwiperBlines: fzf-lua.config.Base
+local __DEFAULT__ = {}
+
 ---@class swiper_state
 ---@field lnum integer?
 ---@field parsing_lnum integer?
@@ -6,6 +9,7 @@
 ---@field text string[]?
 
 return function()
+  assert(__DEFAULT__)
   local off = vim.o.cmdheight + (vim.o.laststatus and 1 or 0)
   local height = math.ceil(vim.o.lines / 4)
   local ns = vim.api.nvim_create_namespace('swiper')

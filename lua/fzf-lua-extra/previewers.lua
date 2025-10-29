@@ -1,6 +1,8 @@
 local M = {}
+
 local previewer = require('fzf-lua.previewer.builtin')
 local utils = require('fzf-lua-extra.utils')
+local fs = vim.fs
 
 ---@param _self fzf-lua.previewer.Gitignore
 ---@param content string[]
@@ -23,22 +25,44 @@ local p_type = {
   LOCAL = 1, -- local module
   UNINS_GH = 2, -- uninstall, url is github
   UNINS_NO_GH = 3, -- uninstall, not github
-  INS_MD = 4, -- install, readme found
-  INS_NO_MD = 5, -- install, readme not found
+  INS_MD = 4, -- installed, readme found
+  INS_NO_MD = 5, -- installed, readme not found
 }
+
+-- Helper to check for README variants
+local function find_readme(dir)
+  local readme_names = {
+    'README.md',
+    'readme.md',
+    'Readme.md',
+    'README.markdown',
+    'readme.markdown',
+    'Readme.markdown',
+    'README',
+    'readme',
+    'Readme',
+  }
+  for name, type in fs.dir(dir) do
+    if type == 'file' then
+      for _, rname in ipairs(readme_names) do
+        if name:lower() == rname:lower() then return fs.joinpath(dir, name) end
+      end
+    end
+  end
+  return nil
+end
 
 ---@param entry_str string
 ---@return LazyPlugin
 local parse_entry = function(_, entry_str)
   local slices = vim.split(entry_str, '/')
-  local name = slices[#slices]
-  local plugins = utils.get_lazy_plugins()
-  return plugins[name]
+  local name = assert(slices[#slices])
+  return assert(utils.get_lazy_plugins()[name])
 end
 
 -- item can be a fullname or just a plugin name
 ---@param plugin LazyPlugin plugin spec
----@return plugin_type,any
+---@return plugin_type, any
 local parse_plugin_type = function(_, plugin)
   local dir = plugin.dir
 
@@ -49,11 +73,9 @@ local parse_plugin_type = function(_, plugin)
     return p_type.UNINS_NO_GH
   end
 
-  for name, type in vim.fs.dir(dir) do
-    if type == 'file' and name:lower():find('readme') then
-      return p_type.INS_MD, vim.fs.joinpath(dir, name)
-    end
-  end
+  -- README check
+  local readme_path = find_readme(dir)
+  if readme_path then return p_type.INS_MD, readme_path end
 
   return p_type.INS_NO_MD
 end
@@ -75,24 +97,18 @@ function M.lazy:populate_preview_buf(entry_str)
   local plugin = parse_entry(self, entry_str)
   local t, data = parse_plugin_type(self, plugin)
 
-  ---@type (string|fun():string)[]
+  ---@type table<plugin_type, string|fun():string>
   local handlers = {
-    -- TODO: parse local dir (absolute, or relative to vim.fn.stdpath('config'))
     [p_type.LOCAL] = function()
       local path = vim.fn.stdpath('config') .. '/lua/' .. plugin.dir .. '.lua'
       if path then return ('cat %s'):format(path) end
       return 'echo Local module!'
     end,
 
-    -- https://raw.githubusercontent.com/author/repo/master/README.md
-    -- main? master
-    -- FIXME: 1. if subprocess false, still return 0; 2. 404 is even not a false (drop output if 404?)
-    -- anyway, we just always run both commands here
     [p_type.UNINS_GH] = function()
       return ('echo "> Not Installed (fetch from github)!\n" && curl -sL %s && curl -sL %s'):format(
         github_raw_url(plugin.url, 'README.md'),
         github_raw_url(plugin.url, 'readme.md')
-        -- although there are other name (e.g. tpope use Readme.markdown)...
       )
     end,
 
@@ -112,15 +128,11 @@ function M.lazy:populate_preview_buf(entry_str)
     self.filetype = 'lua'
   end
 
-  vim.system(
-    ---@cast cmd string
-    { 'sh', '-c', cmd },
-    ---@diagnostic disable-next-line: param-type-mismatch
-    function(obj)
-      local content = vim.split(obj.stdout, '\n')
-      preview_with(self, content)
-    end
-  )
+  utils.arun(function()
+    local obj = utils.run({ 'sh', '-c', cmd })
+    local content = vim.split(obj.stdout or '', '\n')
+    preview_with(self, content)
+  end)
 end
 
 ---@class fzf-lua.previewer.Gitignore: fzf-lua.previewer.Builtin
@@ -139,7 +151,9 @@ function M.gitignore:new(o, opts)
 end
 
 function M.gitignore:populate_preview_buf(entry_str)
-  utils.gh_cache(self.api_root .. '/' .. entry_str, function(_, json)
+  utils.arun(function()
+    local route = fs.joinpath(self.api_root, entry_str)
+    local json = utils.gh(route)
     ---@type string
     local content = assert(json[self.json_key])
     preview_with(self, vim.split(content, '\n'))

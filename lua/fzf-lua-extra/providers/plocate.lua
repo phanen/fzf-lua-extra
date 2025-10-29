@@ -1,6 +1,10 @@
+---@class fle.config.Plocate: fzf-lua.config.Base
+local __DEFAULT__ = {}
+
 ---TODO:
 ---@diagnostic disable-next-line: no-unknown
 return function(opts)
+  assert(__DEFAULT__)
   require('fzf-lua')
   opts = opts or {}
   local search = FzfLua.utils.input('Grep > ')
@@ -22,8 +26,8 @@ return function(opts)
       change = {
         fn = function() end,
         exec_silent = true,
-        postfix = 'transform:' .. require('fzf-lua.shell').stringify_data(function(sel)
-          local sq, gq = unpack(vim.split(unpack(sel), '%s%-%-%s'))
+        postfix = 'transform:' .. FzfLua.shell.stringify_data(function(sel)
+          local sq, gq = unpack(vim.split(unpack(sel) --[[@as string]], '%s%-%-%s'))
           local gq_changed = gq ~= last_gq
           last_gq = gq
           if gq_changed then return ('reload(%s %q)+search:%s'):format(cmd, gq, sq) end

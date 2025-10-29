@@ -88,7 +88,7 @@ describe('main', function()
         { src = 'https://github.com/folke/lazy.nvim' },
         { src = 'https://github.com/lewis6991/gitsigns.nvim' },
       } or {
-        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'b/fzf-lua') },
+        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'b/fzf-lua'), version = 'cli' },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/aerial.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/mini.nvim') },
         { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/lazy.nvim') },
@@ -105,6 +105,7 @@ describe('main', function()
       vim.opt.rtp:append('.')
       vim.cmd.runtime { 'plugin/fzf-lua-extra.lua', bang = true }
     end)
+    if os.getenv('update_only') then os.exit(0) end
     -- print('SERVERNAME:', n.api.nvim_get_vvar('servername'))
     -- n.feed('y')
     -- screen:print_snapshot()
@@ -122,7 +123,12 @@ describe('main', function()
       n.api.nvim_command('edit test/main_spec.lua')
       n.fn.search('function(')
       exec_lua(function(name0, scale0)
-        assert(xpcall(function() require('fzf-lua-extra')[name0]() end, debug.traceback))
+        local opts = {
+          cmd = { query = 'journalctl --user -u kanata' },
+          ex = { query = 'ls' },
+          repl = { query = 'vim.api.nvim_list_uis()' },
+        }
+        assert(xpcall(function() require('fzf-lua-extra')[name0](opts[name0]) end, debug.traceback))
         -- vim.api.nvim_command('sleep 100m') wait jobstart, check callback codepath
         -- vim.uv.sleep(100)
         vim.defer_fn(function() vim.api.nvim_input(('<c-j>'):rep(4)) end, 100 * scale0)

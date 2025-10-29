@@ -1,7 +1,7 @@
 -- Update README.md providers section with generated list
 -- Usage: nvim -l scripts/gen_readme.lua
 
-local luv = vim.loop
+local luv = vim.uv
 local dir = 'lua/fzf-lua-extra/providers/'
 local readme = 'README.md'
 local section_start = '<!-- providers:start -->'
