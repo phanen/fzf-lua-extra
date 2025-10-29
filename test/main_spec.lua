@@ -130,7 +130,7 @@ describe('main', function()
         }
         assert(xpcall(function() require('fzf-lua-extra')[name0](opts[name0]) end, debug.traceback))
         -- vim.api.nvim_command('sleep 100m') wait jobstart, check callback codepath
-        -- vim.uv.sleep(100)
+        vim.uv.sleep(100)
         vim.defer_fn(function() vim.api.nvim_input(('<c-j>'):rep(4)) end, 100 * scale0)
       end, name, scale)
       n.sleep(200 * scale)
