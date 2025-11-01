@@ -34,12 +34,11 @@ return function(opts)
   ---@param entry_str string
   ---@return fzf-lua.buffer_or_file.Entry
   local parse_entry = function(entry_str)
-    ---@type string, string
     local idx0, _ = entry_str:match('^(%d+)\t(.*)$')
     local idx = assert(utils.tointeger(idx0))
     local item = assert(items[idx], entry_str)
     return {
-      bufnr = tonumber(bufnr),
+      bufnr = utils.tointeger(bufnr),
       bufname = filename,
       path = filename,
       line = item.lnum or 0,

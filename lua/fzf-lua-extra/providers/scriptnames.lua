@@ -1,17 +1,14 @@
 ---@class fle.config.Scriptnames: fzf-lua.config.Base
-local __DEFAULT__ = {}
+local __DEFAULT__ = {
+  previewer = 'builtin',
+  _fmt = { from = function(e, _) return vim.fn.expand(e) end },
+  winopts = { preview = { hidden = 'nohidden' } },
+  file_icons = true,
+  actions = { ['enter'] = require('fzf-lua.actions').file_sel_to_qf },
+}
 
 return function(opts)
   assert(__DEFAULT__)
-  local default = {
-    previewer = 'builtin',
-    _fmt = { from = function(e, _) return vim.fn.expand(e) end },
-    winopts = { preview = { hidden = 'nohidden' } },
-    file_icons = true,
-    actions = { ['enter'] = require('fzf-lua.actions').file_sel_to_qf },
-  }
-  opts = vim.tbl_deep_extend('force', default, opts or {})
-
   local utils = require('fzf-lua.utils')
   local green = utils.ansi_codes.green
   local blue = utils.ansi_codes.blue
@@ -19,7 +16,7 @@ return function(opts)
   local contents = vim
     .iter(vim.fn.getscriptinfo())
     :map(function(s) return s.name end)
-    :map(require('fzf-lua-extra.utils').replace_with_envname)
+    :map(require('fzf-lua-extra.utils').format_env)
     :map(
       ---@param path string
       ---@return string
@@ -32,6 +29,5 @@ return function(opts)
       end
     )
     :totable()
-
   return FzfLua.fzf_exec(contents, opts)
 end

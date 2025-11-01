@@ -23,7 +23,8 @@ return function()
         exec_silent = true,
         postfix = 'transform:'
           .. require('fzf-lua.shell').stringify_data(function(sel)
-            local sq, gq = unpack(vim.split(unpack(sel), '%s%-%-%s'))
+            if not sel[1] then return end
+            local sq, gq = unpack(vim.split(sel[1], '%s%-%-%s'))
             local gq_changed = gq ~= last_gq
             last_gq = gq
             if gq_changed then return ('reload(%s "" --iglob %q)+search:%s'):format(cmd, gq, sq) end

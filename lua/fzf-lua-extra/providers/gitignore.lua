@@ -1,9 +1,9 @@
-local api_root = 'gitignore/templates'
+local endpoint = 'gitignore/templates'
 
 ---@class fle.config.Gitignore: fzf-lua.config.Base
 local __DEFAULT__ = {
   previewer = { _ctor = function() return require('fzf-lua-extra.previewers').gitignore end },
-  api_root = api_root,
+  endpoint = endpoint,
   json_key = 'source',
   filetype = 'gitignore',
   winopts = { preview = { hidden = true } },
@@ -22,9 +22,8 @@ local __DEFAULT__ = {
         end
         ---@type string
         local filetype = assert(selected[1])
-        local route = vim.fs.joinpath(api_root, filetype)
         utils.arun(function()
-          local json = utils.gh(route)
+          local json = utils.gh({ endpoint = vim.fs.joinpath(endpoint, filetype) })
           local content = assert(json.source)
           utils.write_file(path, content)
           vim.cmd.edit(path)
@@ -39,7 +38,7 @@ return function(opts)
   local utils = require('fzf-lua-extra.utils')
   local contents = function(fzf_cb)
     utils.arun(function()
-      local json = utils.gh(opts.api_root)
+      local json = utils.gh({ endpoint = opts.endpoint })
       vim.iter(json):each(fzf_cb)
       fzf_cb()
     end)

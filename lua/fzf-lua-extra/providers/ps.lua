@@ -40,7 +40,8 @@ local __DEFAULT__ = {
     ['hl'] = '-1:reverse',
   },
   keymap = function(opts)
-    return {
+    return { -- TODO: emmylua bug, code action applied on wrong pos
+      --- @diagnostic disable-next-line: assign-type-mismatch
       fzf = {
         ['click-header'] = utils.has(opts, 'fzf', { 0, 60 })
             and [[transform-nth(echo "$FZF_CLICK_HEADER_NTH")+transform-prompt(echo "$FZF_CLICK_HEADER_WORD> ")]]
@@ -65,7 +66,8 @@ local __DEFAULT__ = {
       function p:cmdline(_)
         return (
           FzfLua.shell.stringify_cmd(function(items)
-            local pid = (items[1]):match('^%s*(%d+)')
+            if not items[1] then return FzfLua.utils.shell_nop() end
+            local pid = items[1]:match('^%s*(%d+)')
             if not pid then return 'echo no preview' end
             return self.opts.ps_preview_cmd .. ' ' .. pid
           end, self.opts, '{}')

@@ -19,7 +19,7 @@ local register = function(name, mod)
       FzfLua.defaults[name] = default
       opts = require('fzf-lua.config').normalize_opts(opts or {}, name)
     end
-    FzfLua.utils.set_info({ cmd = name, fnc = name, mod = mod })
+    FzfLua.set_info({ cmd = name, fnc = name, mod = mod })
     return f(opts)
   end
 end

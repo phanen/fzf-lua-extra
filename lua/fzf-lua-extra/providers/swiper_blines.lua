@@ -1,3 +1,4 @@
+--- @diagnostic disable
 ---@class fle.config.SwiperBlines: fzf-lua.config.Base
 local __DEFAULT__ = {}
 
@@ -85,7 +86,7 @@ return function()
       end,
       on_close = function()
         vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-        vim.api.nvim_win_set_cursor(0, FzfLua.utils.__CTX().cursor)
+        vim.api.nvim_win_set_cursor(0, assert(FzfLua.utils.__CTX()).cursor)
         FzfLua.utils.zz()
       end,
     },
@@ -98,6 +99,7 @@ return function()
           local entry = FzfLua.path.entry_to_file(sel[1], opts)
           if not entry.line then return end
           local ctx = FzfLua.utils.CTX()
+          --- @diagnostic disable-next-line: assign-type-mismatch
           pcall(vim.api.nvim_win_set_cursor, ctx.winid, { entry.line, entry.col })
         end,
         field_index = '{}',

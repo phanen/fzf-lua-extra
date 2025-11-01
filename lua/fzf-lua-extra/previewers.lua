@@ -4,11 +4,12 @@ local previewer = require('fzf-lua.previewer.builtin')
 local utils = require('fzf-lua-extra.utils')
 local fs = vim.fs
 
----@param _self fzf-lua.previewer.Gitignore
+---@param _self fzf-lua.previewer.Builtin
 ---@param content string[]
 local preview_with = vim.schedule_wrap(function(_self, content)
   local tmpbuf = _self:get_tmp_buffer()
   vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, content)
+  --- @diagnostic disable-next-line: undefined-field
   if _self.filetype then vim.bo[tmpbuf].filetype = _self.filetype end
   _self:set_preview_buf(tmpbuf)
   _self.win:update_preview_scrollbar()
@@ -80,7 +81,9 @@ local parse_plugin_type = function(_, plugin)
   return p_type.INS_NO_MD
 end
 
-M.lazy = previewer.base:extend()
+---@class fle.previewer.Lazy: fzf-lua.previewer.BufferOrFile
+---@field super fzf-lua.previewer.BufferOrFile
+M.lazy = previewer.buffer_or_file:extend()
 
 function M.lazy:new(o, opts, fzf_win)
   M.lazy.super.new(self, o, opts, fzf_win)
@@ -121,7 +124,7 @@ function M.lazy:populate_preview_buf(entry_str)
 
   local handler = handlers[t]
   if not handler then return end
-  local cmd = type(handler) == 'function' and handler() or handler
+  local cmd = type(handler) == 'function' and handler() or handler ---@cast cmd string
   if t == p_type.INS_MD or t == p_type.UNINS_GH then
     self.filetype = 'markdown'
   elseif t == p_type.LOCAL then
@@ -135,16 +138,16 @@ function M.lazy:populate_preview_buf(entry_str)
   end)
 end
 
----@class fzf-lua.previewer.Gitignore: fzf-lua.previewer.Builtin
+---@class fle.previewer.Gitignore: fzf-lua.previewer.Builtin
 ---@field super fzf-lua.previewer.Builtin
----@field api_root string
+---@field endpoint string
 ---@field filetype string
 ---@field json_key string
 M.gitignore = previewer.buffer_or_file:extend()
 
 function M.gitignore:new(o, opts)
   M.gitignore.super.new(self, o, opts)
-  self.api_root = opts.api_root
+  self.endpoint = opts.endpoint
   self.filetype = opts.filetype
   self.json_key = opts.json_key
   return self
@@ -152,8 +155,8 @@ end
 
 function M.gitignore:populate_preview_buf(entry_str)
   utils.arun(function()
-    local route = fs.joinpath(self.api_root, entry_str)
-    local json = utils.gh(route)
+    local endpoint = fs.joinpath(self.endpoint, entry_str)
+    local json = utils.gh({ endpoint = endpoint })
     ---@type string
     local content = assert(json[self.json_key])
     preview_with(self, vim.split(content, '\n'))

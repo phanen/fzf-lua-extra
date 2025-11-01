@@ -1,4 +1,4 @@
----@diagnostic disable: invisible, no-unknown
+---@diagnostic disable: invisible, no-unknown, assign-type-mismatch, param-type-mismatch, need-check-nil
 local n = require('nvim-test.helpers')
 local Screen = require('nvim-test.screen')
 local exec_lua = n.exec_lua
@@ -101,7 +101,7 @@ describe('main', function()
       require('fzf-lua').setup({ 'hide' })
       require('mini.visits').setup()
       require('mini.icons').setup()
-      require('gitsigns').setup({})
+      require('gitsigns').setup()
       vim.opt.rtp:append('.')
       vim.cmd.runtime { 'plugin/fzf-lua-extra.lua', bang = true }
     end)

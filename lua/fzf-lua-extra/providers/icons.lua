@@ -1,6 +1,3 @@
----@module 'vim._async'
-local async = vim.F.npcall(require, 'vim._async') or require('fzf-lua-extra.compat.async')
-
 local utils = require('fzf-lua-extra.utils')
 
 ---@class fle.config.Icons: fzf-lua.config.Base
@@ -21,9 +18,7 @@ local __DEFAULT__ = {
     if not s then return '' end
     if _o.__CTX.mode == 'i' then col = col - 1 end
     local cur_end = (line:len() == 0 or col == 0) and 0 or col + vim.str_utf_end(line, col)
-    ---@type string
     local icon = s:match(('^(.-)' .. FzfLua.utils.nbsp))
-    ---@type string
     local newline = line:sub(1, cur_end) .. icon .. line:sub(cur_end + 1)
     return newline, cur_end
   end,
@@ -42,14 +37,16 @@ local __DEFAULT__ = {
 return function(opts)
   assert(__DEFAULT__)
   local contents = function(cb)
-    async.run(function()
+    utils.arun(function()
       local nerds = vim.json.decode(
+        --- @diagnostic disable-next-line: param-type-mismatch
         utils.run(
           { 'curl', '-sL', opts.glyphnames_url },
           { cache_path = utils.path('glyphnames.json'), cache_invalid = opts.cache_invalid }
         ).stdout
       )
       local emojis = vim.json.decode(
+        --- @diagnostic disable-next-line: param-type-mismatch
         utils.run(
           { 'curl', '-sL', opts.emojis_url },
           { cache_path = utils.path('emojis.json'), cache_invalid = opts.cache_invalid }
