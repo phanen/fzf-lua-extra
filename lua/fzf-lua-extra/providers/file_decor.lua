@@ -18,8 +18,9 @@ local __DEFAULT__ = {
         on_line = function(_, _, buf, lnum)
           -- skip prompt 0, maybe not the first line though
           if buf ~= e.bufnr or lnum == 0 then return end
-          local content =
-            vim.api.nvim_buf_get_lines(buf, lnum, lnum + 1, true)[1]:match('^%s*(%S+)')
+          local line = vim.api.nvim_buf_get_lines(buf, lnum, lnum + 1, true)[1]
+          if not line then return end
+          local content = line:match('^%s*(%S+)')
           if not content then
             if lmarks[lnum] then
               vim.api.nvim_buf_del_extmark(buf, ns, lmarks[lnum][1])

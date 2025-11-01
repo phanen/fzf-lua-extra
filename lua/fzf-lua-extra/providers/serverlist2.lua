@@ -1,3 +1,4 @@
+---@diagnostic disable
 local uv = vim.uv
 
 local spawn = function()

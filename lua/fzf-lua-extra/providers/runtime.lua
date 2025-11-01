@@ -23,14 +23,13 @@ local test = function()
     -- sometimes we don't reload?
     f = api.nvim_get_runtime_file(glob, true)
     return f
+    ---@diagnostic disable-next-line: param-type-mismatch
   end, {
     fzf_opts = { ['--listen'] = true },
     previewer = 'builtin',
     -- live_field_index = '{q} $FZF_PORT',
     actions = {
       start = {
-        ---TODO:
-        ---@param s string[]
         fn = function(s) port = unpack(s) end,
         field_index = '$FZF_PORT',
         exec_silent = true,
@@ -43,7 +42,7 @@ return function()
   ---@type string[]
   local rtp = vim.opt.runtimepath:get()
   -- If using lazy.nvim, get all the lazy loaded plugin paths (#1296)
-  local lazy = package.loaded['lazy.core.util'] ---@type table
+  local lazy = package.loaded['lazy.core.util']
   if lazy and lazy.get_unloaded_rtp then vim.list_extend(rtp, (lazy.get_unloaded_rtp(''))) end
   FzfLua.live_grep({ search_paths = rtp, actions = { ['alt-t'] = test } })
 end

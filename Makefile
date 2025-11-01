@@ -108,7 +108,7 @@ else
     EMMYLUA_ARCH ?= x64
 endif
 
-EMMYLUA_REF := 0.11.0
+EMMYLUA_REF := 0.16.0
 EMMYLUA_OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 EMMYLUA_RELEASE_URL := https://github.com/EmmyLuaLs/emmylua-analyzer-rust/releases/download/$(EMMYLUA_REF)/emmylua_check-$(EMMYLUA_OS)-$(EMMYLUA_ARCH).tar.gz
 EMMYLUA_RELEASE_TAR := deps/emmylua_check-$(EMMYLUA_REF)-$(EMMYLUA_OS)-$(EMMYLUA_ARCH).tar.gz
@@ -145,5 +145,4 @@ $(NVIM_TEST_RUNTIME): $(NVIM_TEST)
 emmylua-check: $(EMMYLUA_BIN) $(NVIM_TEST_RUNTIME)
 	VIMRUNTIME=$(NVIM_TEST_RUNTIME) \
 		$(EMMYLUA_BIN) . \
-		--ignore 'deps/**/*' \
-		--ignore gen_help.lua
+		--ignore 'deps/**/*'

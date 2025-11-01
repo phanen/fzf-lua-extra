@@ -1,5 +1,6 @@
 local M = {}
 
+---@diagnostic disable-next-line: assign-type-mismatch
 ---@module 'vim._async'
 local async = vim.F.npcall(require, 'vim._async') or require('fzf-lua-extra.compat.async')
 
@@ -10,9 +11,14 @@ local state_path ---@type string
 ---@param ... string
 ---@return string
 M.path = function(...)
-  state_path = state_path or fn.stdpath('state')
-  --- @diagnostic disable-next-line: param-type-not-match
+  state_path = state_path or M.stdpath('state')
   return fs.joinpath(state_path, 'fzf-lua-extra', ...)
+end
+
+---@param s string
+---@return string
+M.stdpath = function(s) ---@diagnostic disable-next-line: param-type-mismatch, return-type-mismatch
+  return fn.stdpath(s)
 end
 
 M.arun = async.run
@@ -125,22 +131,21 @@ M.run = function(cmd, opts)
 end
 
 ---@class fle.gh.Opts
+---@field endpoint string
 ---@field method? string
 ---@field headers? table
 ---@field data? any
 
 ---github restful api with cache
 ---@async
----@param route string
----@param opts? fle.gh.Opts
+---@param opts fle.gh.Opts
 ---@return table
-M.gh = function(route, opts)
-  opts = opts or {}
+M.gh = function(opts)
   local method = opts.method or 'GET'
   local headers = opts.headers or {}
   local data = opts.data
 
-  local cmd = { 'gh', 'api', route, '--method', method }
+  local cmd = { 'gh', 'api', opts.endpoint, '--method', method }
 
   -- Add headers if provided
   for k, v in pairs(headers) do
@@ -166,7 +171,7 @@ M.gh = function(route, opts)
   local sopts = {} ---@type fle.SystemOpts
   if data then sopts.stdin = vim.json.encode(data) end
   sopts.cache_invalid = function(_) return false end
-  sopts.cache_path = M.path(route .. '.json')
+  sopts.cache_path = M.path(opts.endpoint .. '.json')
 
   local obj = M.run(cmd, sopts)
   local stdout = obj.stdout or ''
@@ -177,34 +182,32 @@ end
 
 ---@param name string
 ---@return string
-M.replace_with_envname = function(name)
-  local xdg_config = vim.env.XDG_CONFIG_HOME ---@type string
-  local xdg_state = vim.env.XDG_STATE_HOME ---@type string
-  local xdg_cache = vim.env.XDG_CACHE_HOME ---@type string
-  local xdg_data = vim.env.XDG_DATA_HOME ---@type string
-  local vimruntime = vim.env.VIMRUNTIME ---@type string
-
-  -- archlinux specific system-wide configs...
-  local vimfile = '/usr/share/vim/vimfiles'
-  vim.env.VIMFILE = vimfile
-  -- note: lazy root may locate in xdg_data
-  -- so it should be mached before data_home
-  local lazy = vim.tbl_get(package.loaded['lazy.core.config'] or {}, 'options', 'root')
-  vim.env.LAZY = lazy
+M.format_env = function(name)
+  local env_vars = {
+    {
+      key = 'LAZY',
+      color = 'cyan',
+      get = function(env)
+        local v = vim.tbl_get(package.loaded['lazy.core.config'] or {}, 'options', 'root')
+        env.LAZY = v
+        return v
+      end,
+    },
+    { key = 'XDG_CONFIG_HOME', color = 'yellow' },
+    { key = 'XDG_STATE_HOME', color = 'red' },
+    { key = 'XDG_CACHE_HOME', color = 'grey' },
+    { key = 'XDG_DATA_HOME', color = 'green' },
+    { key = 'VIMFILE', color = 'red', get = function() return '/usr/share/vim/vimfiles' end },
+    { key = 'VIMRUNTIME', color = 'red' },
+  }
 
   local ac = require('fzf-lua.utils').ansi_codes
-  local patterns = {
-    { var = lazy, color = ac.cyan, label = '$LAZY' },
-    { var = xdg_config, color = ac.yellow, label = '$XDG_CONFIG_HOME' },
-    { var = xdg_state, color = ac.red, label = '$XDG_STATE_HOME' },
-    { var = xdg_cache, color = ac.grey, label = '$XDG_CACHE_HOME' },
-    { var = xdg_data, color = ac.green, label = '$XDG_DATA_HOME' },
-    { var = vimfile, color = ac.red, label = '$VIMFILE' },
-    { var = vimruntime, color = ac.red, label = '$VIMRUNTIME' },
-  }
-  for _, p in ipairs(patterns) do
-    if p.var and name:match('^' .. p.var) then
-      name = name:gsub('^' .. p.var, p.color(p.label))
+
+  for _, env in ipairs(env_vars) do
+    local value = env.get and env.get(vim.env) or vim.env[env.key]
+    if value and name:match('^' .. vim.pesc(value)) then
+      local color_fn = ac[env.color] or function(x) return x end
+      name = name:gsub('^' .. vim.pesc(value), color_fn('$' .. env.key))
       break
     end
   end
@@ -222,6 +225,7 @@ M.fix_actions = function(format)
       if old_fn then
         actions[a].fn = function(s, ...)
           if s[1] and vim.startswith(s[1], '/tmp/fzf-temp-') then -- {+f} is used as field_index
+            ---@diagnostic disable-next-line: need-check-nil
             s = vim.split(io.open(s[1], 'r'):read('*a'), '\n')
             s[#s] = nil
           end

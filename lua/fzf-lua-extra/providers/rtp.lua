@@ -18,7 +18,7 @@ return function(opts)
   local clear_pat = vim.pesc(clear)
   local contents = vim
     .iter(vim.api.nvim_list_runtime_paths())
-    :map(require('fzf-lua-extra.utils').replace_with_envname)
+    :map(require('fzf-lua-extra.utils').format_env)
     :map(
       ---@param path string
       ---@return string

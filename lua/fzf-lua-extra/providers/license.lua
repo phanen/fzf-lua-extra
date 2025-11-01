@@ -1,6 +1,6 @@
 local utils = require('fzf-lua-extra.utils')
 local fn, uv = vim.fn, vim.uv
-local api_root = 'licenses'
+local endpoint = 'licenses'
 
 local license_path = function(root)
   local path = vim
@@ -14,12 +14,12 @@ end
 ---@class fle.config.License: fzf-lua.config.Base
 local __DEFAULT__ = {
   previewer = { _ctor = function() return require('fzf-lua-extra.previewers').gitignore end },
-  api_root = api_root,
+  endpoint = endpoint,
   json_key = 'body',
   filetype = 'text',
+  ---@type fzf-lua.config.Actions
   actions = {
-    ---@param selected string[]
-    ['enter'] = function(selected)
+    enter = function(selected)
       local root = vim.fs.root(0, '.git')
       if not root then error('Not in a git repo') end
       if not selected[1] then return end
@@ -27,7 +27,7 @@ local __DEFAULT__ = {
       if not path then return end
       local license = assert(selected[1])
       utils.arun(function()
-        local json = utils.gh(api_root .. '/' .. license)
+        local json = utils.gh({ endpoint = vim.fs.joinpath(endpoint, license) })
         ---@type string
         local content = assert(json.body)
         utils.write_file(path, content)
@@ -42,7 +42,7 @@ return function(opts)
   opts = vim.tbl_deep_extend('force', __DEFAULT__, opts or {})
   local contents = function(fzf_cb)
     utils.arun(function()
-      local json = utils.gh(opts.api_root)
+      local json = utils.gh({ endpoint = opts.endpoint })
       vim.iter(json):each(function(item) fzf_cb(item.key) end)
       fzf_cb()
     end)

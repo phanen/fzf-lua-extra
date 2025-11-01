@@ -23,10 +23,8 @@ local __DEFAULT__ = {
   exec_empty_query = true,
   preview = {
     fn = function(s)
-      ---@type string
       local h = vim.split(s[1], '%s')[1]
       if not h then return end
-      ---@type string
       local S_args = q and q:match('%-S(%S+)')
       local cmd ---@type string
       if S_args then
@@ -41,7 +39,7 @@ local __DEFAULT__ = {
   },
   keymap = function(opts)
     local s = FzfLua.shell.stringify_data2
-    local insert = false
+    local insert = true
     local iOrN = function(a, b)
       return s(
         function(...)
@@ -60,8 +58,8 @@ local __DEFAULT__ = {
       fzf = {
         j = ('transform:%s'):format(iOrN('put:j', 'down')),
         k = ('transform:%s'):format(iOrN('put:k', 'up')),
-        u = ('transform:%s'):format(iOrN('put:d', 'half-page-down')),
-        d = ('transform:%s'):format(iOrN('put:u', 'half-page-up')),
+        u = ('transform:%s'):format(iOrN('put:u', 'half-page-down')),
+        d = ('transform:%s'):format(iOrN('put:d', 'half-page-up')),
         i = ('transform:%s'):format(iOrN('put:i', toggle)),
         ['ctrl-/'] = ('transform:%s'):format(s(toggle, opts, '')),
         -- start = 'beginning-of-line',
@@ -77,13 +75,11 @@ local __DEFAULT__ = {
   end,
   actions = {
     enter = function(s)
-      ---@type string
       local h = vim.split(s[1], '%s')[1]
       if not h then return end
       vim.cmd('Gedit ' .. h)
     end,
     ['ctrl-t'] = function(s)
-      ---@type string
       local h = vim.split(s[1], '%s')[1]
       if not h then return end
       vim.cmd('Gtabedit ' .. h)
@@ -101,8 +97,9 @@ return function(opts)
   opts._fzf_cli_args[#opts._fzf_cli_args + 1] = '--bind='
     .. require('fzf-lua.libuv').shellescape(
       'start,change:+transform:'
-        .. FzfLua.shell.stringify_data(function(_q, _, _)
-          q = _q[1]
+        .. FzfLua.shell.stringify_data(function(s, _, _)
+          if not s[1] then return end
+          q = s[1]
           local cmd =
             [[git log --color --pretty=format:"%C(yellow)%h%Creset %Cgreen(%cs)%Creset %s %Cblue<%an>%Creset" ]]
           return ('reload(%s)+search:%s'):format(

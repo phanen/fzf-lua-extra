@@ -1,3 +1,4 @@
+---@diagnostic disable
 -- Update README.md providers section with generated list
 -- Usage: nvim -l scripts/gen_readme.lua
 

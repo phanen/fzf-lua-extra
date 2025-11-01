@@ -7,7 +7,6 @@
       "lua/?/init.lua"
     ]
   },
-  "woefj": "eowfj",
   "workspace": {
     "library": [
       "$VIMRUNTIME",
@@ -26,12 +25,8 @@
     "disable": [
       "unnecessary-if",
       "unnecessary-assert",
-      "access-invisible",
-      "assign-type-mismatch",
-      "inject-field",
-      "need-check-nil",
       "missing-fields",
-      "param-type-not-match"
+      "access-invisible"
     ],
     "enables": []
   },

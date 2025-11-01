@@ -10,7 +10,6 @@ local getdefault = function(f, name)
   end
 end
 
----@diagnostic disable: no-unknown
 local register = function(name, mod)
   require('fzf-lua')[name] = function(opts)
     local f = require(mod)
@@ -19,7 +18,7 @@ local register = function(name, mod)
       FzfLua.defaults[name] = default
       opts = require('fzf-lua.config').normalize_opts(opts or {}, name)
     end
-    FzfLua.utils.set_info({ cmd = name, fnc = name, mod = mod })
+    FzfLua.set_info({ cmd = name, fnc = name, mod = mod })
     return f(opts)
   end
 end

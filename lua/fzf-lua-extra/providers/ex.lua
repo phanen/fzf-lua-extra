@@ -6,11 +6,10 @@ local __DEFAULT__ = {
   keymap = {
     fzf = {
       start = 'toggle-search',
-      tab = 'transform:' .. FzfLua.shell.stringify_data(
-        function(s, _, _) return 'change-query:' .. (s[1]:gsub('%S+$', s[2])) end,
-        {},
-        '{q} {}'
-      ),
+      tab = 'transform:' .. FzfLua.shell.stringify_data(function(s, _, _)
+        if not s[1] or not s[2] then return end
+        return 'change-query:' .. (s[1]:gsub('%S+$', s[2]))
+      end, {}, '{q} {}'),
     },
   },
   actions = {

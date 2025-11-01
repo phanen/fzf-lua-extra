@@ -65,7 +65,6 @@ return function(opts)
           async.schedule()
           local hunks = run_diff(repo:get_show_text(obj), util.file_lines(f_abs))
           async.schedule()
-          ---@diagnostic disable-next-line: param-type-mismatch
           cb_hunks(f_abs, hunks, cb, opts)
         end
       end

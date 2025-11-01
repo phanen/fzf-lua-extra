@@ -7,6 +7,7 @@ local getfunc = function(s)
   local name = s:match('function (.*)%(')
   if not name then return end
   local content = vim.split(vim.api.nvim_exec2('function ' .. name, { output = true }).output, '\n')
+  if not content[1] then return end
   local skip_col = #content[1]:match('(.*)function')
   local new_content = vim
     .iter(content)
