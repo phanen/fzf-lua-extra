@@ -217,7 +217,7 @@ end
 ---@param format? function
 ---@return fzf-lua.config.Actions
 M.fix_actions = function(format)
-  local actions = FzfLua.config.globals.actions.files ---@type fzf-lua.config.Actions
+  local actions = vim.deepcopy(FzfLua.config.globals.actions.files) ---@type fzf-lua.config.Actions
   for a, f in pairs(actions) do
     if type(a) == 'string' then
       if type(f) == 'function' then actions[a] = { fn = f } end
