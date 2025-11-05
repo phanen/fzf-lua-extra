@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.8.0](https://github.com/phanen/fzf-lua-extra/compare/v3.7.0...v3.8.0) (2025-11-05)
+
+
+### Features
+
+* treesitter hl ps ([a04601c](https://github.com/phanen/fzf-lua-extra/commit/a04601c1b7e6ba66ea0e09a445eabac6b28424ff))
+
+
+### Bug Fixes
+
+* _G.FzfLua give types ([83e563a](https://github.com/phanen/fzf-lua-extra/commit/83e563ad8712d7fa7c0230272494f92b1d32f085))
+* actions in global config ([6873166](https://github.com/phanen/fzf-lua-extra/commit/6873166adab69013c53b5ffd6e33d99aae2ce4b1))
+* config types ([4a2c0e3](https://github.com/phanen/fzf-lua-extra/commit/4a2c0e307a67e967c0d1c27343f53daa339692bd))
+* connect error ([81cc1e5](https://github.com/phanen/fzf-lua-extra/commit/81cc1e53e252b92297ec185448645c5abff996bd))
+* deepcopy global opts ([6640dc5](https://github.com/phanen/fzf-lua-extra/commit/6640dc55995ca286cfb36dff465ec241fb7404e4))
+* force update without confirm buf ([9ae0ccd](https://github.com/phanen/fzf-lua-extra/commit/9ae0ccd0f447a51f0d6123f027f999e2d73e5b51))
+* hunk stream early truncated ([432fd58](https://github.com/phanen/fzf-lua-extra/commit/432fd5851f1accde5fb1ccc111670700170c7c47))
+* **hunks:** weird coredump in test ([253789c](https://github.com/phanen/fzf-lua-extra/commit/253789c04e9e01aec10074cef9470a61167b6396))
+* ignore luals warnings ([508aeb4](https://github.com/phanen/fzf-lua-extra/commit/508aeb46ea144b41907fef33c9a231bda493deae))
+* rename serverlist to serverlist2 ([8d1891b](https://github.com/phanen/fzf-lua-extra/commit/8d1891bde7dba1db151d786a5aa6705d5c08c594))
+* sigabort in compose_line again ([cc244b8](https://github.com/phanen/fzf-lua-extra/commit/cc244b80b36d3242ff40885d1f4a454b08f4b349))
+* use absolute path for xdg_{config,data}_path ([80cce0c](https://github.com/phanen/fzf-lua-extra/commit/80cce0c3413e5902254bb837042b02f5cf92cac2))
+* verbose json decode error ([a874c20](https://github.com/phanen/fzf-lua-extra/commit/a874c20486896e4651099a055f43daa859bbef5d))
+* wtf the table is ([14ecd15](https://github.com/phanen/fzf-lua-extra/commit/14ecd15a236b910d09f6f5461116ad9ffe44e1d5))
+
 ## [3.7.0](https://github.com/phanen/fzf-lua-extra/compare/v3.6.0...v3.7.0) (2025-10-25)
 
 
