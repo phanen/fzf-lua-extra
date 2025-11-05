@@ -35,7 +35,6 @@ local function cb_hunks(buf_or_filename, hunks, cb, opts)
       text = text,
     }, opts))
   end
-  cb()
 end
 
 return function(opts)
@@ -68,6 +67,7 @@ return function(opts)
           cb_hunks(f_abs, hunks, cb, opts)
         end
       end
+      cb()
     end)
     async.schedule()
     FzfLua.fzf_exec(func, opts)
