@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.1](https://github.com/phanen/fzf-lua-extra/compare/v3.8.0...v3.8.1) (2025-11-12)
+
+
+### Bug Fixes
+
+* **runtime:** {lgrep,files}.search_paths ([c148934](https://github.com/phanen/fzf-lua-extra/commit/c1489345bab51c48f87658877f285c5ebd61d781))
+
 ## [3.8.0](https://github.com/phanen/fzf-lua-extra/compare/v3.7.0...v3.8.0) (2025-11-05)
 
 
