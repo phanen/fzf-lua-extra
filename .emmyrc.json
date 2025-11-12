@@ -33,8 +33,5 @@
   "strict": {
     "typeCall": true,
     "arrayIndex": true
-  },
-  "codeAction": {
-    "insertSpace": true
   }
 }

@@ -38,11 +38,33 @@ local test = function()
   })
 end
 
-return function()
+---@return string[]
+local get_rtp = function()
   ---@type string[]
   local rtp = vim.opt.runtimepath:get()
   -- If using lazy.nvim, get all the lazy loaded plugin paths (#1296)
   local lazy = package.loaded['lazy.core.util']
   if lazy and lazy.get_unloaded_rtp then vim.list_extend(rtp, (lazy.get_unloaded_rtp(''))) end
-  FzfLua.live_grep({ search_paths = rtp, actions = { ['alt-t'] = test } })
+  return rtp
 end
+
+local _ = {}
+_.lgrep = function()
+  FzfLua.live_grep({
+    search_paths = get_rtp(),
+    actions = {
+      ['ctrl-g'] = function() _.files() end,
+      ['alt-g'] = FzfLua.actions.grep_lgrep,
+      ['alt-t'] = test,
+    },
+  })
+end
+
+_.files = function()
+  FzfLua.files({
+    search_paths = get_rtp(),
+    actions = { ['ctrl-g'] = function() _.lgrep() end },
+  })
+end
+
+return _.files
