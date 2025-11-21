@@ -38,6 +38,17 @@ local test = function()
   })
 end
 
+local dedup = function(paths)
+  table.sort(paths, function(a, b) return #a < #b end)
+  local res = {}
+  for _, path in ipairs(paths) do
+    if not vim.iter(res):any(function(p) return vim.fs.relpath(p, path) end) then
+      res[#res + 1] = path
+    end
+  end
+  return res
+end
+
 ---@return string[]
 local get_rtp = function()
   ---@type string[]
@@ -45,7 +56,7 @@ local get_rtp = function()
   -- If using lazy.nvim, get all the lazy loaded plugin paths (#1296)
   local lazy = package.loaded['lazy.core.util']
   if lazy and lazy.get_unloaded_rtp then vim.list_extend(rtp, (lazy.get_unloaded_rtp(''))) end
-  return rtp
+  return dedup(rtp)
 end
 
 local _ = {}
