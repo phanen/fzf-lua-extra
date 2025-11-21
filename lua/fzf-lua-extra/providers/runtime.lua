@@ -49,8 +49,12 @@ local get_rtp = function()
 end
 
 local _ = {}
+local file_state = true
 
-local make_opts = function() return { query = FzfLua.get_last_query(), resume = true } end
+local make_opts = function()
+  file_state = not file_state
+  return { query = FzfLua.get_last_query(), resume = true }
+end
 
 _.lgrep = function(opts)
   FzfLua.live_grep(vim.tbl_deep_extend('keep', opts or {}, {
@@ -71,4 +75,4 @@ _.files = function(opts)
   }))
 end
 
-return _.files
+return function(...) return file_state and _.lgrep(...) or _.files(...) end
