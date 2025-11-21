@@ -49,22 +49,26 @@ local get_rtp = function()
 end
 
 local _ = {}
-_.lgrep = function()
-  FzfLua.live_grep({
+
+local make_opts = function() return { query = FzfLua.get_last_query(), resume = true } end
+
+_.lgrep = function(opts)
+  FzfLua.live_grep(vim.tbl_deep_extend('keep', opts or {}, {
     search_paths = get_rtp(),
     actions = {
-      ['ctrl-g'] = function() _.files() end,
+      ['ctrl-g'] = function() _.files(make_opts()) end,
       ['alt-g'] = FzfLua.actions.grep_lgrep,
-      ['alt-t'] = test,
     },
-  })
+  }))
 end
 
-_.files = function()
-  FzfLua.files({
+_.files = function(opts)
+  FzfLua.files(vim.tbl_deep_extend('keep', opts or {}, {
     search_paths = get_rtp(),
-    actions = { ['ctrl-g'] = function() _.lgrep() end },
-  })
+    actions = {
+      ['ctrl-g'] = function() _.lgrep(make_opts()) end,
+    },
+  }))
 end
 
 return _.files
