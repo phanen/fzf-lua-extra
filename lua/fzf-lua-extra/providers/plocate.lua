@@ -5,7 +5,6 @@ local __DEFAULT__ = {}
 ---@diagnostic disable-next-line: no-unknown
 return function(opts)
   assert(__DEFAULT__)
-  require('fzf-lua')
   opts = opts or {}
   local search = FzfLua.utils.input('Grep > ')
   if not search then return end
