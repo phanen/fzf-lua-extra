@@ -1,67 +1,35 @@
----@class fle.config.Function: fzf-lua.config.Base
-local __DEFAULT__ = {}
-
-local getfunc = function(s)
+local funcinfo = function(s)
   if not s then return end
   ---@type string?
   local name = s:match('function (.*)%(')
   if not name then return end
-  local content = vim.split(vim.api.nvim_exec2('function ' .. name, { output = true }).output, '\n')
-  if not content[1] then return end
-  local skip_col = #content[1]:match('(.*)function')
-  local new_content = vim
-    .iter(content)
-    :map(function(line) return line:sub(skip_col + 1) end)
-    :totable()
-  return name, new_content
+  local content =
+    vim.split(vim.api.nvim_exec2('verb function ' .. name, { output = true }).output, '\n')
+  if not content[1] or not content[2] then return end
+  local path, lnum = content[2]:match('Last set from (.*) line (%d+)')
+  return path and vim.fs.normalize(path) or nil, tonumber(lnum)
 end
 
----@param _self fzf-lua.previewer.Builtin
----@param content string[]
-local preview_with = vim.schedule_wrap(function(_self, content)
-  local tmpbuf = _self:get_tmp_buffer()
-  vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, content)
-  ---@diagnostic disable-next-line: undefined-field
-  if _self.filetype then vim.bo[tmpbuf].filetype = _self.filetype end
-  _self:set_preview_buf(tmpbuf)
-  _self.win:update_preview_scrollbar()
-end)
+local format = function(e) return ('%s:%s:'):format(funcinfo(e)) end
 
-return function(opts)
-  assert(__DEFAULT__)
-  opts = opts or {}
-  opts._treesitter = function(line) return 'foo.vim', nil, line end
-  opts.actions = {
-    enter = {
-      fn = function(sel)
-        local name, content = getfunc(sel[1])
-        if not name or not content then return end
-        vim.cmd.tabnew()
-        vim.bo.ft = 'vim'
-        vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), 0, -1, false, content)
-      end,
-    },
-  }
-  -- opts.preview = {
-  --   fn = function(sel)
-  --     local name = d(sel[1])
-  --     if not name then return end
-  --     return vim.api.nvim_exec2('function ' .. name, { output = true }).output
-  --   end,
-  -- }
-  opts.previewer = {
+---@class fle.config.Function: fzf-lua.config.Base
+local __DEFAULT__ = {
+  _treesitter = function(line) return 'foo.vim', nil, line end,
+  fzf_colors = { ['hl'] = '-1:reverse', ['hl+'] = '-1:reverse' },
+  _actions = function() return require('fzf-lua-extra.utils').fix_actions(format) end,
+  previewer = {
     _ctor = function()
       local p = require('fzf-lua.previewer.builtin').buffer_or_file:extend()
-      function p:populate_preview_buf(sel)
-        local name, content = getfunc(sel)
-        if not name or not content then return end
-        self.filetype = 'vim'
-        preview_with(self, content)
+      function p:parse_entry(sel)
+        local path, lnum = funcinfo(sel)
+        return { path = path, line = lnum }
       end
       return p
     end,
-  }
+  },
+}
 
-  opts.fzf_colors = { ['hl'] = '-1:reverse', ['hl+'] = '-1:reverse' }
+return function(opts)
+  assert(__DEFAULT__)
   FzfLua.fzf_exec(vim.split(vim.api.nvim_exec2('function', { output = true }).output, '\n'), opts)
 end
