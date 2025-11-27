@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.9.0](https://github.com/phanen/fzf-lua-extra/compare/v3.8.0...v3.9.0) (2025-11-27)
+
+
+### Features
+
+* `:verb function` ([cd281b9](https://github.com/phanen/fzf-lua-extra/commit/cd281b9ec6d6c7d2c361d43d2f3124cdb322e516))
+* poor man http ([2834f98](https://github.com/phanen/fzf-lua-extra/commit/2834f985ff3ce4c98cae8bcaf861b27b10f8bbfb))
+
+
+### Bug Fixes
+
+* don't search child if parent exist ([4074666](https://github.com/phanen/fzf-lua-extra/commit/4074666691c454ea41df4b7c86f8dc4a427fb650))
+* **runtime:** {lgrep,files}.search_paths ([c148934](https://github.com/phanen/fzf-lua-extra/commit/c1489345bab51c48f87658877f285c5ebd61d781))
+* **runtime:** resume query ([4dcd0a9](https://github.com/phanen/fzf-lua-extra/commit/4dcd0a9a1d5e4decbae42f0764948c10812eefa4))
+* **runtime:** save current state ([52d2320](https://github.com/phanen/fzf-lua-extra/commit/52d2320e3bd9433541408c46bc0ee2298fa61b46))
+
 ## [3.8.0](https://github.com/phanen/fzf-lua-extra/compare/v3.7.0...v3.8.0) (2025-11-05)
 
 
