@@ -52,17 +52,13 @@ return function(opts)
       local magenta = fu.ansi_codes.magenta
       local co = coroutine.running() -- this work now anyway
       for k, v in pairs(nerds) do
-        cb(
-          ('%s%s%s%s(%s)'):format(cyan(v.char), nbsp, yellow(k), nbsp, magenta(v.code)),
-          function() coroutine.resume(co) end
-        )
+        local str = ('%s%s%s%s(%s)'):format(cyan(v.char), nbsp, yellow(k), nbsp, magenta(v.code))
+        cb(str, function() coroutine.resume(co) end)
         coroutine.yield()
       end
       for k, v in pairs(emojis) do
-        cb(
-          ('%s%s%s%s(%s)'):format(cyan(k), nbsp, yellow(v.name), nbsp, magenta('emoji')),
-          function() coroutine.resume(co) end
-        )
+        local str = ('%s%s%s%s(%s)'):format(cyan(k), nbsp, yellow(v.name), nbsp, magenta('emoji'))
+        cb(str, function() coroutine.resume(co) end)
         coroutine.yield()
       end
       cb(nil)
