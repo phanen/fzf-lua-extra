@@ -4,37 +4,51 @@ local __DEFAULT__ = {
   _actions = function() return require('fzf-lua-extra.utils').fix_actions() end,
 }
 
-local function format_func_info(src, info)
+local function format(v)
   local ac = FzfLua.utils.ansi_codes
-  local home2tilde = FzfLua.path.HOME_to_tilde
-  local src_path = home2tilde(src)
-  local function pad(str, width)
-    width = width or 20
-    local padw = width + #str - vim.fn.strwidth(str)
-    return ('%-' .. padw .. 's'):format(str)
-  end
-  local src_str = pad(src_path .. ':' .. info.linedefined .. ':0', 60)
-  local args_str = ('nparams=%s isvararg=%s nups=%s'):format(
-    ac.yellow(tostring(info.nparams)),
-    info.isvararg and ac.red('true') or ac.green('false'),
-    ac.cyan(tostring(info.nups))
-  )
-  return ('%s%s'):format(src_str, args_str)
+  local info = v.info
+  local file_col = ('%s:%d:0'):format(FzfLua.make_entry.file(v.src, v.opts), info.linedefined)
+  local param_str = info.nparams > 0 and (' param=%s'):format(ac.yellow(tostring(info.nparams)))
+    or ''
+  local upv_str = info.nups > 0 and (' upv=%s'):format(ac.cyan(tostring(info.nups))) or ''
+  local vararg_str = info.isvararg and (' ' .. ac.red('vararg')) or ''
+  local ref_str = v.nref > 1 and (' ref=' .. ac.magenta(tostring(v.nref))) or ''
+  local fold_str = v.fold_count > 1 and (' fold=' .. ac.magenta(tostring(v.fold_count))) or ''
+  return ('%s\t%s%s%s%s%s'):format(file_col, param_str, upv_str, vararg_str, ref_str, fold_str)
 end
 
 return function(opts)
   assert(__DEFAULT__)
   local content = function(cb)
     local co = coroutine.running()
-    vim.iter(debug.getregistry()):each(function(_, v)
+    local seen = {}
+    for _, v in pairs(debug.getregistry()) do
       if type(v) == 'function' then
         local info = debug.getinfo(v)
         local src = info.source:sub(2)
-        local line = format_func_info(src, info)
-        cb(line, function() coroutine.resume(co) end)
-        coroutine.yield()
+        seen[v] = seen[v] or { nref = 0 }
+        seen[v].nref = seen[v].nref + 1
+        seen[v].info = info
+        seen[v].src = src
+        seen[v].opts = opts
       end
-    end)
+    end
+    local folded = {}
+    for _, v in pairs(seen) do
+      local info = v.info
+      local key = ('%s:%d:%d:%d'):format(
+        info.source,
+        info.linedefined,
+        info.lastlinedefined,
+        v.nref
+      )
+      folded[key] = folded[key] or v
+      folded[key].fold_count = (folded[key].fold_count or 0) + 1
+    end
+    for _, v in pairs(folded) do
+      cb(format(v), function() coroutine.resume(co) end)
+      coroutine.yield()
+    end
     cb()
   end
   FzfLua.fzf_exec(function(...) return coroutine.wrap(content)(...) end, opts)
