@@ -25,7 +25,7 @@ return function(opts)
     for _, v in pairs(debug.getregistry()) do
       if type(v) == 'function' then
         local info = debug.getinfo(v)
-        local src = info.source:sub(2)
+        local src = info.source:sub(1, 1) == '@' and info.source:sub(2) or info.source
         seen[v] = seen[v] or { nref = 0 }
         seen[v].nref = seen[v].nref + 1
         seen[v].info = info
