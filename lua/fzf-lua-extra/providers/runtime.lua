@@ -62,26 +62,28 @@ end
 local _ = {}
 local file_state = true
 
-local make_opts = function()
+local make_opts = function(resume)
   file_state = not file_state
-  return { query = FzfLua.get_last_query(), resume = true }
+  return { query = resume == false and FzfLua.get_last_query() or nil, resume = resume }
 end
 
 _.lgrep = function(opts)
-  FzfLua.live_grep(vim.tbl_deep_extend('keep', opts or {}, {
+  opts = opts or {}
+  FzfLua.live_grep(vim.tbl_deep_extend('keep', opts, {
     search_paths = get_rtp(),
     actions = {
-      ['ctrl-g'] = function() _.files(make_opts()) end,
+      ['ctrl-g'] = function() _.files(make_opts(opts.resume ~= nil)) end,
       ['alt-g'] = FzfLua.actions.grep_lgrep,
     },
   }))
 end
 
 _.files = function(opts)
-  FzfLua.files(vim.tbl_deep_extend('keep', opts or {}, {
+  opts = opts or {}
+  FzfLua.files(vim.tbl_deep_extend('keep', opts, {
     search_paths = get_rtp(),
     actions = {
-      ['ctrl-g'] = function() _.lgrep(make_opts()) end,
+      ['ctrl-g'] = function() _.lgrep(make_opts(opts.resume ~= nil)) end,
     },
   }))
 end

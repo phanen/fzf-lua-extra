@@ -113,9 +113,7 @@ function M.lazy:populate_preview_buf(entry_str)
       lines = vim.list_extend({ 'Not Installed (fetch from github)' }, lines)
       return lines, 'markdown'
     end,
-    [p_type.UNINS_NO_GH] = function()
-      return center({ 'echo "Not Installed (not github)"!' }), 'markdown'
-    end,
+    [p_type.UNINS_NO_GH] = function() return center({ 'Not Installed (not github)!' }), 'markdown' end,
     [p_type.INS_MD] = function()
       local content = utils.read_file(assert(data))
       local lines = content and vim.split(content, '\n') or center({ 'Failed to read README!' })
