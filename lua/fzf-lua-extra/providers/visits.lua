@@ -8,6 +8,9 @@ local __DEFAULT__ = {
   ---@diagnostic disable-next-line: undefined-field
   _actions = function() return require('fzf-lua-extra.utils').fix_actions() end,
   filter = function(e) return (vim.uv.fs_stat(e.path) or {}).type == 'file' end,
+  path_provider = function(opts)
+    return require('mini.visits').list_paths(opts.cwd or '', { filter = opts.filter })
+  end,
 }
 ---@diagnostic disable-next-line: no-unknown
 return function(opts)
@@ -17,7 +20,7 @@ return function(opts)
       local co = coroutine.running()
       ---@type string[]
       ---@diagnostic disable-next-line: no-unknown
-      local paths = require('mini.visits').list_paths(opts.cwd or '', { filter = opts.filter })
+      local paths = opts.path_provider(opts)
       for _, file in ipairs(paths) do
         cb(FzfLua.make_entry.file(file, opts), function() coroutine.resume(co) end)
         coroutine.yield()
