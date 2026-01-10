@@ -81,18 +81,12 @@ describe('main', function()
         -- TODO: we don't need lockfile, modify HOME+NVIM_APPNAME?
         vim.fs.joinpath(vim.env.XDG_DATA_HOME, vim.env.NVIM_APPNAME or 'nvim', 'site')
       )
-      vim.pack.add(os.getenv('CI') and {
+      vim.pack.add({
         { src = 'https://github.com/ibhagwan/fzf-lua' },
         { src = 'https://github.com/stevearc/aerial.nvim' },
         { src = 'https://github.com/echasnovski/mini.nvim' },
         { src = 'https://github.com/folke/lazy.nvim' },
         { src = 'https://github.com/lewis6991/gitsigns.nvim' },
-      } or {
-        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'b/fzf-lua'), version = 'cli' },
-        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/aerial.nvim') },
-        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/mini.nvim') },
-        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/lazy.nvim') },
-        { src = 'file://' .. vim.fs.joinpath(vim.env.HOME, 'lazy/gitsigns.nvim') },
       }, { confirm = false })
       vim.pack.update(nil, { force = true })
       -- pass spec to let lazy konw it's not a plugins...

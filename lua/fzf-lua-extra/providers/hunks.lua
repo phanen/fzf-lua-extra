@@ -49,26 +49,30 @@ return function(opts)
   local a = function()
     local repo = git.Repo.get((assert(uv.cwd())))
     if not repo then return end
-    local func = async.create(1, function(cb)
-      for _, f in ipairs(repo:files_changed(config.base)) do
-        local f_abs = repo.toplevel .. '/' .. f
-        local stat = uv.fs_stat(f_abs)
-        if stat and stat.type == 'file' then
-          ---@type string
-          local obj
-          if config.base and config.base ~= ':0' then
-            obj = config.base .. ':' .. f
-          else
-            obj = ':0:' .. f
+    local func = function(...)
+      async
+        .run(function(cb)
+          for _, f in ipairs(repo:files_changed(config.base)) do
+            local f_abs = repo.toplevel .. '/' .. f
+            local stat = uv.fs_stat(f_abs)
+            if stat and stat.type == 'file' then
+              ---@type string
+              local obj
+              if config.base and config.base ~= ':0' then
+                obj = config.base .. ':' .. f
+              else
+                obj = ':0:' .. f
+              end
+              async.schedule()
+              local hunks = run_diff(repo:get_show_text(obj), util.file_lines(f_abs))
+              async.schedule()
+              cb_hunks(f_abs, hunks, cb, opts)
+            end
           end
-          async.schedule()
-          local hunks = run_diff(repo:get_show_text(obj), util.file_lines(f_abs))
-          async.schedule()
-          cb_hunks(f_abs, hunks, cb, opts)
-        end
-      end
-      cb()
-    end)
+          cb()
+        end, ...)
+        :raise_on_error()
+    end
     async.schedule()
     FzfLua.fzf_exec(func, opts)
   end
