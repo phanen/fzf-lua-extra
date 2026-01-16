@@ -1,6 +1,30 @@
+-- vim:cole=2
+-- 1. conceal can have at most one char
 local ns = vim.api.nvim_create_namespace('fzf-lua-extra.decor')
 
-local overlay = true
+-- TODO: we can use hlgroup only.. since we only want color icons!!
+local overlay = false
+
+local makeline = function(buf, lnum, line)
+  local off, content = line:match('^(%s*)(%S+)')
+  if not off or not content then return end
+  local icon, hl = require('mini.icons').get('file', content)
+  if not icon then return end
+  local parts = vim.split(content, '/')
+  -- dd(line, parts)
+  local current_col = #off
+  local n = #parts
+  for i, part in ipairs(parts) do
+    if i == n then return end
+    vim.api.nvim_buf_set_extmark(buf, ns, lnum, current_col, {
+      end_col = current_col + #part,
+      hl_group = hl,
+      conceal = part:sub(1, 1),
+      ephemeral = true,
+    })
+    current_col = current_col + #part + 1
+  end
+end
 
 ---@class fle.config.FileDecor: fzf-lua.config.Base
 local __DEFAULT__ = {
@@ -13,6 +37,12 @@ local __DEFAULT__ = {
   previewer = 'builtin',
   winopts = {
     on_create = function(e)
+      -- vim.wo[e.winid].conceallevel = 3
+      vim.wo[e.winid][0].conceallevel = 2
+      vim.schedule(function()
+        -- vim.wo[e.winid][0].number = true
+        -- vim.wo[e.winid][0].signcolumn = 'yes:1'
+      end)
       vim.api.nvim_set_decoration_provider(ns, {
         on_win = function(_, win)
           if e.winid ~= win then return false end
@@ -24,16 +54,8 @@ local __DEFAULT__ = {
           if not line then return end
           local content = line:match('^%s*(%S+)')
           if not content then return end
-          -- FIXME: scroll...
-          ---@type string?, string?
-          local icon, hl = require('mini.icons').get('file', content)
-          if not icon then return end
-          vim.api.nvim_buf_set_extmark(buf, ns, lnum, 0, {
-            -- virt_text_pos = 'inline', -- this break fzf match hl
-            virt_text_pos = overlay and 'overlay' or 'right_align',
-            virt_text = { { icon .. ' ', hl or 'Error' } },
-            ephemeral = true,
-          })
+          makeline(buf, lnum, line)
+          return
         end,
       })
     end,
