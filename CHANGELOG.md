@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.9.0](https://github.com/phanen/fzf-lua-extra/compare/v3.8.0...v3.9.0) (2026-01-20)
+
+
+### Features
+
+* `:verb function` ([cd281b9](https://github.com/phanen/fzf-lua-extra/commit/cd281b9ec6d6c7d2c361d43d2f3124cdb322e516))
+* inspect lua registry ([cbdafc5](https://github.com/phanen/fzf-lua-extra/commit/cbdafc5ee93258ceb2429f8d7ee264a8f2e23633))
+* poor man http ([2834f98](https://github.com/phanen/fzf-lua-extra/commit/2834f985ff3ce4c98cae8bcaf861b27b10f8bbfb))
+
+
+### Bug Fixes
+
+* `:so` have no "@" ([5db6287](https://github.com/phanen/fzf-lua-extra/commit/5db62878cbf759174d29c01057d6eef35a158d0f))
+* don't search child if parent exist ([4074666](https://github.com/phanen/fzf-lua-extra/commit/4074666691c454ea41df4b7c86f8dc4a427fb650))
+* make plocate more useful ([c42210d](https://github.com/phanen/fzf-lua-extra/commit/c42210df953a7d8d4fca87c4f0dc2da5bdf56f13))
+* **runtime:** {lgrep,files}.search_paths ([c148934](https://github.com/phanen/fzf-lua-extra/commit/c1489345bab51c48f87658877f285c5ebd61d781))
+* **runtime:** resume query ([4dcd0a9](https://github.com/phanen/fzf-lua-extra/commit/4dcd0a9a1d5e4decbae42f0764948c10812eefa4))
+* **runtime:** save current state ([52d2320](https://github.com/phanen/fzf-lua-extra/commit/52d2320e3bd9433541408c46bc0ee2298fa61b46))
+* show refcount, dupcount (of temp func) ([3033647](https://github.com/phanen/fzf-lua-extra/commit/30336472c437d5990b0811ad6c7fc5f038d87ce6))
+* simple ephemeral ([7cb5658](https://github.com/phanen/fzf-lua-extra/commit/7cb5658d2a32d95818b63ded2dfb81ec8eab99fd))
+
 ## [3.8.0](https://github.com/phanen/fzf-lua-extra/compare/v3.7.0...v3.8.0) (2025-11-05)
 
 
