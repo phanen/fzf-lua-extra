@@ -100,7 +100,7 @@ end
 
 ---@class fle.SystemOpts: vim.SystemOpts
 ---@field cache_path? string
----@field cache_invalid? fun(cache_path: string): boolean
+---@field cache_invalid fun(cache_path: string): boolean
 
 ---@param path string
 ---@return boolean
@@ -112,7 +112,7 @@ end
 ---run with optional cache
 ---@async
 ---@param cmd string[]
----@param opts? fle.SystemOpts
+---@param opts? fle.SystemOpts|{}
 ---@return vim.SystemCompleted
 M.run = function(cmd, opts)
   opts = opts or {} ---@type fle.SystemOpts

@@ -20,6 +20,7 @@ local __DEFAULT__ = {
   previewer = {
     _ctor = function()
       local p = require('fzf-lua.previewer.builtin').buffer_or_file:extend()
+      ---@diagnostic disable-next-line: unused
       function p:parse_entry(sel)
         local path, lnum = funcinfo(sel)
         return { path = path, line = lnum }

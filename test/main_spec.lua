@@ -89,6 +89,7 @@ describe('main', function()
         { src = 'https://github.com/lewis6991/gitsigns.nvim' },
       }, { confirm = false })
       vim.pack.update(nil, { force = true })
+      ---@diagnostic disable-next-line: missing-parameter
       -- pass spec to let lazy konw it's not a plugins...
       require('lazy').setup({ spec = {}, performance = { rtp = { reset = false } } })
       require('aerial').setup({})

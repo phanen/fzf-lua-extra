@@ -1,39 +1,40 @@
----@class fle.config.Plocate: fzf-lua.config.Base
-local __DEFAULT__ = {}
+---@class fle.config.Plocate: fzf-lua.config.Base|{}
+local __DEFAULT__
 
----TODO:
----@diagnostic disable-next-line: no-unknown
-return function(opts)
-  assert(__DEFAULT__)
-  opts = opts or {}
-  local search = FzfLua.utils.input('Grep > ')
-  if not search then return end
-  local last_gq ---@type string?
-  local cmd = 'plocate -r'
-  local actions = require('fzf-lua.actions')
-  opts = vim.tbl_deep_extend('force', opts or {}, {
-    raw_cmd = cmd .. ' ' .. search,
-    search = search,
-    previewer = 'builtin',
-    actions = {
-      ['enter'] = actions.file_edit_or_qf,
-      ['ctrl-s'] = actions.file_split,
-      ['ctrl-v'] = actions.file_vsplit,
-      ['ctrl-t'] = actions.file_tabedit,
-      ['alt-q'] = actions.file_sel_to_qf,
-      ['alt-Q'] = actions.file_sel_to_ll,
-      change = {
-        fn = function() end,
-        exec_silent = true,
-        postfix = 'transform:' .. FzfLua.shell.stringify_data(function(sel)
-          local sq, gq = unpack(vim.split(unpack(sel) --[[@as string]], '%s%-%-%s'))
-          local gq_changed = gq ~= last_gq
-          last_gq = gq
-          if gq_changed then return ('reload(%s %q)+search:%s'):format(cmd, gq, sq) end
-          return ('+search:%s'):format(sq)
-        end, {}, '{q}'),
-      },
-    },
-  })
-  FzfLua.grep(opts)
+local lgrep, grep
+__DEFAULT__ = {
+  _actions = function() return require('fzf-lua-extra.utils').fix_actions() end,
+  actions = {
+    ['ctrl-g'] = function(_, opts)
+      local o = vim.deepcopy(__DEFAULT__)
+      o.resume = true
+      assert(opts.__ACT_TO)(o, assert(opts.__call_opts).query)
+    end,
+  },
+  previewer = 'builtin',
+}
+
+---@param opts fle.config.Plocate|{}
+---@param search string
+---@return thread?, string?, table?
+grep = function(opts, search)
+  ---@diagnostic disable-next-line: param-type-mismatch
+  opts = vim.tbl_deep_extend('force', __DEFAULT__, opts or {})
+  opts.__ACT_TO = lgrep
+  opts.__resume_key = grep
+  return FzfLua.fzf_exec('plocate -r ' .. FzfLua.libuv.shellescape(search), opts)
 end
+
+---@param opts fle.config.Plocate|{}
+---@return thread?, string?, table?
+lgrep = function(opts)
+  ---@diagnostic disable-next-line: param-type-mismatch
+  opts = vim.tbl_deep_extend('force', __DEFAULT__, opts or {})
+  -- plocate can be slow, but this run plocate one more time on toggle
+  opts.__ACT_TO = grep
+  opts.__resume_key = lgrep
+  ---@diagnostic disable-next-line: param-type-mismatch
+  return FzfLua.fzf_live('plocate -r <query>', opts)
+end
+
+return lgrep

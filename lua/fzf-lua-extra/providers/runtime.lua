@@ -4,7 +4,7 @@ local __DEFAULT__ = {}
 local glob_regex = '(.*)%s%-%-%s(.*)'
 local api = vim.api
 
-local test = function()
+local _test = function()
   assert(__DEFAULT__)
   local port ---@type string?
   local glob ---@type string?

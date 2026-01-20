@@ -41,12 +41,26 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make test
 
+      - name: Cache EmmyLua
+        id: cache-emmylua
+        uses: actions/cache@v4
+        with:
+          path: deps/emmylua_analyzer-rust-*
+          key: emmylua-${{ hashFiles('Makefile') }}
+
+      - name: Install EmmyLua
+        if: steps.cache-emmylua.outputs.cache-hit != 'true'
+        run: make emmylua
+
+      - name: Lint
+        run: make emmylua-check NVIM_TEST_VERSION=nightly
+
   docs:
     runs-on: ubuntu-latest
     needs: tests
     if: ${{ github.ref == 'refs/heads/master' }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install Neovim
         uses: rhysd/action-setup-vim@v1
         with:

@@ -1,0 +1,9 @@
+[*.lua]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+quote_type = single
+
+max_line_length = 100
+collapse_simple_statement = always
+call_parentheses = input

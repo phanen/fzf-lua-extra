@@ -7,7 +7,8 @@ local p_do = function(cb)
     vim.iter(selected):each(function(sel)
       local bs_parts = vim.split(sel, '/')
       local name = bs_parts[#bs_parts]
-      cb(utils.get_lazy_plugins()[name])
+      local plugin = utils.get_lazy_plugins()[name]
+      if plugin then cb(plugin) end
     end)
   end
 end

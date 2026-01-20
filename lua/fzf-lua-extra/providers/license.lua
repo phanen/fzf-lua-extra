@@ -39,7 +39,6 @@ local __DEFAULT__ = {
 
 return function(opts)
   assert(__DEFAULT__)
-  opts = vim.tbl_deep_extend('force', __DEFAULT__, opts or {})
   local contents = function(fzf_cb)
     utils.arun(function()
       local json = utils.gh({ endpoint = opts.endpoint })

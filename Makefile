@@ -23,7 +23,12 @@ NVIM_TEST := deps/nvim-test
 nvim-test: $(NVIM_TEST)
 
 $(NVIM_TEST):
-	git clone --depth 1 --branch v1.3.0 https://github.com/lewis6991/nvim-test $@
+	@mkdir -p deps
+	if [ -d "$(HOME)/lazy/nvim-test" ]; then \
+	  ln -sf $(HOME)/lazy/nvim-test $@; \
+	else \
+	  git clone --depth 1 --branch v1.3.0 https://github.com/lewis6991/nvim-test $@; \
+	fi
 	$@/bin/nvim-test --init
 
 .PHONY: test
@@ -64,7 +69,7 @@ STYLUA_PLATFORM_MACOS := macos-aarch64
 STYLUA_PLATFORM_LINUX := linux-x86_64
 STYLUA_PLATFORM := $(STYLUA_PLATFORM_$(UNAME))
 
-STYLUA_VERSION := v2.0.2
+STYLUA_VERSION := v2.3.1
 STYLUA_ZIP := stylua-$(STYLUA_PLATFORM).zip
 STYLUA_URL_BASE := https://github.com/JohnnyMorganz/StyLua/releases/download
 STYLUA_URL := $(STYLUA_URL_BASE)/$(STYLUA_VERSION)/$(STYLUA_ZIP)
@@ -98,17 +103,13 @@ build: stylua-run
 doc-check: gen_help
 	git diff --exit-code -- doc
 
-################################################################################
-# Emmylua
-################################################################################
-
 ifeq ($(shell uname -m),arm64)
     EMMYLUA_ARCH ?= arm64
 else
     EMMYLUA_ARCH ?= x64
 endif
 
-EMMYLUA_REF := 0.16.0
+EMMYLUA_REF := 0.19.0
 EMMYLUA_OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 EMMYLUA_RELEASE_URL := https://github.com/EmmyLuaLs/emmylua-analyzer-rust/releases/download/$(EMMYLUA_REF)/emmylua_check-$(EMMYLUA_OS)-$(EMMYLUA_ARCH).tar.gz
 EMMYLUA_RELEASE_TAR := deps/emmylua_check-$(EMMYLUA_REF)-$(EMMYLUA_OS)-$(EMMYLUA_ARCH).tar.gz
@@ -139,10 +140,9 @@ NVIM_TEST_RUNTIME=$(XDG_DATA_HOME)/nvim-test/nvim-test-$(NVIM_TEST_VERSION)/shar
 $(NVIM_TEST_RUNTIME): $(NVIM_TEST)
 	$^/bin/nvim-test --init
 
-# make emmylua-check | grep -o '\[[a-z-]\{6,\}\]$' | sort | uniq | sed 's/^\[\(.*\)\]$/\1/'
-
 .PHONY: emmylua-check
 emmylua-check: $(EMMYLUA_BIN) $(NVIM_TEST_RUNTIME)
 	VIMRUNTIME=$(NVIM_TEST_RUNTIME) \
 		$(EMMYLUA_BIN) . \
-		--ignore 'deps/**/*'
+		--ignore 'test/**/*' \
+		--ignore gen_help.lua
