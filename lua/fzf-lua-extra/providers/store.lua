@@ -14,6 +14,15 @@ local p_do = function(cb)
   end
 end
 
+-- https://github.com/folke/lazy.nvim/blob/c6a57a3534d3494bcc5ff9b0586e141bdb0280eb/lua/lazy/core/util.lua#L68
+---@param name string
+---@return string
+local normname = function(name)
+  return (
+    name:lower():gsub('^n?vim%-', ''):gsub('%.n?vim$', ''):gsub('[%.%-]lua', ''):gsub('[^a-z]+', '')
+  )
+end
+
 -- https://github.com/alex-popov-tech/store.nvim/blob/e3aea13c354de465ca3a879158a1752e0c9c13ea/lua/store/actions.lua#L293
 local write_conf = function(data)
   local repo = data.repo
@@ -93,7 +102,7 @@ local __DEFAULT__ = {
         local opts = { cache_path = utils.path('store-lazy.json'), cache_invalid = o.cache_invalid }
         utils.arun(function()
           local plugins_folder = require('store.utils').get_plugins_folder()
-          local filepath = plugins_folder .. '/' .. (p.name:gsub('%.nvim', '') .. '.lua')
+          local filepath = plugins_folder .. '/' .. (normname(p.name) .. '.lua')
           local res = utils.run(cmd, opts).stdout or ''
           local items = vim.json.decode(res).items
           write_conf({ config = items[p.full_name], filepath = filepath, repo = p })
