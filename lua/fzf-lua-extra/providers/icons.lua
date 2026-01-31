@@ -32,18 +32,16 @@ return function(opts)
   local contents = function(cb)
     utils.arun(function()
       local nerds = vim.json.decode(
-        ---@diagnostic disable-next-line: param-type-mismatch
         utils.run(
           { 'curl', '-sL', opts.glyphnames_url },
           { cache_path = utils.path('glyphnames.json'), cache_invalid = opts.cache_invalid }
-        ).stdout
+        ).stdout or ''
       )
       local emojis = vim.json.decode(
-        ---@diagnostic disable-next-line: param-type-mismatch
         utils.run(
           { 'curl', '-sL', opts.emojis_url },
           { cache_path = utils.path('emojis.json'), cache_invalid = opts.cache_invalid }
-        ).stdout
+        ).stdout or ''
       )
       local fu = FzfLua.utils
       local nbsp = fu.nbsp
