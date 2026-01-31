@@ -5,16 +5,6 @@ local utils = require('fzf-lua-extra.utils')
 ---@diagnostic disable-next-line: unused
 local api, fn, fs, uv = vim.api, vim.fn, vim.fs, vim.uv
 
----@param self fzf-lua.previewer.BufferOrFile
----@param entry table
----@param content string[]
-local preview_with = vim.schedule_wrap(function(self, entry, content)
-  local bufnr = self:get_tmp_buffer()
-  api.nvim_buf_set_lines(bufnr, 0, -1, false, content)
-  self:set_preview_buf(bufnr)
-  self:preview_buf_post(entry)
-end)
-
 ---@enum plugin_type
 local p_type = {
   LOCAL = 1, -- local module
@@ -71,27 +61,16 @@ end
 ---@field super fzf-lua.previewer.BufferOrFile
 M.lazy = previewer.buffer_or_file:extend()
 
-function M.lazy:new(...)
-  self.super.new(self, ...)
-  self.bcache = {}
-  return self
-end
-
 ---@diagnostic disable-next-line: unused
 ---@param entry_str string
----@return LazyPlugin
-function M.lazy:parse_entry(entry_str)
-  local slices = vim.split(entry_str, '/')
+---@param cb function
+function M.lazy:parse_entry(entry_str, cb)
+  local owner = entry_str:match('^%S+')
+  if not owner then return end
+  local slices = vim.split(owner, '/')
   local name = assert(slices[#slices])
-  return assert(utils.get_lazy_plugins()[name])
-end
-
----@diagnostic disable-next-line: unused
----@param entry LazyPlugin
-function M.lazy:key_from_entry(entry) return entry.name end
-
-function M.lazy:populate_preview_buf(entry_str)
-  local plugin = self:parse_entry(entry_str)
+  local plugin = utils.get_lazy_plugins()[name]
+  if not plugin then return end
   local t, data = parse_plugin_type(self, plugin)
   local win = api.nvim_win_get_config(self.win.preview_winid)
   local center = function(msg) return utils.center_message(msg, win.height, win.width) end
@@ -126,13 +105,18 @@ function M.lazy:populate_preview_buf(entry_str)
   }
   local handler = handlers[t]
   if not handler then return end
+  -- no raise error
   utils.arun(function()
     local lines, filetype = handler()
     local entry = vim.deepcopy(plugin) ---@type LazyPlugin|{}
     entry.path, entry.filetype = '', filetype
-    preview_with(self, entry, lines)
+    cb({ name = entry.name, filetype = filetype, content = lines })
   end)
 end
+
+---@diagnostic disable-next-line: unused
+---@param entry LazyPlugin
+function M.lazy:key_from_entry(entry) return entry.name end
 
 ---@class fle.previewer.Gitignore: fzf-lua.previewer.BufferOrFile
 ---@field super fzf-lua.previewer.BufferOrFile
@@ -149,13 +133,16 @@ function M.gitignore:new(o, opts)
   return self
 end
 
-function M.gitignore:populate_preview_buf(entry_str)
+function M.gitignore:parse_entry(entry_str, cb)
   utils.arun(function()
     local endpoint = fs.joinpath(self.endpoint, entry_str)
     local json = utils.gh({ endpoint = endpoint })
     local content = assert(json[self.json_key]) ---@type string
-    preview_with(self, { path = '', filetype = self.filetype }, vim.split(content, '\n'))
+    cb({ key = entry_str, filetype = self.filetype, content = vim.split(content, '\n') })
   end)
 end
+
+---@diagnostic disable-next-line: unused
+function M.gitignore:key_from_entry(entry) return entry.key end
 
 return M
