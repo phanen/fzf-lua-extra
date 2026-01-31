@@ -145,4 +145,78 @@ end
 ---@diagnostic disable-next-line: unused
 function M.gitignore:key_from_entry(entry) return entry.key end
 
+---@class fle.previewer.Store: fzf-lua.previewer.BufferOrFile
+---@field super fzf-lua.previewer.BufferOrFile
+---@field store_items table<number, store.Repository>
+M.store = previewer.buffer_or_file:extend()
+
+function M.store:new(o, opts)
+  M.store.super.new(self, o, opts)
+  self.items = opts.previewer.items
+  return self
+end
+
+---@diagnostic disable-next-line: unused
+---@param entry_str string
+---@param cb function
+function M.store:parse_entry(entry_str, cb)
+  local name = entry_str:match('[^%s]+')
+  local err = {
+    content = { 'Failed to find repository information for: ' .. name },
+    filetype = 'markdown',
+  }
+  if not name then return cb(err) end
+  local repo = self.items[name]
+  if not repo then return cb(err) end
+  local lines = {}
+
+  -- Define custom FzfLua highlight groups by linking them to standard Neovim groups.
+  -- This ensures they automatically adapt to your Neovim colorscheme.
+  api.nvim_set_hl(0, 'FleBlue', { link = 'Title' }) -- Typically used for important names or titles
+  api.nvim_set_hl(0, 'FleYellow', { link = 'Comment' }) -- Often used for descriptions or less prominent text
+  api.nvim_set_hl(0, 'FleMagenta', { link = 'Special' }) -- Suitable for symbols, special characters, or numeric indicators
+  api.nvim_set_hl(0, 'FleGreen', { link = 'String' }) -- Good for lists of items like tags
+
+  -- Add meta info to the top
+  lines[#lines + 1] = { '# ', { repo.full_name, 'FleBlue' } }
+  lines[#lines + 1] = ''
+  if repo.description and repo.description ~= '' then
+    lines[#lines + 1] = { '  ', { repo.description, 'FleYellow' } }
+    lines[#lines + 1] = ''
+  end
+  lines[#lines + 1] = {
+    { '⭐' .. repo.stars, 'FleMagenta' },
+    ' ',
+    { '🚨' .. repo.issues, 'FleMagenta' },
+  }
+  lines[#lines + 1] = 'Updated: '
+    .. repo.pretty.updated_at
+    .. ' | Created: '
+    .. repo.pretty.created_at
+  if #repo.tags > 0 then
+    lines[#lines + 1] = { 'Tags: ', { table.concat(repo.tags, ', '), 'FleGreen' } }
+  end
+  lines[#lines + 1] = '' -- Empty line for separation
+  -- Fetch README if available
+  utils.arun(function()
+    local res = utils.gh({ endpoint = fs.joinpath('repos', name, 'readme') })
+    local content = res.content or ''
+    content = (content:gsub('[\n\r]', ''))
+    if res.encoding == 'base64' then -- TODO: error now never bubble up in vim._async..
+      content = vim.F.npcall(vim.base64.decode, content)
+    else
+      error('unimplemented encoding: ' .. res.encoding)
+    end
+    if content ~= '' then
+      lines[#lines + 1] = '---' -- Separator
+      lines[#lines + 1] = '# README'
+      vim.list_extend(lines, vim.split(content, '[\r?\n]'))
+    end
+    cb({ name = name, filetype = 'markdown', content = lines })
+  end)
+end
+
+---@diagnostic disable-next-line: unused
+function M.store:key_from_entry(entry) return entry.name end
+
 return M
