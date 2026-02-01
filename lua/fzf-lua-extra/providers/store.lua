@@ -65,7 +65,7 @@ local function format_repository_info(repo, compact)
   parts[#parts + 1] = magenta(string.format('%-8s', display_issues))
 
   parts[#parts + 1] = cyan(repo.full_name)
-  if not compact and repo.description and repo.description ~= '' then
+  if (not compact or #repo.tags == 0) and repo.description and repo.description ~= '' then
     parts[#parts + 1] = yellow(repo.description)
   end
   if #repo.tags > 0 then parts[#parts + 1] = green('[' .. table.concat(repo.tags, ',') .. ']') end
