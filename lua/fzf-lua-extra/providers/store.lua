@@ -26,49 +26,16 @@ end
 -- https://github.com/alex-popov-tech/store.nvim/blob/e3aea13c354de465ca3a879158a1752e0c9c13ea/lua/store/actions.lua#L293
 local write_conf = function(data)
   local repo = data.repo
-  -- Use the edited configuration and filepath from the popup
   local filepath = vim.fn.expand(data.filepath)
-  local dir = vim.fn.fnamemodify(filepath, ':h')
-  local filename = vim.fn.fnamemodify(filepath, ':t')
-
-  local file_exists = vim.fn.filereadable(filepath) == 1
-
-  -- Handle existing file - append strategy
-  if file_exists then
-    local file = io.open(filepath, 'a')
-    if not file then
-      print('Failed to open existing file for append: ' .. filepath)
-      return
-    end
-
-    file:write('\n\n-- Plugin: ' .. repo.full_name .. '\n')
-    file:write('-- Added by store.nvim on ' .. os.date('%Y-%m-%d %H:%M:%S') .. '\n')
-    file:write(data.config)
-    file:close()
-
-    print('Plugin appended: ' .. repo.full_name .. ' to ' .. filepath)
-    vim.notify("Plugin '" .. repo.full_name .. "' appended to " .. filename)
-    vim.notify('Run :Lazy sync to complete installation')
-  end
-
-  -- Handle new file - create strategy
-  if vim.fn.isdirectory(dir) == 0 then vim.fn.mkdir(dir, 'p') end
-
-  local file = io.open(filepath, 'w')
-  if not file then
-    error('Failed to create plugin file: ' .. filepath)
-    return
-  end
-
-  file:write('-- Plugin: ' .. repo.full_name .. '\n')
-  file:write('-- Installed via store.nvim\n')
-  file:write('\n')
+  vim.fn.mkdir(vim.fn.fnamemodify(filepath, ':h'), 'p')
+  local exist = vim.uv.fs_stat(filepath)
+  local file = io.open(filepath, exist and 'a' or 'w')
+  if not file then return vim.notify('Failed to open file: ' .. filepath) end
+  if exist then file:write('\n\n') end
   file:write(data.config)
+  file:flush()
   file:close()
-
-  print('Plugin installed: ' .. repo.full_name .. ' at ' .. filepath)
-  vim.notify("Plugin '" .. repo.full_name .. "' configuration created at " .. filepath)
-  vim.notify('Run :Lazy sync to complete installation')
+  vim.notify(repo.full_name .. ' in: ' .. filepath)
 end
 
 ---@class fle.config.Store: fzf-lua.config.Base
