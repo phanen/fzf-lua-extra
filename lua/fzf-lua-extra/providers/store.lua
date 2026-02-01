@@ -38,6 +38,59 @@ local write_conf = function(data)
   vim.notify(repo.full_name .. ' in: ' .. filepath)
 end
 
+---Format repository information for display in a single line for the picker
+---@param repo store.Repository The repository to format
+---@param compact? boolean Whether to use compact formatting
+---@return string formatted_line
+local function format_repository_info(repo, compact)
+  local fu = FzfLua.utils
+  local cyan = fu.ansi_codes.cyan
+  local yellow = fu.ansi_codes.yellow
+  local magenta = fu.ansi_codes.magenta
+  local green = fu.ansi_codes.green
+
+  local parts = {}
+  parts[#parts + 1] = repo.full_name
+  parts[#parts + 1] = '\t'
+  -- Format stars: Truncate if longer than 8 bytes, then left-align to 8 bytes.
+  local stars_str = '⭐' .. repo.stars
+  local display_stars = stars_str
+  if #display_stars > 8 then display_stars = string.sub(display_stars, 1, 8) end
+  parts[#parts + 1] = magenta(string.format('%-8s', display_stars))
+
+  -- Format issues: Truncate if longer than 8 bytes, then left-align to 8 bytes.
+  local issues_str = '🚨' .. repo.issues
+  local display_issues = issues_str
+  if #display_issues > 8 then display_issues = string.sub(display_issues, 1, 8) end
+  parts[#parts + 1] = magenta(string.format('%-8s', display_issues))
+
+  parts[#parts + 1] = cyan(repo.full_name)
+  if not compact and repo.description and repo.description ~= '' then
+    parts[#parts + 1] = yellow(repo.description)
+  end
+  if #repo.tags > 0 then parts[#parts + 1] = green('[' .. table.concat(repo.tags, ',') .. ']') end
+  return table.concat(parts, ' ')
+end
+
+local State = {}
+State.state = {
+  all = function()
+    State.encode = function(p) return format_repository_info(p) end
+  end,
+  compat = function()
+    State.encode = function(p) return format_repository_info(p, true) end
+  end,
+}
+State.cycle = function()
+  State.key = next(State.state, State.key)
+  if not State.key then State.key = next(State.state, State.key) end
+  State.state[State.key]()
+end
+
+---@return function, function
+State.get = function() return State.filter, State.encode end
+State.cycle()
+
 ---@class fle.config.Store: fzf-lua.config.Base
 local __DEFAULT__ = {
   -- https://github.com/alex-popov-tech/store.nvim/blob/43e574b5aac28891fe50316fc69727cfc27727a4/lua/store/config.lua#L186
@@ -89,6 +142,7 @@ local __DEFAULT__ = {
     ['ctrl-r'] = p_do(
       function(p) require('lazy.core.loader')[p._ and p._.loaded and 'reload' or 'load'](p) end
     ),
+    ['ctrl-g'] = { fn = State.cycle, reload = true },
   },
 }
 
@@ -153,43 +207,11 @@ return function(opts)
         ).stdout or ''
       )
       local items = db.items
-      local fu = FzfLua.utils
-      local cyan = fu.ansi_codes.cyan
-      local yellow = fu.ansi_codes.yellow
-      local magenta = fu.ansi_codes.magenta
-      local green = fu.ansi_codes.green
-      ---Format repository information for display in a single line for the picker
-      ---@param repo store.Repository The repository to format
-      ---@return string formatted_line
-      local function format_repository_info(repo)
-        local parts = {}
-        parts[#parts + 1] = repo.full_name
-        parts[#parts + 1] = '\t'
-        -- Format stars: Truncate if longer than 8 bytes, then left-align to 8 bytes.
-        local stars_str = '⭐' .. repo.stars
-        local display_stars = stars_str
-        if #display_stars > 8 then display_stars = string.sub(display_stars, 1, 8) end
-        parts[#parts + 1] = magenta(string.format('%-8s', display_stars))
-
-        -- Format issues: Truncate if longer than 8 bytes, then left-align to 8 bytes.
-        local issues_str = '🚨' .. repo.issues
-        local display_issues = issues_str
-        if #display_issues > 8 then display_issues = string.sub(display_issues, 1, 8) end
-        parts[#parts + 1] = magenta(string.format('%-8s', display_issues))
-
-        parts[#parts + 1] = cyan(repo.full_name)
-        if repo.description and repo.description ~= '' then
-          parts[#parts + 1] = yellow(repo.description)
-        end
-        if #repo.tags > 0 then
-          parts[#parts + 1] = green('[' .. table.concat(repo.tags, ',') .. ']')
-        end
-        return table.concat(parts, ' ')
-      end
       opts.previewer.items = opts.previewer.items or {}
       for _, item in ipairs(items) do
         opts.previewer.items[item.full_name] = item
-        cb(format_repository_info(item))
+        local filter, encode = State.get()
+        if not filter or filter(item) then cb(encode(item)) end
       end
       cb(nil)
     end)
