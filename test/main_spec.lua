@@ -82,11 +82,12 @@ describe('main', function()
         vim.fs.joinpath(vim.env.XDG_DATA_HOME, vim.env.NVIM_APPNAME or 'nvim', 'site')
       )
       vim.pack.add({
-        { src = 'https://github.com/ibhagwan/fzf-lua' },
+        { src = 'https://github.com/phanen/fzf-lua', version = 'preview_items' },
         { src = 'https://github.com/stevearc/aerial.nvim' },
         { src = 'https://github.com/echasnovski/mini.nvim' },
         { src = 'https://github.com/folke/lazy.nvim' },
         { src = 'https://github.com/lewis6991/gitsigns.nvim' },
+        { src = 'https://github.com/alex-popov-tech/store.nvim' },
       }, { confirm = false })
       vim.pack.update(nil, { force = true })
       ---@diagnostic disable-next-line: missing-parameter
@@ -97,6 +98,7 @@ describe('main', function()
       require('mini.visits').setup()
       require('mini.icons').setup()
       require('gitsigns').setup()
+      require('store').setup({ plugin_manager = 'lazy.nvim' })
       vim.opt.rtp:append('.')
       vim.cmd.runtime { 'plugin/fzf-lua-extra.lua', bang = true }
     end)
