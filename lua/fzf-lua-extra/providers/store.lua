@@ -4,9 +4,19 @@ local utils = require('fzf-lua-extra.utils')
 ---@param cb fun(plugin: table, o: table)
 local p_do = function(cb)
   return function(selected, opts)
+    if #selected == 0 then -- some plugin may not be included in registry
+      local plugin = {}
+      plugin.url = assert(FzfLua.get_last_query())
+      plugin.full_name = plugin.url:gsub('https?://github.com/', '')
+      plugin._config = string.format('return { %q, opts = {} }', plugin.full_name)
+      local bs_parts = vim.split(plugin.full_name, '/', { trimempty = true })
+      plugin.name = bs_parts[#bs_parts]
+      cb(plugin, opts)
+      return
+    end
     vim.iter(selected):each(function(sel)
       sel = sel:match('[^%s]+')
-      local bs_parts = vim.split(sel, '/')
+      local bs_parts = vim.split(sel, '/', { trimempty = true })
       local name = bs_parts[#bs_parts]
       local plugin = utils.get_lazy_plugins()[name] or opts.previewer.items[sel]
       if plugin then cb(plugin, opts) end
@@ -126,7 +136,7 @@ local __DEFAULT__ = {
           local filepath = plugins_folder .. '/' .. (normname(p.name) .. '.lua')
           local res = utils.run(cmd, opts).stdout or ''
           local items = vim.json.decode(res).items
-          write_conf({ config = items[p.full_name], filepath = filepath, repo = p })
+          write_conf({ config = p._config or items[p.full_name], filepath = filepath, repo = p })
         end)
       end
     end),
