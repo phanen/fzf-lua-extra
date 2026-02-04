@@ -82,24 +82,20 @@ local function format_repository_info(repo, compact)
   return table.concat(parts, ' ')
 end
 
-local State = {}
-State.state = {
-  all = function()
-    State.encode = function(p) return format_repository_info(p) end
-  end,
-  compat = function()
-    State.encode = function(p) return format_repository_info(p, true) end
-  end,
-}
-State.cycle = function()
-  State.key = next(State.state, State.key)
-  if not State.key then State.key = next(State.state, State.key) end
-  State.state[State.key]()
+-- format_repository_info
+local state = require('fzf-lua-extra.state').new()
+state:put('fmt', 'detail', function(p) return format_repository_info(p) end)
+state:put('fmt', 'compat', function(p) return format_repository_info(p, true) end)
+local sort_by_stars = function(a, b)
+  return a.stars > b.stars or (a.stars == b.stars and a.issues > b.issues)
+end
+local sort_by_issues = function(a, b)
+  return a.issues > b.issues or (a.issues == b.issues and a.stars > b.stars)
 end
 
----@return function, function
-State.get = function() return State.filter, State.encode end
-State.cycle()
+state:put('sort', 'no_sort', false)
+state:put('sort', 'stars', sort_by_stars)
+state:put('sort', 'issues', sort_by_issues)
 
 ---@class fle.config.Store: fzf-lua.config.Base
 local __DEFAULT__ = {
@@ -120,6 +116,7 @@ local __DEFAULT__ = {
     items = {},
   },
   fzf_opts = {
+    ['--no-sort'] = true,
     ['--delimiter'] = '\t',
     ['--with-nth'] = '2..',
     ['--no-hscroll'] = true,
@@ -153,7 +150,8 @@ local __DEFAULT__ = {
     ['ctrl-r'] = p_do(
       function(p) require('lazy.core.loader')[p._ and p._.loaded and 'reload' or 'load'](p) end
     ),
-    ['ctrl-g'] = { fn = State.cycle, reload = true },
+    ['ctrl-g'] = { fn = function() state:cycle('fmt') end, reload = true },
+    ['ctrl-s'] = { fn = function() state:cycle('sort') end, reload = true },
   },
 }
 
@@ -217,12 +215,15 @@ return function(opts)
           { cache_path = utils.path('store.json'), cache_invalid = opts.cache_invalid }
         ).stdout or ''
       )
+      local fmt = state:get('fmt')
+      local sort = state:get('sort')
       local items = db.items
+      -- TODO: maybe we also need "toggle-sort"
+      if sort then table.sort(items, sort) end
       opts.previewer.items = opts.previewer.items or {}
       for _, item in ipairs(items) do
         opts.previewer.items[item.full_name] = item
-        local filter, encode = State.get()
-        if not filter or filter(item) then cb(encode(item)) end
+        cb(fmt(item))
       end
       cb(nil)
     end)
