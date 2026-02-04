@@ -26,6 +26,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * runtime
 * scriptnames
 * ~serverlist2~ `FzfLua serverlist` (https://github.com/ibhagwan/fzf-lua/pull/2320)
+* store
 * ~swiper_blines~ `FzfLua blines profile=ivy` (https://github.com/ibhagwan/fzf-lua/issues/2261)
 * visits
 <!-- providers:end -->

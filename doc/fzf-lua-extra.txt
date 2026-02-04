@@ -1,4 +1,4 @@
-*fzf-lua-extra.txt*      For Neovim >= 0.10.0     Last change: 2026 January 02
+*fzf-lua-extra.txt*     For Neovim >= 0.10.0     Last change: 2026 February 04
 
 ==============================================================================
 Table of Contents                            *fzf-lua-extra-table-of-contents*
@@ -18,7 +18,7 @@ Extra pickers for fzf-lua <https://github.com/ibhagwan/fzf-lua>. _aerial
 file_decor function git_log gitignore grep_project_globs hunks icons lazy
 license lua_registry node_lines plocate ps repl rtp runtime scriptnames
 _serverlist2 `FzfLua serverlist` <https://github.com/ibhagwan/fzf-lua/pull/232>
-_swiper_blines `FzfLua blines profile=ivy`
+store _swiper_blines `FzfLua blines profile=ivy`
 <https://github.com/ibhagwan/fzf-lua/issues/226> visits
 
 
