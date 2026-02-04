@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.10.0](https://github.com/phanen/fzf-lua-extra/compare/v3.9.0...v3.10.0) (2026-02-04)
+
+
+### Features
+
+* store.nvim picker ([ebde1a3](https://github.com/phanen/fzf-lua-extra/commit/ebde1a393320b3cc8a0cfd493227e79f428b7c00))
+* **store:** ctrl-r to refresh the list ([5314294](https://github.com/phanen/fzf-lua-extra/commit/5314294eb2e7b3871a0266dd9da197a4fecf4f8c))
+* **store:** toggle sort ([c783098](https://github.com/phanen/fzf-lua-extra/commit/c7830986baeaa09499337c8c339712fca016d3c8))
+
+
+### Bug Fixes
+
+* some plugin is not indexed ([dbfd004](https://github.com/phanen/fzf-lua-extra/commit/dbfd004d559709a20ef1074734d54a0dedae37c7))
+* **store:** generate config ([37d8f63](https://github.com/phanen/fzf-lua-extra/commit/37d8f63ee7ad26716a90fa90a704b2e0f757430a))
+
 ## [3.9.0](https://github.com/phanen/fzf-lua-extra/compare/v3.8.0...v3.9.0) (2026-01-20)
 
 
