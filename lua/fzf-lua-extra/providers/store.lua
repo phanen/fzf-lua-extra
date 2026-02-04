@@ -8,7 +8,6 @@ local p_do = function(cb)
       local plugin = {}
       plugin.url = assert(FzfLua.get_last_query())
       plugin.full_name = plugin.url:gsub('https?://github.com/', '')
-      plugin._config = string.format('return { %q, opts = {} }', plugin.full_name)
       local bs_parts = vim.split(plugin.full_name, '/', { trimempty = true })
       plugin.name = bs_parts[#bs_parts]
       cb(plugin, opts)
@@ -133,7 +132,11 @@ local __DEFAULT__ = {
           local filepath = plugins_folder .. '/' .. (normname(p.name) .. '.lua')
           local res = utils.run(cmd, opts).stdout or ''
           local items = vim.json.decode(res).items
-          write_conf({ config = p._config or items[p.full_name], filepath = filepath, repo = p })
+          write_conf({
+            config = items[p.full_name] or ('return { %q, opts = {} }'):format(p.full_name),
+            filepath = filepath,
+            repo = p,
+          })
         end)
       end
     end),
