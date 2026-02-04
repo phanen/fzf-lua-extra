@@ -15,7 +15,8 @@
       "deps/.data/nvim/site/pack/core/opt/aerial.nvim",
       "deps/.data/nvim/site/pack/core/opt/mini.nvim",
       "deps/.data/nvim/site/pack/core/opt/lazy.nvim",
-      "deps/.data/nvim/site/pack/core/opt/gitsigns.nvim"
+      "deps/.data/nvim/site/pack/core/opt/gitsigns.nvim",
+      "deps/.data/nvim/site/pack/core/opt/store.nvim"
     ],
     "ignoreDir": [".luarocks"]
   },
