@@ -147,9 +147,12 @@ local __DEFAULT__ = {
     ['ctrl-n'] = p_do(function(p)
       if p.dir then FzfLua.live_grep_native { cwd = p.dir } end
     end),
-    ['ctrl-r'] = p_do(
-      function(p) require('lazy.core.loader')[p._ and p._.loaded and 'reload' or 'load'](p) end
-    ),
+    ['ctrl-r'] = {
+      fn = function(_, o)
+        o.cache_invalid = function() return true end
+      end,
+      reload = true,
+    },
     ['ctrl-g'] = { fn = function() state:cycle('fmt') end, reload = true },
     ['ctrl-s'] = { fn = function() state:cycle('sort') end, reload = true },
   },
