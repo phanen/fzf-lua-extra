@@ -43,7 +43,7 @@ jobs:
 
       - name: Cache EmmyLua
         id: cache-emmylua
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: deps/emmylua_analyzer-rust-*
           key: emmylua-${{ hashFiles('Makefile') }}
