@@ -82,7 +82,7 @@ local function format_repository_info(repo, compact)
 end
 
 -- format_repository_info
-local state = require('fzf-lua-extra.state').new()
+local state = require('fzf-lua-extra.lib.state').new()
 state:put('fmt', 'detail', function(p) return format_repository_info(p) end)
 state:put('fmt', 'compat', function(p) return format_repository_info(p, true) end)
 local sort_by_stars = function(a, b)
@@ -221,7 +221,7 @@ return function(opts)
           { cache_path = utils.path('store.json'), cache_invalid = opts.cache_invalid }
         ).stdout or ''
       )
-      local fmt = state:get('fmt')
+      local fmt = assert(state:get('fmt'))
       local sort = state:get('sort')
       local items = db.items
       -- TODO: maybe we also need "toggle-sort"

@@ -29,7 +29,7 @@ local fmt_repo = function(p)
   return fullname
 end
 
-local state = require('fzf-lua-extra.state').new()
+local state = require('fzf-lua-extra.lib.state').new()
 state:put('fmt', 'full', function(p) return p.name end)
 state:put('fmt', 'repo', fmt_repo)
 
@@ -60,7 +60,7 @@ local __DEFAULT__ = {
 return function(opts)
   assert(__DEFAULT__)
   local contents = function(fzf_cb)
-    local fmt = state:get()
+    local fmt = assert(state:get('fmt'))
     vim.iter(utils.get_lazy_plugins()):each(function(_, p) fzf_cb(fmt(p)) end)
     fzf_cb()
   end

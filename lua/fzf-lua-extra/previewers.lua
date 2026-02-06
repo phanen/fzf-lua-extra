@@ -142,7 +142,10 @@ function M.gitignore:parse_entry(entry_str, cb)
   end)
 end
 
+---@class fle.entry: fzf-lua.buffer_or_file.Entry, { name?: string, key?: string }
+
 ---@diagnostic disable-next-line: unused
+---@param entry fle.entry
 function M.gitignore:key_from_entry(entry) return entry.key end
 
 ---@class fle.previewer.Store: fzf-lua.previewer.BufferOrFile
@@ -217,6 +220,7 @@ function M.store:parse_entry(entry_str, cb)
 end
 
 ---@diagnostic disable-next-line: unused
+---@param entry fle.entry
 function M.store:key_from_entry(entry) return entry.name end
 
 return M
