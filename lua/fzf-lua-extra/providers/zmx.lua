@@ -1,3 +1,4 @@
+local api = vim.api
 local parse = function(entry_str)
   if entry_str:match('^no sessions found') then return end
   local items = vim.split(entry_str, '%s', { trimempty = true })
@@ -8,6 +9,25 @@ local parse = function(entry_str)
   end
   return c['session_name']
 end
+
+local w = function(s)
+  if api.nvim_ui_send and vim.in_fast_event() then
+    vim.schedule_wrap(api.nvim_ui_send)(s)
+  elseif api.nvim_ui_send then
+    api.nvim_ui_send(s)
+  else
+    io.stderr:write(s)
+  end
+end
+
+-- https://github.com/kovidgoyal/kitty/blob/51a08d23cd90dc0c756fef3a702a525ce60a4304/docs/mapping.rst#L204
+---@param varname string
+local set_user_var = function(varname)
+  if not jit then return end
+  w(('\x1b]1337;SetUserVar=%s=MQo\007'):format(varname))
+end
+
+local ns = api.nvim_create_namespace('fzf-lua-extra.zmx')
 
 ---@class fle.config.Zmx: fzf-lua.config.Base
 local __DEFAULT__ = {
@@ -40,6 +60,10 @@ local __DEFAULT__ = {
       )
       vim.fn.system('kitten @ launch --type=overlay-main zmx a ' .. r)
       vim.fn.system('kitten @ close-window --match id:' .. kwin)
+      vim.on_key(function()
+        set_user_var('in_editor')
+        vim.on_key(nil, ns)
+      end, ns)
     end,
     ['ctrl-n'] = {
       fn = function()
