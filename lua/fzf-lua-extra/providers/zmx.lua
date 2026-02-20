@@ -28,6 +28,13 @@ local __DEFAULT__ = {
       local r = parse(sel)
       if not r then return end
       -- local kwin = assert(os.getenv('KITTY_WINDOW_ID'), 'only support kitty')
+      local ksock = assert(os.getenv('KITTY_LISTEN_ON'), 'only support kitty')
+      ksock = (ksock:gsub('unix:', ''))
+      if not vim.uv.fs_stat(ksock) then -- fix kitty socket
+        ksock = vim.split(vim.fn.glob(vim.fs.joinpath(vim.fs.dirname(ksock), '/kitty-*')), '\n')[1]
+        if not ksock or not vim.uv.fs_stat(ksock) then error('kitty socket not found') end
+        vim.env.KITTY_LISTEN_ON = 'unix:' .. ksock
+      end
       local kwin = vim.fn.system(
         [[kitten @ ls | jq -r '.[] | select(.is_focused == true) | .tabs[] | select(.is_focused == true) | .windows[] | select(.is_focused == true) | .id']]
       )
