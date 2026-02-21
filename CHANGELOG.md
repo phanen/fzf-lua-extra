@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.11.0](https://github.com/phanen/fzf-lua-extra/compare/v3.10.0...v3.11.0) (2026-02-21)
+
+
+### Features
+
+* **zmx:** https://github.com/neurosnap/zmx ([fb14931](https://github.com/phanen/fzf-lua-extra/commit/fb149315d29079259d59a02d4a5527733bb90a94))
+
+
+### Bug Fixes
+
+* make ordered dict ([84f3756](https://github.com/phanen/fzf-lua-extra/commit/84f375685b1799210d4a3273e7005de09d085f36))
+* **zmx:** fix socket env when old kitty instance died ([876be3a](https://github.com/phanen/fzf-lua-extra/commit/876be3a08bb71df53afa2b9a4f050714348cb900))
+* **zmx:** set_user_var on re-attach ([3b95da0](https://github.com/phanen/fzf-lua-extra/commit/3b95da0df5589ae5b8642e4aa5d265fe7b448a5c))
+
 ## [3.10.0](https://github.com/phanen/fzf-lua-extra/compare/v3.9.0...v3.10.0) (2026-02-04)
 
 
