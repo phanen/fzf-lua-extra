@@ -29,6 +29,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * store
 * ~swiper_blines~ `FzfLua blines profile=ivy` (https://github.com/ibhagwan/fzf-lua/issues/2261)
 * visits
+* zmx
 <!-- providers:end -->
 
 ## credit
