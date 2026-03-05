@@ -188,7 +188,7 @@ function M.store:parse_entry(entry_str, cb)
     lines[#lines + 1] = ''
   end
   lines[#lines + 1] = {
-    { '⭐' .. repo.stars, 'FleMagenta' },
+    { '⭐' .. repo.stars.curr, 'FleMagenta' },
     ' ',
     { '🚨' .. repo.issues, 'FleMagenta' },
   }

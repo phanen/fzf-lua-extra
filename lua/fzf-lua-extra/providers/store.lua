@@ -62,7 +62,7 @@ local function format_repository_info(repo, compact)
   parts[#parts + 1] = repo.full_name
   parts[#parts + 1] = '\t'
   -- Format stars: Truncate if longer than 8 bytes, then left-align to 8 bytes.
-  local stars_str = '⭐' .. repo.stars
+  local stars_str = '⭐' .. repo.stars.curr
   local display_stars = stars_str
   if #display_stars > 8 then display_stars = string.sub(display_stars, 1, 8) end
   parts[#parts + 1] = magenta(string.format('%-8s', display_stars))
@@ -86,10 +86,10 @@ local state = require('fzf-lua-extra.lib.state').new()
 state:put('fmt', 'detail', function(p) return format_repository_info(p) end)
 state:put('fmt', 'compat', function(p) return format_repository_info(p, true) end)
 local sort_by_stars = function(a, b)
-  return a.stars > b.stars or (a.stars == b.stars and a.issues > b.issues)
+  return a.stars.curr > b.stars.curr or (a.stars.curr == b.stars.curr and a.issues > b.issues)
 end
 local sort_by_issues = function(a, b)
-  return a.issues > b.issues or (a.issues == b.issues and a.stars > b.stars)
+  return a.issues > b.issues or (a.issues == b.issues and a.stars.curr > b.stars.curr)
 end
 
 state:put('sort', 'no_sort', false)
@@ -100,9 +100,9 @@ state:put('sort', 'issues', sort_by_issues)
 local __DEFAULT__ = {
   -- https://github.com/alex-popov-tech/store.nvim/blob/43e574b5aac28891fe50316fc69727cfc27727a4/lua/store/config.lua#L186
   urls = {
-    store = 'https://gist.githubusercontent.com/alex-popov-tech/92d1366bfeb168d767153a24be1475b5/raw/db.json', -- URL for plugin data
-    ['lazy.nvim'] = 'https://gist.githubusercontent.com/alex-popov-tech/6629a59e7910aa08b1aa5cdc0519b8b4/raw/lazy.nvim.json',
-    ['vim.pack'] = 'https://gist.githubusercontent.com/alex-popov-tech/18a46177d6473e12bc2c854e2548f127/raw/vim.pack.json',
+    store = 'https://github.com/alex-popov-tech/store.nvim.crawler/releases/latest/download/db_minified.json', -- URL for plugin data
+    ['lazy.nvim'] = 'https://github.com/alex-popov-tech/store.nvim.crawler/releases/latest/download/lazy_db_minified.json',
+    ['vim.pack'] = 'https://github.com/alex-popov-tech/store.nvim.crawler/releases/latest/download/vimpack_db_minified.json',
   },
   ---@param path string
   ---@return boolean
@@ -170,7 +170,7 @@ local __DEFAULT__ = {
 ---@field url string Repository URL
 ---@field description string Repository description
 ---@field tags string[] Array of topic tags
----@field stars number Number of stars
+---@field stars {curr: number, weekly: number, monthly: number} Star counts
 ---@field issues number Number of open issues
 ---@field created_at string Creation timestamp (ISO format)
 ---@field updated_at string Last update timestamp (ISO format)
