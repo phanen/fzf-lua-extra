@@ -32,5 +32,11 @@ local __DEFAULT__ = {
 
 return function(opts)
   assert(__DEFAULT__)
-  FzfLua.fzf_exec(vim.split(vim.api.nvim_exec2('function', { output = true }).output, '\n'), opts)
+  local with = vim._with or function(_, f) return f() end
+  FzfLua.fzf_exec(
+    with({ o = { verbose = 0 } }, function() --
+      return vim.split(vim.api.nvim_exec2('function', { output = true }).output, '\n')
+    end),
+    opts
+  )
 end
