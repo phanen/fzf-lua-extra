@@ -22,10 +22,7 @@ end
 
 -- https://github.com/kovidgoyal/kitty/blob/51a08d23cd90dc0c756fef3a702a525ce60a4304/docs/mapping.rst#L204
 ---@param varname string
-local set_user_var = function(varname)
-  if not jit then return end
-  w(('\x1b]1337;SetUserVar=%s=MQo\007'):format(varname))
-end
+local set_user_var = function(varname) w(('\027]1337;SetUserVar=%s=MQo\007'):format(varname)) end
 
 local ns = api.nvim_create_namespace('fzf-lua-extra.zmx')
 

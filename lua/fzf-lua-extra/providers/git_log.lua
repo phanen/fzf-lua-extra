@@ -15,7 +15,7 @@ local __DEFAULT__ = {
       end, { buffer = e.bufnr })
       -- vim.keymap.set({ 't', 'n' }, '<Esc>', function()
       --   if not insert then FzfLua.hide() end
-      --   vim.api.nvim_chan_send(vim.bo[e.bufnr].channel, '\x1b')
+      --   vim.api.nvim_chan_send(vim.bo[e.bufnr].channel, '\027')
       -- end, { buffer = e.bufnr, nowait = true })
     end,
   },
