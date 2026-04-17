@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.11.1](https://github.com/phanen/fzf-lua-extra/compare/v3.11.0...v3.11.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* bad puclua string ([113d3e4](https://github.com/phanen/fzf-lua-extra/commit/113d3e4b8545631cd97fb4fecca305d1596abc24))
+* **function:** ensure verbose level ([9160b10](https://github.com/phanen/fzf-lua-extra/commit/9160b106f10c9aa8ed0e4bdae83d3f35da49f985))
+
 ## [3.11.0](https://github.com/phanen/fzf-lua-extra/compare/v3.10.0...v3.11.0) (2026-02-21)
 
 
