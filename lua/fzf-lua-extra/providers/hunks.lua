@@ -53,15 +53,16 @@ return function(opts)
       async
         .run(function(cb)
           for _, f in ipairs(repo:files_changed(config.base)) do
-            local f_abs = repo.toplevel .. '/' .. f
+            local path = type(f) == 'table' and f.path or f
+            local f_abs = repo.toplevel .. '/' .. path
             local stat = uv.fs_stat(f_abs)
             if stat and stat.type == 'file' then
               ---@type string
               local obj
               if config.base and config.base ~= ':0' then
-                obj = config.base .. ':' .. f
+                obj = config.base .. ':' .. path
               else
-                obj = ':0:' .. f
+                obj = ':0:' .. path
               end
               async.schedule()
               local hunks = run_diff(repo:get_show_text(obj), util.file_lines(f_abs))
