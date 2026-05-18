@@ -101,6 +101,7 @@ local __DEFAULT__ = {
       exec_silent = true,
       postfix = 'refresh-preview',
     },
+    ['every(2)'] = { fn = function(_, _) end, reload = true },
   },
 }
 
