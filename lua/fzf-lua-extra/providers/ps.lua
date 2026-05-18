@@ -77,32 +77,35 @@ local __DEFAULT__ = {
     end,
   },
   ---@type fzf-lua.config.Actions
-  actions = {
-    -- cursorhold? top? https://github.com/junegunn/fzf/issues/1211
-    ['ctrl-r'] = { fn = function() end, reload = true },
-    change = { fn = function() end, reload = true },
-    ['ctrl-x'] = {
-      fn = function(selected)
-        ---@type integer[]
-        local pids = vim.tbl_map(function(s) return tonumber(s:match('^%s*(%d+)')) end, selected)
-        local sig = require('fzf-lua.utils').input('signal: ', 'sigkill')
-        if not sig then return end
-        vim.tbl_map(function(_pid) FzfLua.libuv.process_kill(_pid, sig) end, pids)
-      end,
-      field_index = '{+}',
-      reload = true,
-    },
-    ['ctrl-s'] = { -- man ps | nvim +Man! +'norm! G' +'?STANDARD FORMAT SPECIFIERS'
-      fn = function(_, opts)
-        local ps_preview_cmd = require('fzf-lua.utils').input('preview: ', opts.ps_preview_cmd)
-        if not ps_preview_cmd then return end
-        opts.ps_preview_cmd = ps_preview_cmd
-      end,
-      exec_silent = true,
-      postfix = 'refresh-preview',
-    },
-    ['every(2)'] = { fn = function(_, _) end, reload = true },
-  },
+  actions = function(o)
+    return {
+      -- cursorhold? top? https://github.com/junegunn/fzf/issues/1211
+      ['ctrl-r'] = { fn = function() end, reload = true },
+      change = { fn = function() end, reload = true },
+      ['ctrl-x'] = {
+        fn = function(selected)
+          ---@type integer[]
+          local pids = vim.tbl_map(function(s) return tonumber(s:match('^%s*(%d+)')) end, selected)
+          local sig = require('fzf-lua.utils').input('signal: ', 'sigkill')
+          if not sig then return end
+          vim.tbl_map(function(_pid) FzfLua.libuv.process_kill(_pid, sig) end, pids)
+        end,
+        field_index = '{+}',
+        reload = true,
+      },
+      ['ctrl-s'] = { -- man ps | nvim +Man! +'norm! G' +'?STANDARD FORMAT SPECIFIERS'
+        fn = function(_, opts)
+          local ps_preview_cmd = require('fzf-lua.utils').input('preview: ', opts.ps_preview_cmd)
+          if not ps_preview_cmd then return end
+          opts.ps_preview_cmd = ps_preview_cmd
+        end,
+        exec_silent = true,
+        postfix = 'refresh-preview',
+      },
+      ['every(2)'] = utils.has(o, 'fzf', { 0, 73 }) and { fn = function(_, _) end, reload = true }
+        or nil,
+    }
+  end,
 }
 
 return function(opts)
