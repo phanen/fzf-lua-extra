@@ -35,7 +35,7 @@ end
 
 ---@param path string
 M.chdir = function(path)
-  if fn.executable('zoxide') == 1 then vim.system { 'zoxide', 'add', path } end
+  if fn.executable('zoxide') == 1 then vim.system({ 'zoxide', 'add', path }) end
   api.nvim_set_current_dir(path)
 end
 

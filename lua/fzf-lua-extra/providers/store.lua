@@ -145,10 +145,10 @@ local __DEFAULT__ = {
       vim.ui.open(p.url or ('https://github.com/search?q=%s'):format(p.name))
     end),
     ['ctrl-l'] = p_do(function(p)
-      if p.dir and vim.uv.fs_stat(p.dir) then FzfLua.files { cwd = p.dir } end
+      if p.dir and vim.uv.fs_stat(p.dir) then FzfLua.files({ cwd = p.dir }) end
     end),
     ['ctrl-n'] = p_do(function(p)
-      if p.dir then FzfLua.live_grep_native { cwd = p.dir } end
+      if p.dir then FzfLua.live_grep_native({ cwd = p.dir }) end
     end),
     ['ctrl-r'] = {
       fn = function(_, o)

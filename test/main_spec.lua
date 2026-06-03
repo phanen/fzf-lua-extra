@@ -100,7 +100,7 @@ describe('main', function()
       require('gitsigns').setup()
       require('store').setup({ plugin_manager = 'lazy.nvim' })
       vim.opt.rtp:append('.')
-      vim.cmd.runtime { 'plugin/fzf-lua-extra.lua', bang = true }
+      vim.cmd.runtime({ 'plugin/fzf-lua-extra.lua', bang = true })
     end)
     if os.getenv('update_only') then os.exit(0) end
     -- print('SERVERNAME:', n.api.nvim_get_vvar('servername'))

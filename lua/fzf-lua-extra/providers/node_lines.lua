@@ -14,7 +14,7 @@ local function nodelines(opts)
   if not node then return end
   local start_line, end_line ---@type integer, integer
   if api.nvim_get_mode().mode:match('[vV\022]') then
-    start_line, end_line = fn.line '.', fn.line 'v'
+    start_line, end_line = fn.line('.'), fn.line('v')
     if start_line > end_line then
       start_line, end_line = end_line, start_line ---@type integer, integer
     end

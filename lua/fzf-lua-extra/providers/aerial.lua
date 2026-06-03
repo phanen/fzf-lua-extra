@@ -41,7 +41,7 @@ local __DEFAULT__ = {
   _actions = function() return utils.fix_actions(format) end,
   previewer = {
     _ctor = function()
-      local base = require 'fzf-lua.previewer.builtin'.buffer_or_file
+      local base = require('fzf-lua.previewer.builtin').buffer_or_file
       local previewer = base:extend()
       ---@diagnostic disable-next-line: unused
       function previewer:parse_entry(entry_str) return parse_entry(entry_str) end

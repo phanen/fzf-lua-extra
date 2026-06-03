@@ -67,7 +67,7 @@ return function()
     end
   end
 
-  FzfLua.blines {
+  FzfLua.blines({
     silent = true,
     _treesitter = function(line) return 'foo.lua', nil, line:sub(2) end,
     start = 'cursor',
@@ -104,5 +104,5 @@ return function()
         exec_silent = true,
       },
     },
-  }
+  })
 end

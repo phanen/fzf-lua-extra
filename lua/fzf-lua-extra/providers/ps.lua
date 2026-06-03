@@ -1,4 +1,4 @@
-local utils = require 'fzf-lua.utils'
+local utils = require('fzf-lua.utils')
 local exec_lua = function(_) return _ end
 
 ---@class fle.config.Ps: fzf-lua.config.Base
@@ -8,22 +8,22 @@ local __DEFAULT__ = {
   requires_processing = true,
   -- debug = true,
   multiprocess = true,
-  fn_preprocess = exec_lua [[return function(e)
+  fn_preprocess = exec_lua([[return function(e)
       local utils = FzfLua.utils
       _G.bold = utils.ansi_codes.bold
       _G.red = utils.ansi_codes.red
       _G.green = utils.ansi_codes.green
       _G.magenta = utils.ansi_codes.magenta
       _G.hl_cmd = function(cmd) return cmd end
-    end]],
-  fn_transform = exec_lua [[return function(e)
+    end]]),
+  fn_transform = exec_lua([[return function(e)
         if e:match('^%s*PID') then
           local sep1, pid, sep2, ppid, sep3, cmd = e:match('^(%s*)(%S+)(%s*)(%S+)(%s*)(%S+)$')
           return ('%s%s%s%s%s%s'):format(sep1, bold(pid), sep2, bold(ppid), sep3, bold(cmd))
         end
         local sep1, pid, sep2, ppid, sep3, cmd = e:match('^(%s*)(%d+)(%s*)(%d+)(%s*)(.*)$')
         return ('%s%s%s%s%s%s'):format(sep1, magenta(pid), sep2, red(ppid), sep3, hl_cmd(cmd))
-      end]],
+      end]]),
   fzf_opts = {
     ['--ansi'] = true,
     ['--header-lines'] = 1,

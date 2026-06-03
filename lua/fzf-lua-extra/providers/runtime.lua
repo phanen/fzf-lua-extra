@@ -15,7 +15,7 @@ local _test = function()
     local sq, gq = q[1]:match(glob_regex)
     if port then
       sq = sq or q[1] ---@type string
-      vim.system { 'curl', '-XPOST', ('localhost:%s'):format(port), '-d', ('search:%s'):format(sq) }
+      vim.system({ 'curl', '-XPOST', ('localhost:%s'):format(port), '-d', ('search:%s'):format(sq) })
     end
     local new_glob = gq or '*'
     if new_glob == glob then return f end
