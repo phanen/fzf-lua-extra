@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - uses: lewis6991/gh-actions-lua@master
         with:
@@ -60,7 +60,7 @@ jobs:
     needs: tests
     if: ${{ github.ref == 'refs/heads/master' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Install Neovim
         uses: rhysd/action-setup-vim@v1
         with:
@@ -113,7 +113,7 @@ jobs:
         with:
           release-type: simple
           package-name: fzf-lua-extra
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: tag stable versions
         if: ${{ steps.release.outputs.release_created }}
         run: |
