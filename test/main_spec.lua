@@ -81,6 +81,7 @@ describe('main', function()
         -- TODO: we don't need lockfile, modify HOME+NVIM_APPNAME?
         vim.fs.joinpath(vim.env.XDG_DATA_HOME, vim.env.NVIM_APPNAME or 'nvim', 'site')
       )
+      if vim.fn.has('&packlockfile') ~= 0 then vim.o.packlockfile = '/dev/null' end
       vim.pack.add({
         { src = 'https://github.com/ibhagwan/fzf-lua' },
         { src = 'https://github.com/stevearc/aerial.nvim' },
