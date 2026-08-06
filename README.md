@@ -13,6 +13,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * git_log
 * gitignore
 * grep_project_globs
+* help_live_grep
 * hunks
 * icons
 * lazy

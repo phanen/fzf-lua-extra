@@ -1,4 +1,5 @@
-*fzf-lua-extra.txt*     For Neovim >= 0.10.0     Last change: 2026 February 21
+*fzf-lua-extra.txt*
+                           For Neovim >= 0.10.0    Last change: 2026 August 06
 
 ==============================================================================
 Table of Contents                            *fzf-lua-extra-table-of-contents*
@@ -15,11 +16,11 @@ Table of Contents                            *fzf-lua-extra-table-of-contents*
 Extra pickers for fzf-lua <https://github.com/ibhagwan/fzf-lua>. _aerial
 `require("aerial").fzf_lua_picker()`
 <https://github.com/stevearc/aerial.nvim/issues/47> astgrep cliphist cmd ex
-file_decor function git_log gitignore grep_project_globs hunks icons lazy
-license lua_registry node_lines plocate ps repl rtp runtime scriptnames
-_serverlist2 `FzfLua serverlist` <https://github.com/ibhagwan/fzf-lua/pull/232>
-store _swiper_blines `FzfLua blines profile=ivy`
-<https://github.com/ibhagwan/fzf-lua/issues/226> visits zmx
+file_decor function git_log gitignore grep_project_globs help_live_grep hunks
+icons lazy license lua_registry node_lines plocate ps repl rtp runtime
+scriptnames _serverlist2 `FzfLua serverlist`
+<https://github.com/ibhagwan/fzf-lua/pull/232> store _swiper_blines `FzfLua
+blines profile=ivy` <https://github.com/ibhagwan/fzf-lua/issues/226> visits zmx
 
 
 CREDIT                                    *fzf-lua-extra-fzf-lua-extra-credit*
