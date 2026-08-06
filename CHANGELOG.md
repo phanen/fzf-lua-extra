@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.12.0](https://github.com/phanen/fzf-lua-extra/compare/v3.11.0...v3.12.0) (2026-08-06)
+
+
+### Features
+
+* help_live_grep picker ([4b917c4](https://github.com/phanen/fzf-lua-extra/commit/4b917c49f4ae19f3f5f5a517c3bd4b3796db5bc2))
+* **ps:** auto refresh ([d4599df](https://github.com/phanen/fzf-lua-extra/commit/d4599df4cd013f3b9c839ebc4f5e248c650b989f))
+
+
+### Bug Fixes
+
+* bad puclua string ([113d3e4](https://github.com/phanen/fzf-lua-extra/commit/113d3e4b8545631cd97fb4fecca305d1596abc24))
+* **function:** ensure verbose level ([9160b10](https://github.com/phanen/fzf-lua-extra/commit/9160b106f10c9aa8ed0e4bdae83d3f35da49f985))
+* hunks ([c215474](https://github.com/phanen/fzf-lua-extra/commit/c215474e4f4d72bbd1e2cf3a4d312394b7d45dd8))
+* **ps:** version guard ([fb7d477](https://github.com/phanen/fzf-lua-extra/commit/fb7d477022cb863d9700fd7aa512f05eb6afb060))
+
 ## [3.11.0](https://github.com/phanen/fzf-lua-extra/compare/v3.10.0...v3.11.0) (2026-02-21)
 
 
