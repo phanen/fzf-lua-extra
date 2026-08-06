@@ -116,7 +116,7 @@ describe('main', function()
     name = name:match('(.*)%.lua$')
     it(('%s no error'):format(name), function()
       color = color == red and green or red
-      print(clear, prompt_mark, color)
+      io.stderr:write(clear, prompt_mark, color, '\n')
       n.api.nvim_command('edit test/main_spec.lua')
       n.fn.search('function(')
       exec_lua(function(name0, scale0)
