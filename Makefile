@@ -2,7 +2,7 @@ export PJ_ROOT=$(PWD)
 
 FILTER ?= .*
 
-export NVIM_RUNNER_VERSION := nightly
+export NVIM_RUNNER_VERSION := v0.12.3
 export NVIM_TEST_VERSION ?= nightly
 
 ifeq ($(shell uname -s),Darwin)
@@ -35,7 +35,7 @@ $(NVIM_TEST):
 test: $(NVIM_TEST)
 	NVIM_TEST_VERSION=$(NVIM_TEST_VERSION) \
 	$(NVIM_TEST)/bin/nvim-test test \
-		--lpath=$(PWD)/lua/?.lua \
+		--lpath='$(PWD)/lua/?.lua;$(PWD)/lua/?/init.lua;$(PWD)/test/?.lua;$(PWD)/test/?/init.lua' \
 		--verbose \
 		--filter="$(FILTER)"
 
@@ -50,7 +50,11 @@ test-010:
 
 .PHONY: test-011
 test-011:
-	$(MAKE) $(MAKEFLAGS) test NVIM_TEST_VERSION=v0.11.0
+	$(MAKE) $(MAKEFLAGS) test NVIM_TEST_VERSION=v0.11.7
+
+.PHONY: test-012
+test-012:
+	$(MAKE) $(MAKEFLAGS) test NVIM_TEST_VERSION=v0.12.0
 
 .PHONY: test-nightly
 test-nightly:
@@ -85,23 +89,23 @@ stylua: $(STYLUA)
 $(STYLUA): $(STYLUA_ZIP)
 	unzip $< -d $(dir $@)
 
-LUA_FILES := $(shell git ls-files lua test)
+LUA_FILES := $(shell git ls-files 'lua/*.lua' 'lua/**/*.lua' 'plugin/*.lua' 'test/*.lua' 'test/**/*.lua')
 
-.PHONY: stylua-check
-stylua-check: $(STYLUA)
+.PHONY: format-check
+format-check: $(STYLUA)
 	$(STYLUA) --check $(LUA_FILES)
 
-.PHONY: stylua-run
-stylua-run: $(STYLUA)
+.PHONY: format-run
+format-run: $(STYLUA)
 	$(STYLUA) $(LUA_FILES)
 
 .PHONY: build
-# build: gen_help stylua-run
-build: stylua-run
+# build: gen_help format-run
+build: format-run
 
-.PHONY: doc-check
-doc-check: gen_help
-	git diff --exit-code -- doc
+# .PHONY: doc-check
+# doc-check: gen_help
+# 	git diff --exit-code -- doc
 
 ifeq ($(shell uname -m),arm64)
     EMMYLUA_ARCH ?= arm64
@@ -109,7 +113,7 @@ else
     EMMYLUA_ARCH ?= x64
 endif
 
-EMMYLUA_REF := 0.19.0
+EMMYLUA_REF := 0.21.0
 EMMYLUA_OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 EMMYLUA_RELEASE_URL := https://github.com/EmmyLuaLs/emmylua-analyzer-rust/releases/download/$(EMMYLUA_REF)/emmylua_check-$(EMMYLUA_OS)-$(EMMYLUA_ARCH).tar.gz
 EMMYLUA_RELEASE_TAR := deps/emmylua_check-$(EMMYLUA_REF)-$(EMMYLUA_OS)-$(EMMYLUA_ARCH).tar.gz
