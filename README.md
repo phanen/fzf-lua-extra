@@ -19,6 +19,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 * lazy
 * license
 * lua_registry
+* man_live_grep
 * node_lines
 * plocate
 * ps
