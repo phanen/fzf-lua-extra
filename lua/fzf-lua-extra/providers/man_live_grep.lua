@@ -35,17 +35,10 @@ local man_grep, man_live_grep
 __DEFAULT__ = {
   _actions = function() return require('fzf-lua-extra.utils').fix_actions() end,
   actions = {
-    enter = {
-      fn = function(s)
-        -- pcall defensive: parse_apropos occasionally returns nil for
-        -- entries with weird snippet content (manpages.lua:26 asserts).
-        local ok, err = pcall(FzfLua.actions.man, s)
-        if not ok then
-          vim.notify('[mangrep] failed to open manpage: ' .. tostring(err), vim.log.levels.WARN)
-        end
-      end,
-      exec_silent = true,
-    },
+    ['enter'] = function(...) return require('fzf-lua.actions').man(...) end,
+    ['ctrl-s'] = function(...) return require('fzf-lua.actions').man(...) end,
+    ['ctrl-v'] = function(...) return require('fzf-lua.actions').man_vert(...) end,
+    ['ctrl-t'] = function(...) return require('fzf-lua.actions').man_tab(...) end,
     ['ctrl-g'] = function(_, opts)
       local o = vim.deepcopy(__DEFAULT__)
       o.resume = true
