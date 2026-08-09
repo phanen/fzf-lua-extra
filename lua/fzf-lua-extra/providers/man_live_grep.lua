@@ -56,10 +56,11 @@ __DEFAULT__ = {
     _ctor = function() return ManWithMatch end,
     cmd = function() return require('fzf-lua.defaults')._man_cmd_fn() end,
   },
-  fzf_opts = {
-    ['--delimiter'] = ' -- ',
-    ['--with-nth'] = '1',
-  },
+  fn_transform = function(line)
+    local man, snippet = line:match('^(.-) %-%- (.*)$')
+    if not man then return line end
+    return string.format('%-30s %s', man, snippet)
+  end,
 }
 
 ---@param opts fle.config.ManLiveGrep|{}
