@@ -13,6 +13,7 @@ local __DEFAULT__ = {
   with_nth = '2..',
   command_field = 2,
 
+  _treesitter = function(line) return 'foo.sh', nil, line end,
   fzf_opts = {
     ['--no-sort'] = true,
     ['--no-hscroll'] = true,
