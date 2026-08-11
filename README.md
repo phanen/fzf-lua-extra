@@ -5,6 +5,7 @@ Extra pickers for [fzf-lua](https://github.com/ibhagwan/fzf-lua).
 <!-- providers:start -->
 * ~aerial~ `require("aerial").fzf_lua_picker()` (https://github.com/stevearc/aerial.nvim/issues/472)
 * astgrep
+* atuin
 * cliphist
 * cmd
 * ex
