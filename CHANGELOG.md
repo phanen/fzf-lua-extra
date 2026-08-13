@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.13.0](https://github.com/phanen/fzf-lua-extra/compare/v3.12.0...v3.13.0) (2026-08-13)
+
+
+### Features
+
+* add atuin picker ([b8b3aea](https://github.com/phanen/fzf-lua-extra/commit/b8b3aead424d1a1d3a6791b3942827d4990c053f))
+* **atuin:** add preview and treesitter hl ([ad31ad4](https://github.com/phanen/fzf-lua-extra/commit/ad31ad4200f68379d5dfe4faed3f3e9591d9426f))
+* **atuin:** add treesitter hl ([9e971d0](https://github.com/phanen/fzf-lua-extra/commit/9e971d0b260518e4a4037ce59f284de0b16ef5a3))
+* man live grep ([af70c45](https://github.com/phanen/fzf-lua-extra/commit/af70c456500edfcba43f1cb59d42fedea209d603))
+* **man_live_grep:** improve format ([387eb0c](https://github.com/phanen/fzf-lua-extra/commit/387eb0c16565fca13be8fc95f6896d6b8bd94e3c))
+
+
+### Bug Fixes
+
+* **man_live_grep:** default action ([c8468fd](https://github.com/phanen/fzf-lua-extra/commit/c8468fddb89bdee52d47e3734c749f7be89b8cb0))
+
 ## [3.12.0](https://github.com/phanen/fzf-lua-extra/compare/v3.11.0...v3.12.0) (2026-08-06)
 
 
